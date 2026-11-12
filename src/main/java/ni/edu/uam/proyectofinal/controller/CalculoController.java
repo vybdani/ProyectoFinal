@@ -1,9 +1,9 @@
-package ni.edu.uam.nutrifit.controller;
+package ni.edu.uam.proyectofinal.controller;
 
-import ni.edu.uam.nutrifit.dao.RequerimientoDiarioDAO;
-import ni.edu.uam.nutrifit.entity.RequerimientoDiario;
+import ni.edu.uam.proyectofinal.dao.RequerimientoDiarioDAO;
+import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
 import ni.edu.uam.nutrifit.entity.Usuario;
-import ni.edu.uam.nutrifit.service.CalculoNutricionalService;
+import ni.edu.uam.proyectofinal.service.CalculoNutricionalService;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

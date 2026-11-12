@@ -1,6 +1,6 @@
-package ni.edu.uam.nutrifit.dao;
+package ni.edu.uam.proyectofinal.dao;
 
-import ni.edu.uam.nutrifit.entity.Alimento;
+import ni.edu.uam.proyectofinal.model.Alimento;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

@@ -1,8 +1,8 @@
 
-package ni.edu.uam.nutrifit.service;
+package ni.edu.uam.proyectofinal.service;
 
 import ni.edu.uam.nutrifit.entity.Usuario;
-import ni.edu.uam.nutrifit.entity.RequerimientoDiario;
+import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
 
 import java.time.LocalDate;
 

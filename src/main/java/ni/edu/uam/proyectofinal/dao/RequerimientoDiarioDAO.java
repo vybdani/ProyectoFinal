@@ -1,6 +1,6 @@
-package ni.edu.uam.nutrifit.dao;
+package ni.edu.uam.proyectofinal.dao;
 
-import ni.edu.uam.nutrifit.entity.RequerimientoDiario;
+import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
 import ni.edu.uam.nutrifit.util.HibernateUtil;
 
 import org.hibernate.Session;

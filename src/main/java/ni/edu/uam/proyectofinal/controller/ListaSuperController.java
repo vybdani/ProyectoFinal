@@ -1,8 +1,8 @@
 
-package ni.edu.uam.nutrifit.controller;
+package ni.edu.uam.proyectofinal.controller;
 
-import ni.edu.uam.nutrifit.dao.ItemListaSuperDAO;
-import ni.edu.uam.nutrifit.entity.ItemListaSuper;
+import ni.edu.uam.proyectofinal.dao.ItemListaSuperDAO;
+import ni.edu.uam.proyectofinal.model.ItemListaSuper;
 import ni.edu.uam.nutrifit.entity.Usuario;
 
 import javafx.collections.FXCollections;

@@ -1,7 +1,6 @@
-package ni.edu.uam.nutrifit.entity;
+package ni.edu.uam.proyectofinal.model;
 
 import jakarta.persistence.*;
-import ni.edu.uam.proyectofinal.model.Usuario;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

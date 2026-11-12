@@ -1,7 +1,6 @@
-package ni.edu.uam.nutrifit.entity;
+package ni.edu.uam.proyectofinal.model;
 
 import jakarta.persistence.*;
-import ni.edu.uam.proyectofinal.model.Usuario;
 
 @Entity
 @Table(name = "items_lista_super")

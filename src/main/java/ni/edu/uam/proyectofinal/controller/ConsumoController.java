@@ -1,10 +1,10 @@
 
-package ni.edu.uam.nutrifit.controller;
+package ni.edu.uam.proyectofinal.controller;
 
-import ni.edu.uam.nutrifit.dao.AlimentoDAO;
-import ni.edu.uam.nutrifit.dao.RegistroConsumoDAO;
-import ni.edu.uam.nutrifit.entity.Alimento;
-import ni.edu.uam.nutrifit.entity.RegistroConsumo;
+import ni.edu.uam.proyectofinal.dao.AlimentoDAO;
+import ni.edu.uam.proyectofinal.dao.RegistroConsumoDAO;
+import ni.edu.uam.proyectofinal.model.Alimento;
+import ni.edu.uam.proyectofinal.model.RegistroConsumo;
 import ni.edu.uam.nutrifit.entity.Usuario;
 
 import javafx.collections.FXCollections;
