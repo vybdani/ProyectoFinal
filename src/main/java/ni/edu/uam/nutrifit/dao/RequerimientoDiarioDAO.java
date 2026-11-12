@@ -1,4 +1,3 @@
-
 package ni.edu.uam.nutrifit.dao;
 
 import ni.edu.uam.nutrifit.entity.RequerimientoDiario;
