@@ -1,14 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane prefHeight="640.0" prefWidth="920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.proyectofinal.controller.RecetaController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #2e7d32;">
+            <padding><Insets bottom="12.0" left="20.0" right="20.0" top="12.0"/></padding>
+            <Button text="← Menú" onAction="#handleVolverMenu" style="-fx-background-color: white; -fx-text-fill: #2e7d32;"/>
+            <Label text="Gestión de Recetas e Ingredientes" textFill="WHITE">
+                <font><Font name="System Bold" size="18.0"/></font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="📊 Resumen Calórico (HQL)" onAction="#handleVerResumenHQL"
+                    style="-fx-background-color: #1b5e20; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
 
-</AnchorPane>
+    <center>
+        <SplitPane dividerPositions="0.46">
+            <VBox spacing="10.0">
+                <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/></padding>
+                <Label text="Datos de la Receta"><font><Font name="System Bold" size="14.0"/></font></Label>
+
+                <TextField fx:id="txtNombreReceta" promptText="Nombre de la receta (Ej. Pollo con arroz y aguacate)"/>
+                <HBox spacing="10.0">
+                    <ComboBox fx:id="cmbTipoComida" promptText="Tiempo de comida" prefWidth="200.0"/>
+                    <TextField fx:id="txtTiempoPrep" promptText="Minutos prep. (Ej. 20)" prefWidth="160.0"/>
+                </HBox>
+                <TextArea fx:id="txtDescripcion" promptText="Instrucciones de preparación..." prefRowCount="2"/>
+
+                <Separator/>
+                <Label text="Ingredientes"><font><Font name="System Bold" size="14.0"/></font></Label>
+
+                <HBox spacing="8.0">
+                    <ComboBox fx:id="cmbAlimento" promptText="Selecciona alimento" prefWidth="210.0"/>
+                    <TextField fx:id="txtGramos" promptText="Gramos" prefWidth="85.0"/>
+                    <Button text="+ Agregar" onAction="#handleAgregarIngrediente" style="-fx-background-color: #1976d2; -fx-text-fill: white;"/>
+                    <Button text="Quitar" onAction="#handleQuitarIngrediente"/>
+                </HBox>
+
+                <TableView fx:id="tblIngredientes" prefHeight="160.0">
+                    <columns>
+                        <TableColumn fx:id="colIngAlimento" text="Alimento" prefWidth="210.0"/>
+                        <TableColumn fx:id="colIngGramos" text="Gramos" prefWidth="80.0"/>
+                        <TableColumn fx:id="colIngKcal" text="Calorías" prefWidth="90.0"/>
+                    </columns>
+                </TableView>
+
+                <Label fx:id="lblTotalesReceta" text="Total Receta: 0 kcal | Proteína: 0g | Carbs: 0g | Grasas: 0g"
+                       style="-fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
+
+                <HBox spacing="10.0">
+                    <Button text="Guardar / Actualizar" onAction="#handleGuardarReceta" style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
+                    <Button text="Eliminar" onAction="#handleEliminarReceta" style="-fx-background-color: #d32f2f; -fx-text-fill: white;"/>
+                    <Button text="Limpiar" onAction="#handleLimpiar"/>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="10.0">
+                <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/></padding>
+                <Label text="Recetas Registradas"><font><Font name="System Bold" size="14.0"/></font></Label>
+                <TableView fx:id="tblRecetas" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colRecNombre" text="Receta" prefWidth="160.0"/>
+                        <TableColumn fx:id="colRecTipo" text="Tiempo" prefWidth="85.0"/>
+                        <TableColumn fx:id="colRecKcal" text="Calorías" prefWidth="80.0"/>
+                        <TableColumn fx:id="colRecMacros" text="Macronutrientes" prefWidth="150.0"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+</BorderPane>

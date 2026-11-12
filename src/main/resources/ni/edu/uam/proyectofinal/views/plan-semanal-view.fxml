@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
+<BorderPane prefHeight="600.0" prefWidth="880.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.proyectofinal.controller.PlanSemanalController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #1565c0;">
+            <padding><Insets bottom="12.0" left="20.0" right="20.0" top="12.0"/></padding>
+            <Button text="← Menú" onAction="#handleVolverMenu" style="-fx-background-color: white; -fx-text-fill: #1565c0;"/>
+            <Label text="Plan Semanal de Comidas" textFill="WHITE">
+                <font><Font name="System Bold" size="18.0"/></font>
+            </Label>
+        </HBox>
+    </top>
 
-</AnchorPane>
+    <center>
+        <VBox spacing="12.0">
+            <padding><Insets bottom="15.0" left="20.0" right="20.0" top="15.0"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <Button text="⚡ Generar Plan Semanal Automático" onAction="#handleGenerarPlan"
+                        style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Button text="🛒 Enviar Ingredientes a Lista del Súper" onAction="#handleEnviarListaSuper"
+                        style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Filtrar día:"/>
+                <ComboBox fx:id="cmbFiltroDia" onAction="#handleFiltrarDia" prefWidth="150.0"/>
+            </HBox>
+
+            <Label fx:id="lblInfoPlan" text="Aún no tienes un plan semanal generado."
+                   style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #333333;"/>
+
+            <TableView fx:id="tblPlanSemanal" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colDia" text="Día" prefWidth="110.0"/>
+                    <TableColumn fx:id="colTiempo" text="Tiempo de Comida" prefWidth="130.0"/>
+                    <TableColumn fx:id="colReceta" text="Receta Asignada" prefWidth="250.0"/>
+                    <TableColumn fx:id="colCalorias" text="Calorías" prefWidth="110.0"/>
+                    <TableColumn fx:id="colMacros" text="Macronutrientes" prefWidth="220.0"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>
