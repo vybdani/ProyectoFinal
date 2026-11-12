@@ -1,66 +1,51 @@
-
 package ni.edu.uam.proyectofinal.service;
 
-import ni.edu.uam.nutrifit.entity.Usuario;
+import ni.edu.uam.proyectofinal.model.PerfilFisico;
 import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
+import ni.edu.uam.proyectofinal.model.Usuario;
 
 import java.time.LocalDate;
 
 public class CalculoNutricionalService {
 
-    public RequerimientoDiario calcular(ni.edu.uam.nutrifit.service.Usuario usuario) {
+    public RequerimientoDiario calcular(Usuario usuario) {
+        if (usuario == null || usuario.getPerfilFisico() == null) {
+            throw new IllegalArgumentException("El usuario debe completar primero su perfil físico.");
+        }
 
-        int edad = usuario.getEdad();
-        double peso = usuario.getPeso();
-        double altura = usuario.getAltura();
-
-        String sexo = usuario.getSexo();
-        String nivel = usuario.getNivelActividad();
+        PerfilFisico perfil = usuario.getPerfilFisico();
+        int edad = perfil.getEdad() != null ? perfil.getEdad() : 0;
+        double peso = perfil.getPeso() != null ? perfil.getPeso() : 0.0;
+        double altura = perfil.getAltura() != null ? perfil.getAltura() : 0.0;
+        String sexo = perfil.getSexo();
+        String nivel = perfil.getNivelActividad();
 
         if (edad < 18) {
-            throw new IllegalArgumentException(
-                    "Se requiere evaluación profesional para menores de edad."
-            );
+            throw new IllegalArgumentException("Se requiere evaluación profesional para menores de edad.");
         }
-
         if (peso <= 0 || altura <= 0) {
-            throw new IllegalArgumentException(
-                    "El peso y la altura deben ser positivos."
-            );
+            throw new IllegalArgumentException("El peso y la altura deben ser positivos.");
+        }
+        if (sexo == null || sexo.isBlank()) {
+            throw new IllegalArgumentException("Debe seleccionar el sexo en su perfil físico.");
         }
 
-        // 1. Calcular TMB
         double tmb;
-
         if (sexo.equalsIgnoreCase("Masculino")) {
-
-            tmb = (10 * peso) + (6.25 * altura)
-                    - (5 * edad) + 5;
-
+            tmb = (10 * peso) + (6.25 * altura) - (5 * edad) + 5;
         } else if (sexo.equalsIgnoreCase("Femenino")) {
-
-            tmb = (10 * peso) + (6.25 * altura)
-                    - (5 * edad) - 161;
-
+            tmb = (10 * peso) + (6.25 * altura) - (5 * edad) - 161;
         } else {
-
-            throw new IllegalArgumentException(
-                    "Seleccione una categoría válida para el cálculo."
-            );
+            throw new IllegalArgumentException("Seleccione una categoría válida para el cálculo.");
         }
 
-        // 2. Obtener factor de actividad
         double factor = obtenerFactorActividad(nivel);
-
-        // 3. Estimación de mantenimiento
         double calorias = tmb * factor;
 
-        // 4. Distribución ilustrativa de macronutrientes
-        double proteinas = (calorias * 0.20) / 4;
-        double carbohidratos = (calorias * 0.50) / 4;
+        double proteinas = (calorias * 0.25) / 4;
+        double carbohidratos = (calorias * 0.45) / 4;
         double grasas = (calorias * 0.30) / 9;
 
-        // 5. Crear objeto de resultado
         return new RequerimientoDiario(
                 tmb,
                 factor,
@@ -74,31 +59,15 @@ public class CalculoNutricionalService {
     }
 
     private double obtenerFactorActividad(String nivel) {
-
         if (nivel == null) {
-            throw new IllegalArgumentException(
-                    "Debe seleccionar el nivel de actividad."
-            );
+            throw new IllegalArgumentException("Debe seleccionar el nivel de actividad.");
         }
-
-        switch (nivel.toLowerCase()) {
-
-            case "sedentario":
-                return 1.20;
-
-            case "ligero":
-                return 1.375;
-
-            case "moderado":
-                return 1.55;
-
-            case "alto":
-                return 1.725;
-
-            default:
-                throw new IllegalArgumentException(
-                        "Nivel de actividad no válido."
-                );
-        }
+        return switch (nivel.toLowerCase()) {
+            case "sedentario" -> 1.20;
+            case "ligero" -> 1.375;
+            case "moderado" -> 1.55;
+            case "alto" -> 1.725;
+            default -> throw new IllegalArgumentException("Nivel de actividad no válido.");
+        };
     }
 }
