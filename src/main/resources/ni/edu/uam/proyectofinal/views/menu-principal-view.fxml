@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
+<VBox alignment="CENTER" spacing="25.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.proyectofinal.controller.MenuPrincipalController">
+    <padding>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+    </padding>
 
-</AnchorPane>
+    <Label text="Bienvenido a NutriFit">
+        <font>
+            <Font name="System Bold" size="22.0" />
+        </font>
+    </Label>
+
+    <Label text="Selecciona el modo de trabajo:" />
+
+    <HBox spacing="20.0" alignment="CENTER">
+        <Button text="🥗 Modo Nutrición" onAction="#handleModoNutricion" prefWidth="180.0" prefHeight="60.0"
+                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;" />
+
+        <Button text="🏋 Modo Gimnasio" onAction="#handleModoGimnasio" prefWidth="180.0" prefHeight="60.0"
+                style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-size: 14px;" />
+    </HBox>
+</VBox>
