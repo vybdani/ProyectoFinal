@@ -5,7 +5,7 @@ import ni.edu.uam.proyectofinal.dao.AlimentoDAO;
 import ni.edu.uam.proyectofinal.dao.RegistroConsumoDAO;
 import ni.edu.uam.proyectofinal.model.Alimento;
 import ni.edu.uam.proyectofinal.model.RegistroConsumo;
-import ni.edu.uam.nutrifit.entity.Usuario;
+import ni.edu.uam.proyectofinal.model.Usuario;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

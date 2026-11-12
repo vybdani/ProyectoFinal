@@ -1,4 +1,3 @@
-
 package ni.edu.uam.proyectofinal.model;
 
 import jakarta.persistence.*;
@@ -44,6 +43,10 @@ public class Alimento {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -101,5 +104,9 @@ public class Alimento {
     public void setCantidadBase(Double cantidadBase) {
         this.cantidadBase = cantidadBase;
     }
-}
 
+    @Override
+    public String toString() {
+        return nombre + " (" + calorias + " kcal / " + cantidadBase + "g)";
+    }
+}
