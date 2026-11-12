@@ -1,13 +1,12 @@
 package ni.edu.uam.proyectofinal.controller;
 
-import ni.edu.uam.proyectofinal.dao.RequerimientoDiarioDAO;
-import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
-import ni.edu.uam.nutrifit.entity.Usuario;
-import ni.edu.uam.proyectofinal.service.CalculoNutricionalService;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import ni.edu.uam.proyectofinal.dao.RequerimientoDiarioDAO;
+import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
+import ni.edu.uam.proyectofinal.model.Usuario;
+import ni.edu.uam.proyectofinal.service.CalculoNutricionalService;
 
 public class CalculoController {
 
@@ -28,11 +27,9 @@ public class CalculoController {
 
     private Usuario usuario;
 
-    private final CalculoNutricionalService servicio =
-            new CalculoNutricionalService();
+    private final CalculoNutricionalService servicio = new CalculoNutricionalService();
 
-    private final RequerimientoDiarioDAO requerimientoDAO =
-            new RequerimientoDiarioDAO();
+    private final RequerimientoDiarioDAO requerimientoDAO = new RequerimientoDiarioDAO();
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
@@ -40,42 +37,23 @@ public class CalculoController {
 
     @FXML
     public void calcular() {
-
         if (usuario == null) {
             mostrarAlerta("Error", "No se ha seleccionado un usuario.");
             return;
         }
 
         try {
-            RequerimientoDiario resultado =
-                    servicio.calcular(usuario);
+            RequerimientoDiario resultado = servicio.calcular(usuario);
 
             requerimientoDAO.guardar(resultado);
 
-            lblTMB.setText(
-                    String.format("%.2f", resultado.getTmb())
-            );
+            lblTMB.setText(String.format("%.2f", resultado.getTmb()));
+            lblCalorias.setText(String.format("%.2f", resultado.getCaloriasDiarias()));
+            lblProteinas.setText(String.format("%.2f g", resultado.getProteinas()));
+            lblCarbohidratos.setText(String.format("%.2f g", resultado.getCarbohidratos()));
+            lblGrasas.setText(String.format("%.2f g", resultado.getGrasas()));
 
-            lblCalorias.setText(
-                    String.format("%.2f", resultado.getCaloriasDiarias())
-            );
-
-            lblProteinas.setText(
-                    String.format("%.2f g", resultado.getProteinas())
-            );
-
-            lblCarbohidratos.setText(
-                    String.format("%.2f g", resultado.getCarbohidratos())
-            );
-
-            lblGrasas.setText(
-                    String.format("%.2f g", resultado.getGrasas())
-            );
-
-            mostrarAlerta(
-                    "Resultado",
-                    "El cálculo se realizó correctamente."
-            );
+            mostrarAlerta("Resultado", "El cálculo se realizó correctamente.");
 
         } catch (Exception e) {
             mostrarAlerta("Error", e.getMessage());
@@ -83,13 +61,10 @@ public class CalculoController {
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
-
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-
         alerta.setTitle(titulo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
-
         alerta.showAndWait();
     }
 }

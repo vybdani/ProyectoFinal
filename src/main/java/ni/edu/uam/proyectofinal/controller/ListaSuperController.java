@@ -1,22 +1,13 @@
-
 package ni.edu.uam.proyectofinal.controller;
-
-import ni.edu.uam.proyectofinal.dao.ItemListaSuperDAO;
-import ni.edu.uam.proyectofinal.model.ItemListaSuper;
-import ni.edu.uam.nutrifit.entity.Usuario;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
 import javafx.fxml.FXML;
-
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import ni.edu.uam.proyectofinal.dao.ItemListaSuperDAO;
+import ni.edu.uam.proyectofinal.model.ItemListaSuper;
+import ni.edu.uam.proyectofinal.model.Usuario;
 
 public class ListaSuperController {
 
@@ -46,15 +37,12 @@ public class ListaSuperController {
 
     private Usuario usuario;
 
-    private final ItemListaSuperDAO listaDAO =
-            new ItemListaSuperDAO();
+    private final ItemListaSuperDAO listaDAO = new ItemListaSuperDAO();
 
-    private final ObservableList<ItemListaSuper> listaProductos =
-            FXCollections.observableArrayList();
+    private final ObservableList<ItemListaSuper> listaProductos = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-
         cmbUnidad.setItems(
                 FXCollections.observableArrayList(
                         "Unidad",
@@ -66,43 +54,28 @@ public class ListaSuperController {
                 )
         );
 
-        colProducto.setCellValueFactory(
-                new PropertyValueFactory<>("nombreProducto")
-        );
-
-        colCantidad.setCellValueFactory(
-                new PropertyValueFactory<>("cantidad")
-        );
-
-        colUnidad.setCellValueFactory(
-                new PropertyValueFactory<>("unidad")
-        );
-
-        colEstado.setCellValueFactory(
-                new PropertyValueFactory<>("comprado")
-        );
+        colProducto.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        colUnidad.setCellValueFactory(new PropertyValueFactory<>("unidad"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("comprado"));
 
         tblListaSuper.setItems(listaProductos);
     }
 
     public void setUsuario(Usuario usuario) {
-
         this.usuario = usuario;
         listarProductos();
     }
 
     @FXML
     public void agregarProducto() {
-
         try {
-
             if (usuario == null) {
                 mostrarAlerta("Error", "No hay un usuario seleccionado.");
                 return;
             }
 
             String nombre = txtProducto.getText().trim();
-
             if (nombre.isEmpty()) {
                 mostrarAlerta("Validación", "Ingrese el nombre del producto.");
                 return;
@@ -113,10 +86,7 @@ public class ListaSuperController {
                 return;
             }
 
-            double cantidad = Double.parseDouble(
-                    txtCantidad.getText().trim()
-            );
-
+            double cantidad = Double.parseDouble(txtCantidad.getText().trim());
             if (cantidad <= 0) {
                 mostrarAlerta("Validación", "La cantidad debe ser positiva.");
                 return;
@@ -138,68 +108,47 @@ public class ListaSuperController {
 
             txtProducto.clear();
             txtCantidad.clear();
-
             listarProductos();
 
-            mostrarAlerta(
-                    "Correcto",
-                    "Producto agregado correctamente."
-            );
+            mostrarAlerta("Correcto", "Producto agregado correctamente.");
 
         } catch (NumberFormatException e) {
-
-            mostrarAlerta(
-                    "Error",
-                    "La cantidad debe ser un número válido."
-            );
-
+            mostrarAlerta("Error", "La cantidad debe ser un número válido.");
         } catch (Exception e) {
-
             mostrarAlerta("Error", e.getMessage());
         }
     }
 
     @FXML
     public void marcarComprado() {
-
-        ItemListaSuper item = tblListaSuper.getSelectionModel()
-                .getSelectedItem();
+        ItemListaSuper item = tblListaSuper.getSelectionModel().getSelectedItem();
 
         if (item == null) {
             mostrarAlerta("Aviso", "Seleccione un producto.");
             return;
         }
 
-        item.setComprado(!item.isComprado());
-
+        item.setComprado(!Boolean.TRUE.equals(item.getComprado()));
         listaDAO.actualizar(item);
-
         listarProductos();
     }
 
     @FXML
     public void eliminarProducto() {
-
-        ItemListaSuper item = tblListaSuper.getSelectionModel()
-                .getSelectedItem();
+        ItemListaSuper item = tblListaSuper.getSelectionModel().getSelectedItem();
 
         if (item == null) {
             mostrarAlerta("Aviso", "Seleccione un producto.");
             return;
         }
 
-        listaDAO.eliminar(item);
-
+        listaDAO.eliminar(item.getId());
         listarProductos();
 
-        mostrarAlerta(
-                "Correcto",
-                "Producto eliminado correctamente."
-        );
+        mostrarAlerta("Correcto", "Producto eliminado correctamente.");
     }
 
     private void listarProductos() {
-
         if (usuario == null) {
             return;
         }
@@ -210,13 +159,10 @@ public class ListaSuperController {
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
-
         Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-
         alerta.setTitle(titulo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
-
         alerta.showAndWait();
     }
 }
