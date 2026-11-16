@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="ReportePerfilNutricional"
+              pageWidth="595" pageHeight="842"
+              columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30"
+              uuid="a7b8c9d0-1234-5678-9abc-def012345678">
+
+    <parameter name="NOMBRE_USUARIO" class="java.lang.String"/>
+    <parameter name="CORREO" class="java.lang.String"/>
+    <parameter name="PESO" class="java.lang.Double"/>
+    <parameter name="ALTURA" class="java.lang.Double"/>
+    <parameter name="EDAD" class="java.lang.Integer"/>
+    <parameter name="SEXO" class="java.lang.String"/>
+    <parameter name="OBJETIVO" class="java.lang.String"/>
+    <parameter name="CALORIAS_OBJETIVO" class="java.lang.Integer"/>
+    <parameter name="PROTEINAS_G" class="java.lang.Integer"/>
+    <parameter name="CARBOHIDRATOS_G" class="java.lang.Integer"/>
+    <parameter name="GRASAS_G" class="java.lang.Integer"/>
+    <parameter name="FECHA" class="java.lang.String"/>
+
+    <title>
+        <band height="320">
+            <!-- Encabezado Principal -->
+            <rectangle>
+                <reportElement x="0" y="0" width="535" height="60" backcolor="#1976D2" uuid="h1111111-1111-1111-1111-111111111111"/>
+                <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="15" y="10" width="340" height="40" forecolor="#FFFFFF" uuid="h2222222-1111-1111-1111-111111111111"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="19" isBold="true"/>
+                </textElement>
+                <text><![CDATA[📊 NutriFit - Ficha Nutricional]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="360" y="20" width="160" height="20" forecolor="#FFFFFF" uuid="h3333333-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Fecha: " + ($P{FECHA} != null ? $P{FECHA} : "")]]></textFieldExpression>
+            </textField>
+
+            <!-- Sección Datos Personales -->
+            <rectangle>
+                <reportElement x="0" y="75" width="535" height="95" backcolor="#F5F5F5" uuid="d1111111-1111-1111-1111-111111111111"/>
+                <graphicElement><pen lineWidth="0.5" lineColor="#E0E0E0"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="15" y="82" width="200" height="18" forecolor="#1976D2" uuid="d2222222-1111-1111-1111-111111111111"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Información del Usuario]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="15" y="105" width="240" height="16" uuid="d3333333-1111-1111-1111-111111111111"/>
+                <textFieldExpression><![CDATA["Nombre: " + ($P{NOMBRE_USUARIO} != null ? $P{NOMBRE_USUARIO} : "-")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="15" y="125" width="240" height="16" uuid="d4444444-1111-1111-1111-111111111111"/>
+                <textFieldExpression><![CDATA["Correo: " + ($P{CORREO} != null ? $P{CORREO} : "-")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="15" y="145" width="240" height="16" uuid="d5555555-1111-1111-1111-111111111111"/>
+                <textFieldExpression><![CDATA["Sexo: " + ($P{SEXO} != null ? $P{SEXO} : "-")]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="280" y="105" width="240" height="16" uuid="d6666666-1111-1111-1111-111111111111"/>
+                <textFieldExpression><![CDATA["Peso actual: " + ($P{PESO} != null ? $P{PESO} + " kg" : "-")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="125" width="240" height="16" uuid="d7777777-1111-1111-1111-111111111111"/>
+                <textFieldExpression><![CDATA["Estatura: " + ($P{ALTURA} != null ? $P{ALTURA} + " cm" : "-")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="145" width="240" height="16" uuid="d8888888-1111-1111-1111-111111111111"/>
+                <textFieldExpression><![CDATA["Edad: " + ($P{EDAD} != null ? $P{EDAD} + " años" : "-")]]></textFieldExpression>
+            </textField>
+
+            <!-- Sección Requerimiento Calórico y Macros -->
+            <rectangle>
+                <reportElement x="0" y="185" width="535" height="125" backcolor="#E8F5E9" uuid="m1111111-1111-1111-1111-111111111111"/>
+                <graphicElement><pen lineWidth="0.5" lineColor="#C8E6C9"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="15" y="193" width="250" height="18" forecolor="#2E7D32" uuid="m2222222-1111-1111-1111-111111111111"/>
+                <textElement>
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Meta y Requerimiento Diario]]></text>
+            </staticText>
+
+            <textField>
+                <reportElement x="15" y="215" width="500" height="18" uuid="m3333333-1111-1111-1111-111111111111"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Objetivo: " + ($P{OBJETIVO} != null ? $P{OBJETIVO} : "No definido")]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="15" y="240" width="240" height="24" forecolor="#C2185B" uuid="m4444444-1111-1111-1111-111111111111"/>
+                <textElement>
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["🔥 Calorías Meta: " + ($P{CALORIAS_OBJETIVO} != null ? $P{CALORIAS_OBJETIVO} + " kcal" : "-")]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="15" y="275" width="160" height="20" uuid="m5555555-1111-1111-1111-111111111111"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["🥩 Proteína: " + ($P{PROTEINAS_G} != null ? $P{PROTEINAS_G} + " g" : "-")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="185" y="275" width="160" height="20" uuid="m6666666-1111-1111-1111-111111111111"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["🍚 Carbohidratos: " + ($P{CARBOHIDRATOS_G} != null ? $P{CARBOHIDRATOS_G} + " g" : "-")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="355" y="275" width="160" height="20" uuid="m7777777-1111-1111-1111-111111111111"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["🥑 Grasas: " + ($P{GRASAS_G} != null ? $P{GRASAS_G} + " g" : "-")]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <pageFooter>
+        <band height="30">
+            <textField>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="e1111111-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="e2222222-2222-2222-2222-222222222222"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[NutriFit - Reportes Médicos y Nutricionales]]></text>
+            </staticText>
+        </band>
+    </pageFooter>
+
+</jasperReport>
