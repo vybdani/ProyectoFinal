@@ -70,6 +70,9 @@ $env:DB_PASSWORD = "tu_contraseña"
 5. **Recetas**: crear recetas con sus ingredientes (los alimentos básicos se cargan solos).
 6. **Plan semanal**: generar el plan automático y enviar los ingredientes a la **lista del súper**.
 7. **Registrar consumo**: anotar lo que comiste y compararlo con tu meta del día.
+8. **Rutina de gimnasio** (solo en Modo Gimnasio): elegir 3, 4 o 5 días por semana y generar la rutina.
+   Volumen usa 4 series de 8-12 repeticiones y Definición 3 series de 12-15 con menos descanso.
+   Desde ahí se gestiona el **catálogo de ejercicios** (crear, editar y eliminar).
 
 ## Modelo de datos
 
@@ -86,6 +89,10 @@ $env:DB_PASSWORD = "tu_contraseña"
 | `RecetaIngrediente` | `receta_ingredientes` | N:1 `Receta`, N:1 `Alimento` |
 | `PlanComidas` | `planes_comidas` | N:1 `Usuario`, N:1 `RequerimientoDiario`, 1:N `ComidaPlan` |
 | `ComidaPlan` | `comidas_plan` | N:1 `PlanComidas`, N:1 `Receta` |
+| `GrupoMuscular` | `grupos_musculares` | 1:N `Ejercicio` |
+| `Ejercicio` | `ejercicios` | N:1 `GrupoMuscular` |
+| `Rutina` | `rutinas` | N:1 `Usuario`, 1:N `RutinaEjercicio` |
+| `RutinaEjercicio` | `rutina_ejercicios` | N:1 `Rutina`, N:1 `Ejercicio` |
 
 ## Consultas HQL destacadas
 
@@ -96,6 +103,9 @@ $env:DB_PASSWORD = "tu_contraseña"
 | Usuario con su perfil físico al iniciar sesión | `UsuarioDAO.autenticar` | `Usuario` → `PerfilFisico` |
 | Totales consumidos en el día por usuario | `RegistroConsumoDAO.obtenerTotales` | `RegistroConsumo` → `Usuario` |
 | Historial de objetivos con el nombre del usuario | `ObjetivoDAO.listarObjetivosConUsuario` | `Objetivo` → `Usuario` |
+| Última rutina del usuario con sus ejercicios y grupos musculares | `RutinaDAO.buscarUltimaPorUsuario` | `Rutina` → `RutinaEjercicio` → `Ejercicio` → `GrupoMuscular` |
+| Series semanales por grupo muscular de una rutina | `RutinaDAO.resumenPorGrupoMuscular` | `RutinaEjercicio` → `Ejercicio` → `GrupoMuscular` |
+| Ejercicios de un grupo muscular | `EjercicioDAO.listarPorGrupo` | `Ejercicio` → `GrupoMuscular` |
 
 ## Estructura del proyecto
 
@@ -104,7 +114,7 @@ src/main/java/ni/edu/uam/proyectofinal/
 ├── controller/   Controladores de las pantallas JavaFX
 ├── dao/          Acceso a datos con Hibernate (CRUD y consultas HQL)
 ├── model/        Entidades JPA
-├── service/      Lógica de negocio (cálculo nutricional, generador de plan)
+├── service/      Lógica de negocio (cálculo nutricional, generador de plan y de rutina)
 └── util/         HibernateUtil, sesión del usuario y navegación
 src/main/resources/
 ├── hibernate.cfg.xml
