@@ -1,9 +1,11 @@
 package ni.edu.uam.proyectofinal.service;
 
+import ni.edu.uam.proyectofinal.dao.ObjetivoDAO;
 import ni.edu.uam.proyectofinal.dao.PlanComidasDAO;
 import ni.edu.uam.proyectofinal.dao.RecetaDAO;
 import ni.edu.uam.proyectofinal.dao.RequerimientoDiarioDAO;
 import ni.edu.uam.proyectofinal.model.*;
+import ni.edu.uam.proyectofinal.util.SesionActual;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -16,6 +18,7 @@ public class GeneradorPlanService {
     private final PlanComidasDAO planComidasDAO = new PlanComidasDAO();
     private final RequerimientoDiarioDAO requerimientoDAO = new RequerimientoDiarioDAO();
     private final CalculoNutricionalService calculoService = new CalculoNutricionalService();
+    private final ObjetivoDAO objetivoDAO = new ObjetivoDAO();
 
     private static final List<String> DIAS_SEMANA = List.of(
             "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"
@@ -40,7 +43,10 @@ public class GeneradorPlanService {
 
         RequerimientoDiario req = requerimientoDAO.buscarPorUsuario(usuario.getId());
         if (req == null && usuario.getPerfilFisico() != null) {
-            req = calculoService.calcular(usuario);
+            // Si aún no calculó su requerimiento, se calcula con el objetivo del modo actual
+            Objetivo objetivo = SesionActual.getModoActual() == null ? null
+                    : objetivoDAO.buscarPorUsuarioYModo(usuario.getId(), SesionActual.getModoActual());
+            req = calculoService.calcular(usuario, objetivo);
             requerimientoDAO.guardar(req);
         }
 

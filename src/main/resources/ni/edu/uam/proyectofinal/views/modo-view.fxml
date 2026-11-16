@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" spacing="16.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.proyectofinal.controller.ModoController">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+
+    <Label fx:id="lblTitulo" text="Modo">
+        <font>
+            <Font name="System Bold" size="22.0" />
+        </font>
+    </Label>
+
+    <Label fx:id="lblObjetivoActual" text="" />
+
+    <HBox alignment="CENTER" spacing="10.0">
+        <Label text="Mi objetivo:" />
+        <ComboBox fx:id="cmbObjetivo" promptText="Selecciona tu objetivo" prefWidth="220.0" />
+        <Button text="Guardar objetivo" onAction="#handleGuardarObjetivo"
+                style="-fx-background-color: #4caf50; -fx-text-fill: white;" />
+    </HBox>
+
+    <Label fx:id="lblDescripcion" text="" wrapText="true" maxWidth="480.0" style="-fx-text-fill: #555555;" />
+
+    <Separator />
+
+    <GridPane hgap="15.0" vgap="15.0" alignment="CENTER">
+        <Button text="📊 Calcular requerimiento" onAction="#handleCalculo" prefWidth="220.0" prefHeight="45.0"
+                GridPane.columnIndex="0" GridPane.rowIndex="0" />
+        <Button text="🍽 Registrar consumo" onAction="#handleConsumo" prefWidth="220.0" prefHeight="45.0"
+                GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Button text="📖 Recetas" onAction="#handleRecetas" prefWidth="220.0" prefHeight="45.0"
+                GridPane.columnIndex="0" GridPane.rowIndex="1" />
+        <Button text="📅 Plan semanal" onAction="#handlePlanSemanal" prefWidth="220.0" prefHeight="45.0"
+                GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <Button text="🛒 Lista del súper" onAction="#handleListaSuper" prefWidth="220.0" prefHeight="45.0"
+                GridPane.columnIndex="0" GridPane.rowIndex="2" />
+        <Button fx:id="btnRutina" text="🏋 Rutina de gimnasio" onAction="#handleRutina" prefWidth="220.0" prefHeight="45.0"
+                style="-fx-background-color: #ff9800; -fx-text-fill: white;"
+                GridPane.columnIndex="1" GridPane.rowIndex="2" />
+    </GridPane>
+
+    <Button text="Volver al menú principal" onAction="#handleVolverMenu" />
+</VBox>
