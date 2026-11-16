@@ -121,9 +121,7 @@ public class ModoController {
 
     @FXML
     private void handleRutina() {
-        // La rutina de gimnasio es el módulo que falta implementar (GrupoMuscular, Ejercicio, Rutina, RutinaEjercicio)
-        mostrarAlerta(Alert.AlertType.INFORMATION, "Rutina de gimnasio",
-                "La rutina de gimnasio está en desarrollo.");
+        Navegacion.ir(lblTitulo, "rutina-view.fxml", "Rutina de Gimnasio", 900, 640);
     }
 
     @FXML
