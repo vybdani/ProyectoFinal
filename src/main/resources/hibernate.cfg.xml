@@ -28,5 +28,11 @@
         <mapping class="ni.edu.uam.proyectofinal.model.RecetaIngrediente"/>
         <mapping class="ni.edu.uam.proyectofinal.model.PlanComidas"/>
         <mapping class="ni.edu.uam.proyectofinal.model.ComidaPlan"/>
+
+        <!-- Modo gimnasio -->
+        <mapping class="ni.edu.uam.proyectofinal.model.GrupoMuscular"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.Ejercicio"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.Rutina"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.RutinaEjercicio"/>
     </session-factory>
 </hibernate-configuration>
