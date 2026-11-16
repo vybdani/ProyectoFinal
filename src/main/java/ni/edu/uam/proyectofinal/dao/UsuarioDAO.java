@@ -14,10 +14,41 @@ public class UsuarioDAO {
             transaction = session.beginTransaction();
             session.persist(usuario);
             transaction.commit();
-            System.out.println("Usuario guardado correctamente.");
         } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Error al guardar el usuario", e);
+        }
+    }
+
+    public void actualizar(Usuario usuario) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.merge(usuario);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw new RuntimeException("Error al actualizar el usuario", e);
+        }
+    }
+
+    public Usuario autenticar(String correo, String password) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = """
+                SELECT u FROM Usuario u
+                LEFT JOIN FETCH u.perfilFisico
+                WHERE u.correo = :correo AND u.password = :password
+                """;
+            Query<Usuario> query = session.createQuery(hql, Usuario.class);
+            query.setParameter("correo", correo);
+            query.setParameter("password", password);
+            return query.uniqueResult();
+        } catch (Exception e) {
+            throw new RuntimeException("Error al autenticar usuario", e);
         }
     }
 
@@ -28,8 +59,7 @@ public class UsuarioDAO {
             query.setParameter("id", id);
             return query.uniqueResult();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Error al obtener usuario con perfil", e);
         }
     }
 }

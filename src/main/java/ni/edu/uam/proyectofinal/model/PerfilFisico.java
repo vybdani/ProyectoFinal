@@ -14,6 +14,8 @@ public class PerfilFisico {
     private Double altura;
     private Integer edad;
     private Double porcentajeGrasa;
+    private String sexo;
+    private String nivelActividad;
 
     @OneToOne
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
@@ -26,6 +28,15 @@ public class PerfilFisico {
         this.altura = altura;
         this.edad = edad;
         this.porcentajeGrasa = porcentajeGrasa;
+    }
+
+    public PerfilFisico(Double peso, Double altura, Integer edad, Double porcentajeGrasa, String sexo, String nivelActividad) {
+        this.peso = peso;
+        this.altura = altura;
+        this.edad = edad;
+        this.porcentajeGrasa = porcentajeGrasa;
+        this.sexo = sexo;
+        this.nivelActividad = nivelActividad;
     }
 
     public Long getId() { return id; }
@@ -42,6 +53,12 @@ public class PerfilFisico {
 
     public Double getPorcentajeGrasa() { return porcentajeGrasa; }
     public void setPorcentajeGrasa(Double porcentajeGrasa) { this.porcentajeGrasa = porcentajeGrasa; }
+
+    public String getSexo() { return sexo; }
+    public void setSexo(String sexo) { this.sexo = sexo; }
+
+    public String getNivelActividad() { return nivelActividad; }
+    public void setNivelActividad(String nivelActividad) { this.nivelActividad = nivelActividad; }
 
     public Usuario getUsuario() { return usuario; }
     public void setUsuario(Usuario usuario) { this.usuario = usuario; }

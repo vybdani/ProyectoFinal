@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
         <!-- Configuración de la conexión a PostgreSQL -->
         <property name="connection.driver_class">org.postgresql.Driver</property>
         <property name="connection.url">jdbc:postgresql://localhost:5432/nutrifit_db</property>
         <property name="connection.username">postgres</property>
-        <property name="connection.password"></property> <!-- Dejar vacío o ingresar tu clave local -->
+        <property name="connection.password"></property>
 
-        <!-- Dialecto de PostgreSQL y configuración de SQL -->
+        <!-- Dialecto de PostgreSQL y generación automática de tablas -->
         <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
 
-        <!-- Mapeo de Entidades JPA del proyecto -->
+        <!-- Mapeo de las 11 Entidades JPA del proyecto -->
         <mapping class="ni.edu.uam.proyectofinal.model.Usuario"/>
         <mapping class="ni.edu.uam.proyectofinal.model.PerfilFisico"/>
         <mapping class="ni.edu.uam.proyectofinal.model.Objetivo"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.Alimento"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.RequerimientoDiario"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.RegistroConsumo"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.ItemListaSuper"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.Receta"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.RecetaIngrediente"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.PlanComidas"/>
+        <mapping class="ni.edu.uam.proyectofinal.model.ComidaPlan"/>
     </session-factory>
 </hibernate-configuration>
