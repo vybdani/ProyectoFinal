@@ -52,6 +52,16 @@ public class UsuarioDAO {
         }
     }
 
+    public boolean existeCorreo(String correo) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Long cantidad = session.createQuery(
+                            "SELECT COUNT(u) FROM Usuario u WHERE lower(u.correo) = lower(:correo)", Long.class)
+                    .setParameter("correo", correo)
+                    .uniqueResult();
+            return cantidad != null && cantidad > 0;
+        }
+    }
+
     public Usuario obtenerUsuarioConPerfil(Long id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "SELECT u FROM Usuario u LEFT JOIN FETCH u.perfilFisico WHERE u.id = :id";

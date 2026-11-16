@@ -9,6 +9,14 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/workspace.xml
+.idea/copilot*
+.idea/dataSources*
+
+### Configuración local y credenciales ###
+.env
+*.local.properties
+hibernate.local.cfg.xml
 *.iws
 *.iml
 *.ipr

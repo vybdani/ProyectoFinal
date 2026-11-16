@@ -4,18 +4,14 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
-import ni.edu.uam.proyectofinal.HelloApplication;
 import ni.edu.uam.proyectofinal.dao.ItemListaSuperDAO;
 import ni.edu.uam.proyectofinal.dao.PlanComidasDAO;
 import ni.edu.uam.proyectofinal.model.*;
 import ni.edu.uam.proyectofinal.service.GeneradorPlanService;
+import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,15 +113,7 @@ public class PlanSemanalController {
 
     @FXML
     private void handleVolverMenu() {
-        try {
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("views/menu-principal-view.fxml"));
-            Stage stage = (Stage) tblPlanSemanal.getScene().getWindow();
-            stage.setScene(new Scene(loader.load(), 650, 420));
-            stage.setTitle("NutriFit - Menú Principal");
-            stage.centerOnScreen();
-        } catch (IOException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
-        }
+        Navegacion.volver(tblPlanSemanal);
     }
 
     private void actualizarVistaPlan() {

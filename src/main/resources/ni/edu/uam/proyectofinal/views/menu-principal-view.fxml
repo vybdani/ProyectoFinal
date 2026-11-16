@@ -13,7 +13,7 @@
         <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
     </padding>
 
-    <Label text="Bienvenido a NutriFit">
+    <Label fx:id="lblBienvenida" text="Bienvenido/a a NutriFit">
         <font>
             <Font name="System Bold" size="22.0" />
         </font>
@@ -22,10 +22,21 @@
     <Label text="Selecciona el modo de trabajo:" />
 
     <HBox spacing="20.0" alignment="CENTER">
-        <Button text="🥗 Modo Nutrición" onAction="#handleModoNutricion" prefWidth="180.0" prefHeight="60.0"
-                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;" />
+        <VBox spacing="6.0" alignment="CENTER">
+            <Button text="🥗 Modo Nutrición" onAction="#handleModoNutricion" prefWidth="200.0" prefHeight="60.0"
+                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;" />
+            <Label text="Bajar, mantener o subir de peso" style="-fx-text-fill: #666666;" />
+        </VBox>
 
-        <Button text="🏋 Modo Gimnasio" onAction="#handleModoGimnasio" prefWidth="180.0" prefHeight="60.0"
-                style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-size: 14px;" />
+        <VBox spacing="6.0" alignment="CENTER">
+            <Button text="🏋 Modo Gimnasio" onAction="#handleModoGimnasio" prefWidth="200.0" prefHeight="60.0"
+                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-size: 14px;" />
+            <Label text="Volumen muscular o definición" style="-fx-text-fill: #666666;" />
+        </VBox>
+    </HBox>
+
+    <HBox spacing="15.0" alignment="CENTER">
+        <Button text="Editar perfil físico" onAction="#handleEditarPerfil" />
+        <Button text="Cerrar sesión" onAction="#handleCerrarSesion" />
     </HBox>
 </VBox>
