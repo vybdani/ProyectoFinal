@@ -43,6 +43,26 @@
             <version>42.7.8</version>
         </dependency>
 
+        <!-- JSON Parser para Consumo de API (Gson) -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+        <!-- JasperReports para Generación de Reportes -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>6.21.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.lowagie</groupId>
+                    <artifactId>itext</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- Pruebas JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

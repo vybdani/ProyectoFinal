@@ -5,10 +5,15 @@ module ni.edu.uam.proyectofinal {
     requires jakarta.persistence;
     requires java.naming;
     requires java.sql;
+    requires java.desktop;
+    requires java.net.http;
+    requires com.google.gson;
+    requires jasperreports;
 
     opens ni.edu.uam.proyectofinal to javafx.fxml;
     opens ni.edu.uam.proyectofinal.controller to javafx.fxml;
-    opens ni.edu.uam.proyectofinal.model to org.hibernate.orm.core, javafx.base;
+    opens ni.edu.uam.proyectofinal.model to org.hibernate.orm.core, javafx.base, com.google.gson, jasperreports;
 
     exports ni.edu.uam.proyectofinal;
+    exports ni.edu.uam.proyectofinal.model;
 }
