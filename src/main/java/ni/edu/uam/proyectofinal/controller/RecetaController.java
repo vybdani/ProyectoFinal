@@ -5,18 +5,14 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
-import ni.edu.uam.proyectofinal.HelloApplication;
 import ni.edu.uam.proyectofinal.dao.AlimentoDAO;
 import ni.edu.uam.proyectofinal.dao.RecetaDAO;
 import ni.edu.uam.proyectofinal.model.Alimento;
 import ni.edu.uam.proyectofinal.model.Receta;
 import ni.edu.uam.proyectofinal.model.RecetaIngrediente;
+import ni.edu.uam.proyectofinal.util.Navegacion;
 
-import java.io.IOException;
 import java.util.List;
 
 public class RecetaController {
@@ -79,16 +75,8 @@ public class RecetaController {
     }
 
     private void cargarAlimentos() {
+        alimentoDAO.asegurarAlimentosIniciales();
         List<Alimento> alimentos = alimentoDAO.listarTodos();
-        if (alimentos.isEmpty()) {
-            alimentoDAO.guardar(new Alimento("Pechuga de Pollo", "Proteína", 165.0, 31.0, 0.0, 3.6));
-            alimentoDAO.guardar(new Alimento("Arroz Blanco Cocido", "Carbohidrato", 130.0, 2.7, 28.0, 0.3));
-            alimentoDAO.guardar(new Alimento("Huevo Entero", "Proteína", 155.0, 13.0, 1.1, 11.0));
-            alimentoDAO.guardar(new Alimento("Avena en Hojuelas", "Carbohidrato", 389.0, 16.9, 66.3, 6.9));
-            alimentoDAO.guardar(new Alimento("Aguacate", "Grasa", 160.0, 2.0, 8.5, 14.7));
-            alimentoDAO.guardar(new Alimento("Banano", "Fruta", 89.0, 1.1, 22.8, 0.3));
-            alimentos = alimentoDAO.listarTodos();
-        }
         cmbAlimento.setItems(FXCollections.observableArrayList(alimentos));
     }
 
@@ -211,15 +199,7 @@ public class RecetaController {
 
     @FXML
     private void handleVolverMenu() {
-        try {
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("views/menu-principal-view.fxml"));
-            Stage stage = (Stage) txtNombreReceta.getScene().getWindow();
-            stage.setScene(new Scene(loader.load(), 650, 420));
-            stage.setTitle("NutriFit - Menú Principal");
-            stage.centerOnScreen();
-        } catch (IOException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
-        }
+        Navegacion.volver(txtNombreReceta);
     }
 
     private void cargarRecetaEnFormulario(Receta r) {
