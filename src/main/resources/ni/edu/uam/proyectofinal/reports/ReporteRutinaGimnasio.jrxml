@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="ReporteRutinaGimnasio"
+              pageWidth="595" pageHeight="842"
+              columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30"
+              uuid="d2a84b91-1234-45cf-8abc-012345678901">
+
+    <parameter name="USUARIO" class="java.lang.String"/>
+    <parameter name="OBJETIVO" class="java.lang.String"/>
+    <parameter name="DIAS_SEMANA" class="java.lang.Integer"/>
+    <parameter name="FECHA" class="java.lang.String"/>
+
+    <field name="diaSemana" class="java.lang.Integer"/>
+    <field name="nombreEjercicio" class="java.lang.String"/>
+    <field name="grupoMuscular" class="java.lang.String"/>
+    <field name="series" class="java.lang.Integer"/>
+    <field name="repeticiones" class="java.lang.String"/>
+    <field name="descansoSegundos" class="java.lang.Integer"/>
+
+    <title>
+        <band height="80">
+            <rectangle>
+                <reportElement x="0" y="0" width="535" height="60" backcolor="#FF9800" uuid="e1111111-2222-3333-4444-555555555555"/>
+                <graphicElement><pen lineWidth="0.0"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="15" y="10" width="310" height="40" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-666666666666"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="19" isBold="true"/>
+                </textElement>
+                <text><![CDATA[🏋 NutriFit - Rutina de Gimnasio]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="330" y="8" width="190" height="16" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-777777777777"/>
+                <textElement textAlignment="Right">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Atleta: " + ($P{USUARIO} != null ? $P{USUARIO} : "General")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="330" y="24" width="190" height="16" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-888888888888"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Meta: " + ($P{OBJETIVO} != null ? $P{OBJETIVO} : "Definición / Volumen")]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="330" y="40" width="190" height="16" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-999999999999"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Frecuencia: " + ($P{DIAS_SEMANA} != null ? $P{DIAS_SEMANA} + " días/sem" : "-")]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="25">
+            <rectangle>
+                <reportElement x="0" y="0" width="535" height="22" backcolor="#EEEEEE" uuid="f1111111-1111-1111-1111-111111111111"/>
+                <graphicElement><pen lineWidth="0.5" lineColor="#CCCCCC"/></graphicElement>
+            </rectangle>
+            <staticText>
+                <reportElement x="8" y="3" width="40" height="16" uuid="f2222222-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Día]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="55" y="3" width="170" height="16" uuid="f3333333-1111-1111-1111-111111111111"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Ejercicio]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="230" y="3" width="110" height="16" uuid="f4444444-1111-1111-1111-111111111111"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Grupo Muscular]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="345" y="3" width="55" height="16" uuid="f5555555-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Series]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="405" y="3" width="65" height="16" uuid="f6666666-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Reps]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="475" y="3" width="55" height="16" uuid="f7777777-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Descanso]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="20">
+            <line>
+                <reportElement x="0" y="19" width="535" height="1" forecolor="#F0F0F0" uuid="d1111111-1111-1111-1111-111111111111"/>
+            </line>
+            <textField>
+                <reportElement x="8" y="2" width="40" height="15" uuid="d2222222-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{diaSemana} != null ? "Día " + $F{diaSemana} : "-"]]></textFieldExpression>
+            </textField>
+            <textField textAdjust="StretchHeight">
+                <reportElement x="55" y="2" width="170" height="15" uuid="d3333333-1111-1111-1111-111111111111"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{nombreEjercicio} != null ? $F{nombreEjercicio} : ""]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="230" y="2" width="110" height="15" uuid="d4444444-1111-1111-1111-111111111111"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{grupoMuscular} != null ? $F{grupoMuscular} : ""]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="345" y="2" width="55" height="15" uuid="d5555555-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{series} != null ? $F{series} : "-"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="405" y="2" width="65" height="15" uuid="d6666666-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{repeticiones} != null ? $F{repeticiones} : "-"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="475" y="2" width="55" height="15" uuid="d7777777-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{descansoSegundos} != null ? $F{descansoSegundos} + "s" : "-"]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="30">
+            <textField>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="p1111111-1111-1111-1111-111111111111"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="p2222222-2222-2222-2222-222222222222"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <text><![CDATA[NutriFit - Módulo de Entrenamiento]]></text>
+            </staticText>
+        </band>
+    </pageFooter>
+
+</jasperReport>
