@@ -1,110 +1,93 @@
 package ni.edu.uam.api.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import ni.edu.uam.api.dto.AlimentoExternoDTO;
+import ni.edu.uam.api.dto.CalculoMacrosRequest;
+import ni.edu.uam.api.dto.CalculoMacrosResponse;
 import ni.edu.uam.api.dto.ConsejoNutricionalDTO;
+import ni.edu.uam.api.service.CalculoMacrosService;
 import ni.edu.uam.api.service.OpenFoodFactsService;
 import ni.edu.uam.api.service.RecomendacionService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
+import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Controlador REST principal de la API de NutriFit.
- * Expone endpoints consumidos por la aplicación de escritorio JavaFX.
+ * Endpoints REST que consume la app de escritorio de Solea.
+ *
+ * <pre>
+ * GET  /api/status                               estado del servicio
+ * GET  /api/alimentos/buscar?q=avena&limite=8    alimentos de Open Food Facts (macros por 100 g)
+ * GET  /api/consejos?objetivo=Volumen muscular   recomendación según el objetivo
+ * POST /api/calculo/macros   (JSON)              calorías y macros, mismas fórmulas que la app
+ * </pre>
  */
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
+@Validated
 public class NutricionApiController {
 
     private final OpenFoodFactsService openFoodFactsService;
     private final RecomendacionService recomendacionService;
+    private final CalculoMacrosService calculoMacrosService;
 
-    public NutricionApiController(OpenFoodFactsService openFoodFactsService, RecomendacionService recomendacionService) {
+    public NutricionApiController(OpenFoodFactsService openFoodFactsService,
+                                  RecomendacionService recomendacionService,
+                                  CalculoMacrosService calculoMacrosService) {
         this.openFoodFactsService = openFoodFactsService;
         this.recomendacionService = recomendacionService;
+        this.calculoMacrosService = calculoMacrosService;
     }
 
-    /**
-     * Endpoint de estado y comprobación de salud de la API.
-     * GET http://localhost:8080/api/status
-     */
     @GetMapping("/status")
-    public ResponseEntity<Map<String, Object>> estado() {
-        Map<String, Object> resp = new HashMap<>();
-        resp.put("estado", "ACTIVO");
-        resp.put("servicio", "API REST NutriFit");
-        resp.put("version", "1.0.0");
-        resp.put("fuente_externa", "Open Food Facts API Conectada");
-        return ResponseEntity.ok(resp);
+    public Map<String, Object> estado() {
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("estado", "ACTIVO");
+        respuesta.put("servicio", "API REST Solea");
+        respuesta.put("version", "1.1.0");
+        respuesta.put("fuenteExterna", OpenFoodFactsService.FUENTE_RED);
+        respuesta.put("hora", Instant.now().toString());
+        return respuesta;
     }
 
-    /**
-     * Endpoint para buscar alimentos y sus macronutrientes en internet.
-     * GET http://localhost:8080/api/alimentos/buscar?q=avena
-     */
     @GetMapping("/alimentos/buscar")
-    public ResponseEntity<List<AlimentoExternoDTO>> buscarAlimento(@RequestParam(name = "q", defaultValue = "avena") String criterio) {
-        List<AlimentoExternoDTO> alimentos = openFoodFactsService.buscarAlimentos(criterio);
-        return ResponseEntity.ok(alimentos);
+    public List<AlimentoExternoDTO> buscarAlimentos(
+            @RequestParam(name = "q")
+            @NotBlank(message = "Escribe el alimento que quieres buscar")
+            @Size(min = 2, max = 60, message = "La búsqueda debe tener entre 2 y 60 caracteres")
+            String criterio,
+            @RequestParam(name = "limite", defaultValue = "8")
+            @Min(value = 1, message = "El límite debe estar entre 1 y 20")
+            @Max(value = 20, message = "El límite debe estar entre 1 y 20")
+            int limite) {
+        return openFoodFactsService.buscarAlimentos(criterio, limite);
     }
 
-    /**
-     * Endpoint para obtener recomendaciones nutricionales y distribución de macros según objetivo.
-     * GET http://localhost:8080/api/consejos?objetivo=volumen
-     */
     @GetMapping("/consejos")
-    public ResponseEntity<ConsejoNutricionalDTO> obtenerConsejos(@RequestParam(name = "objetivo", defaultValue = "mantener") String objetivo) {
-        ConsejoNutricionalDTO consejo = recomendacionService.obtenerConsejoPorObjetivo(objetivo);
-        return ResponseEntity.ok(consejo);
+    public ConsejoNutricionalDTO obtenerConsejos(
+            @RequestParam(name = "objetivo", defaultValue = "mantener")
+            @Size(max = 60, message = "El objetivo admite como máximo 60 caracteres")
+            String objetivo) {
+        return recomendacionService.obtenerConsejoPorObjetivo(objetivo);
     }
 
-    /**
-     * Endpoint de cálculo nutricional instantáneo en la nube / backend.
-     * POST http://localhost:8080/api/calculo/macros
-     */
     @PostMapping("/calculo/macros")
-    public ResponseEntity<Map<String, Object>> calcularMacros(
-            @RequestParam double pesoKg,
-            @RequestParam double alturaCm,
-            @RequestParam int edad,
-            @RequestParam String sexo,
-            @RequestParam String objetivo) {
-
-        // Fórmula Harris-Benedict revisada (Mifflin-St Jeor)
-        double tmb;
-        if ("F".equalsIgnoreCase(sexo) || "Femenino".equalsIgnoreCase(sexo)) {
-            tmb = (10 * pesoKg) + (6.25 * alturaCm) - (5 * edad) - 161;
-        } else {
-            tmb = (10 * pesoKg) + (6.25 * alturaCm) - (5 * edad) + 5;
-        }
-
-        double gastoTotal = tmb * 1.55; // Factor actividad moderada por defecto
-        double caloriasObjetivo = gastoTotal;
-
-        if (objetivo.toLowerCase().contains("bajar") || objetivo.toLowerCase().contains("definicion")) {
-            caloriasObjetivo -= 400;
-        } else if (objetivo.toLowerCase().contains("volumen") || objetivo.toLowerCase().contains("subir")) {
-            caloriasObjetivo += 350;
-        }
-
-        // Distribución en gramos
-        double proteinaGramos = pesoKg * 2.0; // 2g por kg
-        double grasaGramos = pesoKg * 0.9;    // 0.9g por kg
-        double caloriasRestantes = caloriasObjetivo - ((proteinaGramos * 4) + (grasaGramos * 9));
-        double carbohidratosGramos = Math.max(50.0, caloriasRestantes / 4.0);
-
-        Map<String, Object> resultado = new HashMap<>();
-        resultado.put("calorias_mantenimiento", Math.round(gastoTotal));
-        resultado.put("calorias_objetivo", Math.round(caloriasObjetivo));
-        resultado.put("proteinas_g", Math.round(proteinaGramos));
-        resultado.put("carbohidratos_g", Math.round(carbohidratosGramos));
-        resultado.put("grasas_g", Math.round(grasaGramos));
-        resultado.put("objetivo", objetivo);
-
-        return ResponseEntity.ok(resultado);
+    public CalculoMacrosResponse calcularMacros(@Valid @RequestBody CalculoMacrosRequest datos) {
+        return calculoMacrosService.calcular(datos);
     }
 }

@@ -13,11 +13,11 @@
 
     <groupId>ni.edu.uam</groupId>
     <!-- NOTA: Aquí puedes cambiar el nombre del artefacto cuando tu equipo defina el nombre final -->
-    <artifactId>api-nutrifit</artifactId>
+    <artifactId>api-solea</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <!-- NOTA: Aquí puedes cambiar el nombre del proyecto cuando tu equipo defina el nombre final -->
-    <name>api-nutrifit</name>
-    <description>API REST en Spring Boot para NutriFit con integracion a API externa de alimentos</description>
+    <name>api-solea</name>
+    <description>API REST en Spring Boot para Solea con integracion a API externa de alimentos</description>
 
     <properties>
         <java.version>21</java.version>
@@ -31,17 +31,8 @@
         </dependency>
 
         <!-- Spring Data JPA (Hibernate ORM) -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
 
         <!-- Driver de PostgreSQL -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- Validación de Beans (Hibernate Validator) -->
         <dependency>

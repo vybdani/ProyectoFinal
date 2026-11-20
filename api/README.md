@@ -1,4 +1,4 @@
-# API REST NutriFit (Spring Boot)
+# API REST Solea (Spring Boot)
 
 Microservicio backend desarrollado en **Spring Boot 3.4.2** con **Java 21**, diseñado para apoyar a la aplicación de escritorio en JavaFX.
 
@@ -11,8 +11,8 @@ Microservicio backend desarrollado en **Spring Boot 3.4.2** con **Java 21**, dis
 ## Cómo ejecutar la API
 
 ### Opción 1: Desde IntelliJ IDEA
-1. Navega a `api/src/main/java/ni/edu/uam/api/ApiNutrifitApplication.java`.
-2. Haz clic derecho y selecciona **Run 'ApiNutrifitApplication'** (o presiona Shift + F10).
+1. Navega a `api/src/main/java/ni/edu/uam/api/SoleaApiApplication.java`.
+2. Haz clic derecho y selecciona **Run 'SoleaApiApplication'** (o presiona Shift + F10).
 3. El servidor iniciará en `http://localhost:8080`.
 
 ### Opción 2: Desde la terminal (PowerShell o CMD)
