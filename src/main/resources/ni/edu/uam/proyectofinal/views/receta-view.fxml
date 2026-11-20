@@ -38,6 +38,7 @@
 
                 <HBox spacing="8.0">
                     <ComboBox fx:id="cmbAlimento" promptText="Selecciona alimento" prefWidth="210.0"/>
+                    <Button text="Internet" onAction="#handleBuscarEnInternet"/>
                     <TextField fx:id="txtGramos" promptText="Gramos" prefWidth="85.0"/>
                     <Button text="+ Agregar" onAction="#handleAgregarIngrediente" style="-fx-background-color: #1976d2; -fx-text-fill: white;"/>
                     <Button text="Quitar" onAction="#handleQuitarIngrediente"/>

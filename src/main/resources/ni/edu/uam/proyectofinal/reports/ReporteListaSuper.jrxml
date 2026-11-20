@@ -5,7 +5,7 @@
               name="ReporteListaSuper"
               pageWidth="595" pageHeight="842"
               columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30"
-              uuid="c1b72e8a-7845-42cf-9e6b-0c159048a101">
+              uuid="8a8082a1-540f-418a-90e8-089375d6d8d6">
 
     <parameter name="TITULO" class="java.lang.String"/>
     <parameter name="USUARIO" class="java.lang.String"/>
@@ -19,25 +19,25 @@
     <title>
         <band height="75">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="55" backcolor="#4CAF50" uuid="e812b1a1-9a72-4d1a-8c88-111111111111"/>
+                <reportElement x="0" y="0" width="535" height="55" backcolor="#4CAF50" uuid="ac2d7d36-7855-4269-9e12-14298ccc5feb"/>
                 <graphicElement><pen lineWidth="0.0"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="15" y="10" width="300" height="35" forecolor="#FFFFFF" uuid="e812b1a1-9a72-4d1a-8c88-222222222222"/>
+                <reportElement x="15" y="10" width="300" height="35" forecolor="#FFFFFF" uuid="27299011-6a61-4b7e-bb56-9c5f32b3eeae"/>
                 <textElement verticalAlignment="Middle">
                     <font size="20" isBold="true"/>
                 </textElement>
-                <text><![CDATA[🛒 NutriFit - Lista del Súper]]></text>
+                <text><![CDATA[Solea - Lista del Súper]]></text>
             </staticText>
             <textField>
-                <reportElement x="320" y="10" width="200" height="18" forecolor="#FFFFFF" uuid="e812b1a1-9a72-4d1a-8c88-333333333333"/>
+                <reportElement x="320" y="10" width="200" height="18" forecolor="#FFFFFF" uuid="89bb29a4-9bc8-4b5a-ad84-da9b92622b48"/>
                 <textElement textAlignment="Right">
                     <font size="10"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Usuario: " + ($P{USUARIO} != null ? $P{USUARIO} : "General")]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="320" y="28" width="200" height="18" forecolor="#FFFFFF" uuid="e812b1a1-9a72-4d1a-8c88-444444444444"/>
+                <reportElement x="320" y="28" width="200" height="18" forecolor="#FFFFFF" uuid="90417cbb-4176-42af-bcd4-fc320ba2302d"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
@@ -49,32 +49,32 @@
     <columnHeader>
         <band height="25">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="22" backcolor="#E0E0E0" uuid="e812b1a1-9a72-4d1a-8c88-555555555555"/>
+                <reportElement x="0" y="0" width="535" height="22" backcolor="#E0E0E0" uuid="f4ba0d12-38a3-45c1-a74b-425e6efcd629"/>
                 <graphicElement><pen lineWidth="0.5" lineColor="#BDBDBD"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="10" y="3" width="240" height="16" uuid="a1111111-1111-1111-1111-111111111111"/>
+                <reportElement x="10" y="3" width="240" height="16" uuid="64bf8e09-4ca7-486e-96b4-f5d0feee1e23"/>
                 <textElement verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
                 <text><![CDATA[Alimento / Ingrediente]]></text>
             </staticText>
             <staticText>
-                <reportElement x="260" y="3" width="90" height="16" uuid="a2222222-2222-2222-2222-222222222222"/>
+                <reportElement x="260" y="3" width="90" height="16" uuid="a2286868-3cbc-463b-99fa-2c4a3e294bf9"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
                 <text><![CDATA[Cantidad]]></text>
             </staticText>
             <staticText>
-                <reportElement x="365" y="3" width="80" height="16" uuid="a3333333-3333-3333-3333-333333333333"/>
+                <reportElement x="365" y="3" width="80" height="16" uuid="f559f52d-87c3-47c4-873b-ad23dc701098"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
                 <text><![CDATA[Unidad]]></text>
             </staticText>
             <staticText>
-                <reportElement x="460" y="3" width="65" height="16" uuid="a4444444-4444-4444-4444-444444444444"/>
+                <reportElement x="460" y="3" width="65" height="16" uuid="14a57e8e-bcb8-44ca-92ea-0a5cc4eaf894"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
@@ -86,29 +86,29 @@
     <detail>
         <band height="22">
             <line>
-                <reportElement x="0" y="21" width="535" height="1" forecolor="#EEEEEE" uuid="b1111111-1111-1111-1111-111111111111"/>
+                <reportElement x="0" y="21" width="535" height="1" forecolor="#EEEEEE" uuid="b62764ec-077a-430b-92f2-3dcf3f9c3885"/>
             </line>
             <textField textAdjust="StretchHeight">
-                <reportElement x="10" y="2" width="240" height="16" uuid="b2222222-2222-2222-2222-222222222222"/>
+                <reportElement x="10" y="2" width="240" height="16" uuid="c941b413-7ad1-4755-889f-3767641d5121"/>
                 <textElement verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{alimento} != null ? $F{alimento} : ""]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="260" y="2" width="90" height="16" uuid="b3333333-3333-3333-3333-333333333333"/>
+                <reportElement x="260" y="2" width="90" height="16" uuid="f0e38cfe-4d61-431c-a9c4-01edfc2b83f1"/>
                 <textElement textAlignment="Right" verticalAlignment="Middle"/>
-                <textFieldExpression><![CDATA[$F{cantidad} != null ? String.format("%.1f", $F{cantidad}) : "-"]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$F{cantidad} != null ? new java.text.DecimalFormat("#,##0.##").format($F{cantidad}) : "-"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="365" y="2" width="80" height="16" uuid="b4444444-4444-4444-4444-444444444444"/>
+                <reportElement x="365" y="2" width="80" height="16" uuid="e60ea994-af84-4364-8fd8-17458ae0c548"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{unidad} != null ? $F{unidad} : ""]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="460" y="2" width="65" height="16" uuid="b5555555-5555-5555-5555-555555555555"/>
+                <reportElement x="460" y="2" width="65" height="16" uuid="ef0ff62a-af57-4fa3-ab44-bc7e59b3c5b8"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
-                <textFieldExpression><![CDATA[Boolean.TRUE.equals($F{comprado}) ? "✓ Sí" : "[ ] Pendiente"]]></textFieldExpression>
+                <textFieldExpression><![CDATA[Boolean.TRUE.equals($F{comprado}) ? "Comprado" : "Pendiente"]]></textFieldExpression>
             </textField>
         </band>
     </detail>
@@ -116,18 +116,18 @@
     <pageFooter>
         <band height="30">
             <textField>
-                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="c1111111-1111-1111-1111-111111111111"/>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="61e4a0fc-7d47-46f9-89aa-79f9bea94fef"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="c2222222-2222-2222-2222-222222222222"/>
+                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="fe6157a4-10a4-4587-bc14-1b4af2c6c22e"/>
                 <textElement>
                     <font size="9"/>
                 </textElement>
-                <text><![CDATA[NutriFit - Sistema de Nutrición y Entrenamiento]]></text>
+                <text><![CDATA[Solea - Sistema de Nutrición y Entrenamiento]]></text>
             </staticText>
         </band>
     </pageFooter>

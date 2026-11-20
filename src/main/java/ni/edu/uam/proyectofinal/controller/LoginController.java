@@ -1,104 +1,88 @@
 package ni.edu.uam.proyectofinal.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import ni.edu.uam.proyectofinal.dao.UsuarioDAO;
 import ni.edu.uam.proyectofinal.model.Usuario;
+import ni.edu.uam.proyectofinal.util.Alertas;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
+import ni.edu.uam.proyectofinal.util.Validacion;
+import ni.edu.uam.proyectofinal.util.Validacion.ValidacionException;
 
 public class LoginController {
 
-    private static final String PATRON_CORREO = "^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$";
+    private static final int MIN_CONTRASENA = 6;
+    private static final int MAX_CONTRASENA = 64;
 
-    @FXML
-    private TextField txtCorreo;
-
-    @FXML
-    private PasswordField txtPassword;
-
-    @FXML
-    private TextField txtNombreRegistro;
+    @FXML private TextField txtCorreo;
+    @FXML private PasswordField txtPassword;
+    @FXML private TextField txtNombreRegistro;
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
     @FXML
     private void handleLogin() {
-        String correo = txtCorreo.getText().trim();
-        String password = txtPassword.getText().trim();
-
-        if (correo.isEmpty() || password.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor ingresa tu correo y contraseña.");
-            return;
-        }
-
         try {
+            String correo = Validacion.texto(txtCorreo, "tu correo", 100);
+            String password = contrasena();
+
             Usuario usuario = usuarioDAO.autenticar(correo, password);
             if (usuario == null) {
-                mostrarAlerta(Alert.AlertType.ERROR, "Acceso Denegado", "Correo o contraseña incorrectos.");
+                txtPassword.clear();
+                // Mismo mensaje para correo o contraseña incorrectos: no revela qué cuentas existen
+                Alertas.aviso("Acceso denegado", "El correo o la contraseña no son correctos.");
                 return;
             }
-
             SesionActual.setUsuarioActivo(usuario);
             if (usuario.getPerfilFisico() == null) {
-                // Usuario que se registró pero no terminó su perfil
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Perfil incompleto", "Completa tu perfil físico para continuar.");
+                Alertas.info("Perfil incompleto", "Completa tu perfil físico para continuar.");
                 Navegacion.irAlPerfil(txtCorreo);
             } else {
                 Navegacion.irAlMenuPrincipal(txtCorreo);
             }
-
+        } catch (ValidacionException e) {
+            Alertas.aviso("Revisa tus datos", e.getMessage());
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Conexión",
-                    "No se pudo conectar con la base de datos. Revisa que PostgreSQL esté encendido y la configuración del README.\n\n"
-                            + e.getMessage());
+            Alertas.error("No se pudo iniciar sesión", e);
         }
     }
 
     @FXML
     private void handleRegistro() {
-        String nombre = txtNombreRegistro != null ? txtNombreRegistro.getText().trim() : "";
-        String correo = txtCorreo.getText().trim();
-        String password = txtPassword.getText().trim();
-
-        if (nombre.isEmpty() || correo.isEmpty() || password.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos Vacíos", "Completa nombre, correo y contraseña para registrarte.");
-            return;
-        }
-        if (!correo.matches(PATRON_CORREO)) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Correo inválido", "Ingresa un correo con formato válido, por ejemplo ana@correo.com.");
-            return;
-        }
-        if (password.length() < 6) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Contraseña débil", "La contraseña debe tener al menos 6 caracteres.");
-            return;
-        }
-
         try {
-            if (usuarioDAO.existeCorreo(correo)) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Correo registrado", "Ya existe una cuenta con ese correo. Inicia sesión.");
-                return;
+            String nombre = Validacion.texto(txtNombreRegistro, "tu nombre", 100);
+            if (nombre.length() < 2 || !nombre.matches("[\\p{L} .'-]+")) {
+                throw Validacion.fallo(txtNombreRegistro, "El nombre solo puede tener letras y espacios (mínimo 2).");
             }
+            String correo = Validacion.correo(txtCorreo);
+            String password = contrasena();
 
-            Usuario nuevoUsuario = new Usuario(nombre, correo, password);
-            usuarioDAO.guardar(nuevoUsuario);
+            if (usuarioDAO.existeCorreo(correo)) {
+                throw Validacion.fallo(txtCorreo, "Ya existe una cuenta con ese correo. Inicia sesión.");
+            }
+            Usuario nuevoUsuario = usuarioDAO.guardar(new Usuario(nombre, correo.toLowerCase(), password));
             SesionActual.setUsuarioActivo(nuevoUsuario);
-
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Registro Exitoso", "Cuenta creada. Completa tu perfil físico.");
+            Alertas.info("Cuenta creada", "Bienvenido/a, " + nombre + ". Ahora completa tu perfil físico.");
             Navegacion.irAlPerfil(txtCorreo);
-
+        } catch (ValidacionException e) {
+            Alertas.aviso("Revisa tus datos", e.getMessage());
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Registro", "No se pudo registrar el usuario: " + e.getMessage());
+            Alertas.error("No se pudo crear la cuenta", e);
         }
     }
 
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    /** La contraseña no se recorta: los espacios forman parte de ella. */
+    private String contrasena() {
+        String password = txtPassword.getText() == null ? "" : txtPassword.getText();
+        if (password.isEmpty()) {
+            throw Validacion.fallo(txtPassword, "Escribe tu contraseña.");
+        }
+        if (password.length() < MIN_CONTRASENA || password.length() > MAX_CONTRASENA) {
+            throw Validacion.fallo(txtPassword,
+                    "La contraseña debe tener entre " + MIN_CONTRASENA + " y " + MAX_CONTRASENA + " caracteres.");
+        }
+        return password;
     }
 }

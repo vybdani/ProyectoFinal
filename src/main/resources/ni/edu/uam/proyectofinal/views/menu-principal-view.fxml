@@ -13,7 +13,7 @@
         <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
     </padding>
 
-    <Label fx:id="lblBienvenida" text="Bienvenido/a a NutriFit">
+    <Label fx:id="lblBienvenida" text="Bienvenido/a a Solea">
         <font>
             <Font name="System Bold" size="22.0" />
         </font>
@@ -35,7 +35,7 @@
         </VBox>
     </HBox>
 
-    <!-- Botón para consumir la API REST de NutriFit -->
+    <!-- Botón para consumir la API REST de Solea -->
     <Button text="💡 Consejo Nutricional del Día (API REST)" onAction="#handleConsultarApiConsejo"
             prefWidth="320.0" prefHeight="38.0"
             style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold;" />

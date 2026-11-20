@@ -26,6 +26,7 @@
 
     <HBox spacing="10.0" alignment="CENTER_LEFT">
         <ComboBox fx:id="cmbAlimento" promptText="Alimento" prefWidth="260.0" />
+        <Button text="Buscar en internet" onAction="#handleBuscarEnInternet" />
         <TextField fx:id="txtCantidad" promptText="Gramos" prefWidth="90.0" />
         <ComboBox fx:id="cmbTipoComida" promptText="Comida" prefWidth="120.0" />
         <DatePicker fx:id="dpFecha" prefWidth="130.0" />

@@ -2,38 +2,27 @@ package ni.edu.uam.proyectofinal.controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import ni.edu.uam.proyectofinal.dao.UsuarioDAO;
 import ni.edu.uam.proyectofinal.model.PerfilFisico;
 import ni.edu.uam.proyectofinal.model.Usuario;
+import ni.edu.uam.proyectofinal.util.Alertas;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
+import ni.edu.uam.proyectofinal.util.Validacion;
+import ni.edu.uam.proyectofinal.util.Validacion.ValidacionException;
 
 public class PerfilFisicoController {
 
-    @FXML
-    private TextField txtPeso;
-
-    @FXML
-    private TextField txtAltura;
-
-    @FXML
-    private TextField txtEdad;
-
-    @FXML
-    private TextField txtPorcentajeGrasa;
-
-    @FXML
-    private ComboBox<String> cmbSexo;
-
-    @FXML
-    private ComboBox<String> cmbNivelActividad;
-
-    @FXML
-    private Button btnVolver;
+    @FXML private TextField txtPeso;
+    @FXML private TextField txtAltura;
+    @FXML private TextField txtEdad;
+    @FXML private TextField txtPorcentajeGrasa;
+    @FXML private ComboBox<String> cmbSexo;
+    @FXML private ComboBox<String> cmbNivelActividad;
+    @FXML private Button btnVolver;
 
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
     private Usuario usuarioActual;
@@ -73,40 +62,25 @@ public class PerfilFisicoController {
             usuarioActual = SesionActual.getUsuarioActivo();
         }
         if (usuarioActual == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Sesión Requerida", "No hay un usuario activo en sesión.");
+            Alertas.aviso("Sesión requerida", "Inicia sesión para guardar tu perfil.");
+            Navegacion.irAlLogin(txtPeso);
             return;
         }
 
         try {
-            double peso = Double.parseDouble(txtPeso.getText().trim());
-            double altura = Double.parseDouble(txtAltura.getText().trim());
-            int edad = Integer.parseInt(txtEdad.getText().trim());
-            double grasa = txtPorcentajeGrasa.getText().trim().isEmpty()
-                    ? 0.0
-                    : Double.parseDouble(txtPorcentajeGrasa.getText().trim());
-            String sexo = cmbSexo.getValue();
-            String nivel = cmbNivelActividad.getValue();
+            double peso = Validacion.decimal(txtPeso, "el peso (kg)", 30, 300);
+            double altura = Validacion.decimal(txtAltura, "la altura (cm)", 120, 230);
+            int edad = Validacion.entero(txtEdad, "la edad", 18, 100);
+            Double grasa = Validacion.decimalOpcional(txtPorcentajeGrasa, "el % de grasa", 3, 60);
+            String sexo = Validacion.seleccion(cmbSexo, "tu sexo");
+            String nivel = Validacion.seleccion(cmbNivelActividad, "tu nivel de actividad");
 
-            if (peso < 30 || peso > 300) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Datos Inválidos", "El peso debe estar entre 30 y 300 kg.");
-                return;
-            }
-            if (altura < 120 || altura > 230) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Datos Inválidos", "La altura debe estar entre 120 y 230 cm.");
-                return;
-            }
-            if (edad < 18 || edad > 100) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Datos Inválidos",
-                        "La edad debe estar entre 18 y 100 años. Los menores de edad necesitan evaluación profesional.");
-                return;
-            }
-            if (grasa < 0 || grasa > 60) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Datos Inválidos", "El % de grasa debe estar entre 0 y 60.");
-                return;
-            }
-            if (sexo == null || nivel == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Datos Incompletos", "Selecciona tu sexo y tu nivel de actividad.");
-                return;
+            // IMC fuera de rango humano: probablemente se confundieron peso y altura
+            double imc = peso / Math.pow(altura / 100.0, 2);
+            if (imc < 12 || imc > 70) {
+                throw Validacion.fallo(txtPeso, String.format(
+                        "Con %.1f kg y %.0f cm el IMC sería %.1f, que no es realista. Revisa el peso y la altura.",
+                        peso, altura, imc));
             }
 
             PerfilFisico perfil = usuarioActual.getPerfilFisico();
@@ -127,26 +101,17 @@ public class PerfilFisicoController {
             Usuario recargado = usuarioDAO.obtenerUsuarioConPerfil(usuarioActual.getId());
             SesionActual.setUsuarioActivo(recargado != null ? recargado : usuarioActual);
 
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Perfil Guardado", "Tus datos físicos han sido guardados.");
+            Alertas.info("Perfil guardado", "Tus datos físicos se guardaron. Recalcula tu requerimiento para actualizar tus metas.");
             Navegacion.irAlMenuPrincipal(txtPeso);
-
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Formato", "Ingresa valores numéricos válidos en peso, altura, edad y % de grasa.");
+        } catch (ValidacionException e) {
+            Alertas.aviso("Revisa tus datos", e.getMessage());
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Persistencia", "No se pudo guardar el perfil: " + e.getMessage());
+            Alertas.error("No se pudo guardar el perfil", e);
         }
     }
 
     @FXML
     private void handleVolver() {
         Navegacion.irAlMenuPrincipal(txtPeso);
-    }
-
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
     }
 }

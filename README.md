@@ -1,4 +1,4 @@
-# NutriFit
+# Solea
 
 Aplicación de escritorio en **JavaFX** que te ayuda a comer (y entrenar) según tu objetivo.
 Usa **Hibernate ORM** con **PostgreSQL** para guardar toda la información.
@@ -25,7 +25,7 @@ súper y registra lo que vas comiendo.
 2. Crea la base de datos:
 
    ```sql
-   CREATE DATABASE nutrifit_db;
+   CREATE DATABASE solea_db;
    ```
 
 3. No hace falta crear las tablas: Hibernate las crea solo la primera vez que se ejecuta la app
@@ -40,7 +40,7 @@ La conexión está en `src/main/resources/hibernate.cfg.xml` con la contraseña 
 |---|---|---|
 | `DB_PASSWORD` | Contraseña de PostgreSQL | *(vacía)* |
 | `DB_USER` | Usuario de PostgreSQL | `postgres` |
-| `DB_URL` | URL de la base de datos | `jdbc:postgresql://localhost:5432/nutrifit_db` |
+| `DB_URL` | URL de la base de datos | `jdbc:postgresql://localhost:5432/solea_db` |
 
 **En IntelliJ:** *Run → Edit Configurations… →* selecciona `Launcher` *→ Environment variables* y agrega
 `DB_PASSWORD=tu_contraseña`.

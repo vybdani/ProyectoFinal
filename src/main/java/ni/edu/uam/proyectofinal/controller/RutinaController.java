@@ -13,7 +13,11 @@ import ni.edu.uam.proyectofinal.model.Rutina;
 import ni.edu.uam.proyectofinal.model.RutinaEjercicio;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.service.GeneradorRutinaService;
+import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.reporte.ReporteService;
+import ni.edu.uam.proyectofinal.util.ExportadorPdf;
 import ni.edu.uam.proyectofinal.util.Navegacion;
+import ni.edu.uam.proyectofinal.util.Validacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
 
 import java.util.Comparator;
@@ -122,9 +126,11 @@ public class RutinaController {
             mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "Primero genera una rutina.");
             return;
         }
-        String nombre = txtNombreRutina.getText().trim();
-        if (nombre.isEmpty() || nombre.length() > 120) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Validación", "El nombre debe tener entre 1 y 120 caracteres.");
+        String nombre;
+        try {
+            nombre = Validacion.texto(txtNombreRutina, "el nombre de la rutina", 120);
+        } catch (Validacion.ValidacionException e) {
+            Alertas.aviso("Revisa el nombre", e.getMessage());
             return;
         }
         try {
@@ -142,10 +148,7 @@ public class RutinaController {
             mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "No hay una rutina para eliminar.");
             return;
         }
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION,
-                "¿Eliminar la rutina \"" + rutinaActual.getNombre() + "\"?", ButtonType.YES, ButtonType.NO);
-        confirmacion.setHeaderText(null);
-        if (confirmacion.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+        if (!Alertas.confirmar("Confirmar eliminación", "¿Eliminar la rutina \"" + rutinaActual.getNombre() + "\"?")) {
             return;
         }
         try {
@@ -160,6 +163,18 @@ public class RutinaController {
     @FXML
     private void handleEjercicios() {
         Navegacion.ir(tblRutina, "ejercicio-view.fxml", "Catálogo de Ejercicios", 860, 600);
+    }
+
+    /** Exporta la rutina que se está viendo a PDF (JasperReports). */
+    @FXML
+    private void handleExportarPdf() {
+        if (rutinaActual == null) {
+            Alertas.aviso("Sin rutina", "Genera una rutina antes de exportarla.");
+            return;
+        }
+        Rutina rutina = rutinaActual;
+        ExportadorPdf.exportar(tblRutina, "Rutina", usuario,
+                destino -> new ReporteService().exportarRutina(usuario, rutina, destino));
     }
 
     @FXML
@@ -231,10 +246,6 @@ public class RutinaController {
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        Alertas.mostrar(tipo, titulo, mensaje);
     }
 }

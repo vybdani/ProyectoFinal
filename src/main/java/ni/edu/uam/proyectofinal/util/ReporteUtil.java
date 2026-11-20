@@ -1,86 +1,119 @@
 package ni.edu.uam.proyectofinal.util;
 
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Clase utilitaria para facilitar a Daniella la generación y exportación
- * de reportes con JasperReports en la aplicación NutriFit.
+ * Operaciones de bajo nivel con JasperReports: compilar plantillas .jrxml, llenarlas con datos
+ * y exportarlas a PDF. La lógica de qué datos lleva cada reporte está en ReporteService.
  */
-public class ReporteUtil {
+public final class ReporteUtil {
 
     private static final String RUTA_REPORTES = "/ni/edu/uam/proyectofinal/reports/";
 
-    private ReporteUtil() {}
+    /** Compilar una plantilla tarda segundos: se compila una sola vez y se reutiliza. */
+    private static final Map<String, JasperReport> COMPILADOS = new ConcurrentHashMap<>();
 
-    /**
-     * Compila y llena un reporte JasperReports a partir de una plantilla .jrxml.
-     *
-     * @param nombreArchivoJrxml Nombre del archivo .jrxml (ej. "ReporteListaSuper.jrxml").
-     * @param parametros         Mapa de parámetros (puede ser null).
-     * @param datosColeccion     Lista de objetos Java (JavaBeans) para alimentar la tabla (puede ser null).
-     * @return JasperPrint listo para visualizar o exportar a PDF.
-     */
-    public static JasperPrint compilarYLlenar(String nombreArchivoJrxml, Map<String, Object> parametros, List<?> datosColeccion) throws JRException {
-        String rutaCompleta = RUTA_REPORTES + nombreArchivoJrxml;
-        InputStream reportStream = ReporteUtil.class.getResourceAsStream(rutaCompleta);
-
-        if (reportStream == null) {
-            throw new JRException("No se encontró la plantilla de reporte en: " + rutaCompleta);
-        }
-
-        JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
-
-        JRDataSource dataSource;
-        if (datosColeccion != null && !datosColeccion.isEmpty()) {
-            dataSource = new JRBeanCollectionDataSource(datosColeccion);
-        } else {
-            dataSource = new JREmptyDataSource();
-        }
-
-        Map<String, Object> params = (parametros != null) ? parametros : new HashMap<>();
-        return JasperFillManager.fillReport(jasperReport, params, dataSource);
+    private ReporteUtil() {
     }
 
     /**
-     * Exporta el reporte generado a un archivo PDF en el disco.
+     * Compila (o toma de la caché) y llena un reporte.
      *
-     * @param print       Objeto JasperPrint generado.
-     * @param rutaDestino Ruta donde se guardará el PDF (ej. "reporte_super.pdf").
+     * @param nombreArchivoJrxml plantilla dentro de /reports, por ejemplo "ReporteListaSuper.jrxml"
+     * @param parametros         valores de los $P{...} de la plantilla (puede ser null)
+     * @param datosColeccion     filas de la tabla como JavaBeans con getters (puede ser null)
      */
+    public static JasperPrint compilarYLlenar(String nombreArchivoJrxml, Map<String, Object> parametros,
+                                              List<?> datosColeccion) throws JRException {
+        JasperReport reporte = compilar(nombreArchivoJrxml);
+        JRDataSource datos = datosColeccion != null && !datosColeccion.isEmpty()
+                ? new JRBeanCollectionDataSource(datosColeccion)
+                : new JREmptyDataSource();
+        Map<String, Object> params = parametros != null ? new HashMap<>(parametros) : new HashMap<>();
+        return JasperFillManager.fillReport(reporte, params, datos);
+    }
+
+    /** Compila la plantilla la primera vez que se pide y la guarda en caché. */
+    public static JasperReport compilar(String nombreArchivoJrxml) throws JRException {
+        JasperReport enCache = COMPILADOS.get(nombreArchivoJrxml);
+        if (enCache != null) {
+            return enCache;
+        }
+        String ruta = RUTA_REPORTES + nombreArchivoJrxml;
+        try (InputStream plantilla = ReporteUtil.class.getResourceAsStream(ruta)) {
+            if (plantilla == null) {
+                throw new JRException("No se encontró la plantilla de reporte: " + ruta);
+            }
+            JasperReport compilado = JasperCompileManager.compileReport(plantilla);
+            COMPILADOS.put(nombreArchivoJrxml, compilado);
+            return compilado;
+        } catch (IOException e) {
+            throw new JRException("No se pudo leer la plantilla " + ruta, e);
+        }
+    }
+
+    /** Exporta el reporte a PDF, creando la carpeta de destino si no existe. */
+    public static Path exportarPdf(JasperPrint print, Path destino) throws JRException {
+        try {
+            Path carpeta = destino.toAbsolutePath().getParent();
+            if (carpeta != null) {
+                Files.createDirectories(carpeta);
+            }
+        } catch (IOException e) {
+            throw new JRException("No se pudo crear la carpeta " + destino.getParent(), e);
+        }
+        JasperExportManager.exportReportToPdfFile(print, destino.toString());
+        return destino;
+    }
+
+    /** Compatibilidad con el código anterior que recibía la ruta como texto. */
     public static void exportarPdf(JasperPrint print, String rutaDestino) throws JRException {
-        JasperExportManager.exportReportToPdfFile(print, rutaDestino);
-        System.out.println("Reporte PDF exportado con éxito a: " + rutaDestino);
+        exportarPdf(print, Path.of(rutaDestino));
     }
 
-    /**
-     * Abre el visor interactivo de JasperReports en una ventana independiente.
-     */
+    /** Abre el visor interactivo de JasperReports en una ventana aparte. */
     public static void visualizar(JasperPrint print) {
         JasperViewer viewer = new JasperViewer(print, false);
-        viewer.setTitle("NutriFit - Visualizador de Reporte");
+        viewer.setTitle("Solea - Visualizador de Reporte");
         viewer.setVisible(true);
     }
 
-    /**
-     * Abre automáticamente el archivo PDF con el lector predeterminado de Windows/OS.
-     */
-    public static void abrirPdfConLectorDelSistema(String rutaPdf) {
+    /** Abre el PDF con el lector predeterminado del sistema. Devuelve false si no se pudo. */
+    public static boolean abrirPdfConLectorDelSistema(Path pdf) {
         try {
-            File pdfFile = new File(rutaPdf);
-            if (pdfFile.exists() && Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().open(pdfFile);
+            File archivo = pdf.toFile();
+            if (archivo.exists() && Desktop.isDesktopSupported()
+                    && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                Desktop.getDesktop().open(archivo);
+                return true;
             }
-        } catch (Exception e) {
+        } catch (IOException | UnsupportedOperationException e) {
             System.err.println("No se pudo abrir el PDF automáticamente: " + e.getMessage());
         }
+        return false;
+    }
+
+    public static void abrirPdfConLectorDelSistema(String rutaPdf) {
+        abrirPdfConLectorDelSistema(Path.of(rutaPdf));
     }
 }

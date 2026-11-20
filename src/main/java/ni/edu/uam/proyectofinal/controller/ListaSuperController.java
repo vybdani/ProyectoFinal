@@ -4,65 +4,47 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ni.edu.uam.proyectofinal.dao.ItemListaSuperDAO;
 import ni.edu.uam.proyectofinal.model.ItemListaSuper;
 import ni.edu.uam.proyectofinal.model.Usuario;
+import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.reporte.ReporteService;
+import ni.edu.uam.proyectofinal.util.ExportadorPdf;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
+import ni.edu.uam.proyectofinal.util.Validacion;
+import ni.edu.uam.proyectofinal.util.Validacion.ValidacionException;
 
 public class ListaSuperController {
 
-    @FXML
-    private TextField txtProducto;
-
-    @FXML
-    private TextField txtCantidad;
-
-    @FXML
-    private ComboBox<String> cmbUnidad;
-
-    @FXML
-    private TableView<ItemListaSuper> tblListaSuper;
-
-    @FXML
-    private TableColumn<ItemListaSuper, String> colProducto;
-
-    @FXML
-    private TableColumn<ItemListaSuper, Double> colCantidad;
-
-    @FXML
-    private TableColumn<ItemListaSuper, String> colUnidad;
-
-    @FXML
-    private TableColumn<ItemListaSuper, String> colEstado;
+    @FXML private TextField txtProducto;
+    @FXML private TextField txtCantidad;
+    @FXML private ComboBox<String> cmbUnidad;
+    @FXML private TableView<ItemListaSuper> tblListaSuper;
+    @FXML private TableColumn<ItemListaSuper, String> colProducto;
+    @FXML private TableColumn<ItemListaSuper, Double> colCantidad;
+    @FXML private TableColumn<ItemListaSuper, String> colUnidad;
+    @FXML private TableColumn<ItemListaSuper, String> colEstado;
 
     private Usuario usuario;
-
     private final ItemListaSuperDAO listaDAO = new ItemListaSuperDAO();
-
     private final ObservableList<ItemListaSuper> listaProductos = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        cmbUnidad.setItems(
-                FXCollections.observableArrayList(
-                        "Unidad",
-                        "Kilogramos",
-                        "Gramos",
-                        "Litros",
-                        "Mililitros",
-                        "Paquetes"
-                )
-        );
+        cmbUnidad.setItems(FXCollections.observableArrayList(
+                "Unidad", "Kilogramos", "Gramos", "Litros", "Mililitros", "Paquetes"));
 
         colProducto.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colUnidad.setCellValueFactory(new PropertyValueFactory<>("unidad"));
-        colEstado.setCellValueFactory(datos -> new ReadOnlyStringWrapper(
-                Boolean.TRUE.equals(datos.getValue().getComprado()) ? "✔ Comprado" : "Pendiente"));
-
+        colEstado.setCellValueFactory(d -> new ReadOnlyStringWrapper(
+                Boolean.TRUE.equals(d.getValue().getComprado()) ? "✔ Comprado" : "Pendiente"));
         tblListaSuper.setItems(listaProductos);
 
         usuario = SesionActual.getUsuarioActivo();
@@ -76,98 +58,74 @@ public class ListaSuperController {
 
     @FXML
     public void agregarProducto() {
+        if (usuario == null) {
+            Alertas.aviso("Sesión requerida", "Inicia sesión para usar tu lista del súper.");
+            return;
+        }
         try {
-            if (usuario == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Error", "No hay un usuario activo en sesión.");
-                return;
+            String nombre = Validacion.texto(txtProducto, "el nombre del producto", 100);
+            double cantidad = Validacion.decimal(txtCantidad, "la cantidad", 0.01, 100_000);
+            String unidad = Validacion.seleccion(cmbUnidad, "una unidad");
+            if (("Unidad".equals(unidad) || "Paquetes".equals(unidad)) && cantidad != Math.rint(cantidad)) {
+                throw Validacion.fallo(txtCantidad, "Las unidades y los paquetes se cuentan en números enteros.");
             }
 
-            String nombre = txtProducto.getText().trim();
-            if (nombre.isEmpty()) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Validación", "Ingrese el nombre del producto.");
-                return;
-            }
-            if (nombre.length() > 100) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Validación", "El nombre no puede tener más de 100 caracteres.");
-                return;
-            }
-
-            if (txtCantidad.getText().trim().isEmpty()) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Validación", "Ingrese una cantidad.");
-                return;
-            }
-
-            double cantidad = Double.parseDouble(txtCantidad.getText().trim());
-            if (cantidad <= 0) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Validación", "La cantidad debe ser positiva.");
-                return;
-            }
-
-            if (cmbUnidad.getValue() == null) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Validación", "Seleccione una unidad.");
-                return;
-            }
-
-            ItemListaSuper item = new ItemListaSuper(
-                    usuario,
-                    nombre,
-                    cantidad,
-                    cmbUnidad.getValue()
-            );
-
-            listaDAO.guardar(item);
-
+            listaDAO.guardar(new ItemListaSuper(usuario, nombre, cantidad, unidad));
             txtProducto.clear();
             txtCantidad.clear();
             listarProductos();
-
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "La cantidad debe ser un número válido.");
+        } catch (ValidacionException e) {
+            Alertas.aviso("Revisa los datos", e.getMessage());
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
+            Alertas.error("No se pudo agregar el producto", e);
         }
     }
 
     @FXML
     public void marcarComprado() {
         ItemListaSuper item = tblListaSuper.getSelectionModel().getSelectedItem();
-
         if (item == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "Seleccione un producto.");
+            Alertas.aviso("Nada seleccionado", "Selecciona en la tabla el producto que quieres marcar.");
             return;
         }
-
         try {
             item.setComprado(!Boolean.TRUE.equals(item.getComprado()));
             listaDAO.actualizar(item);
             listarProductos();
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
+            Alertas.error("No se pudo actualizar el producto", e);
+            listarProductos();
         }
     }
 
     @FXML
     public void eliminarProducto() {
         ItemListaSuper item = tblListaSuper.getSelectionModel().getSelectedItem();
-
         if (item == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "Seleccione un producto.");
+            Alertas.aviso("Nada seleccionado", "Selecciona en la tabla el producto que quieres eliminar.");
             return;
         }
-
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION,
-                "¿Eliminar \"" + item.getNombreProducto() + "\" de la lista?", ButtonType.YES, ButtonType.NO);
-        confirmacion.setHeaderText(null);
-        if (confirmacion.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+        if (!Alertas.confirmar("Eliminar producto", "¿Eliminar \"" + item.getNombreProducto() + "\" de la lista?")) {
             return;
         }
-
         try {
             listaDAO.eliminar(item.getId());
             listarProductos();
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
+            Alertas.error("No se pudo eliminar el producto", e);
         }
+    }
+
+    /** Exporta la lista del súper a PDF (JasperReports). */
+    @FXML
+    private void handleExportarPdf() {
+        if (listaProductos.isEmpty()) {
+            Alertas.aviso("Lista vacía", "Agrega productos antes de exportar la lista.");
+            return;
+        }
+        java.util.List<ItemListaSuper> items = java.util.List.copyOf(listaProductos);
+        ExportadorPdf.exportar(tblListaSuper, "ListaSuper", usuario,
+                destino -> new ReporteService().exportarListaSuper(usuario, items, destino));
     }
 
     @FXML
@@ -179,21 +137,10 @@ public class ListaSuperController {
         if (usuario == null) {
             return;
         }
-
         try {
-            listaProductos.setAll(
-                    listaDAO.listarPorUsuario(usuario.getId())
-            );
+            listaProductos.setAll(listaDAO.listarPorUsuario(usuario.getId()));
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo cargar la lista: " + e.getMessage());
+            Alertas.error("No se pudo cargar la lista", e);
         }
-    }
-
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alerta = new Alert(tipo);
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
     }
 }

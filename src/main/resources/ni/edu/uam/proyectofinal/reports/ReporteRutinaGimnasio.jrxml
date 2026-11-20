@@ -5,7 +5,7 @@
               name="ReporteRutinaGimnasio"
               pageWidth="595" pageHeight="842"
               columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30"
-              uuid="d2a84b91-1234-45cf-8abc-012345678901">
+              uuid="02c50f4a-6add-4532-9ba0-96fe180de201">
 
     <parameter name="USUARIO" class="java.lang.String"/>
     <parameter name="OBJETIVO" class="java.lang.String"/>
@@ -18,36 +18,59 @@
     <field name="series" class="java.lang.Integer"/>
     <field name="repeticiones" class="java.lang.String"/>
     <field name="descansoSegundos" class="java.lang.Integer"/>
+    <field name="nombreDia" class="java.lang.String"/>
+
+    <variable name="TOTAL_SERIES" class="java.lang.Integer" calculation="Sum">
+        <variableExpression><![CDATA[$F{series}]]></variableExpression>
+    </variable>
+    <variable name="TOTAL_EJERCICIOS" class="java.lang.Integer" calculation="Count">
+        <variableExpression><![CDATA[$F{nombreEjercicio}]]></variableExpression>
+    </variable>
+
+    <group name="Dia">
+        <groupExpression><![CDATA[$F{diaSemana}]]></groupExpression>
+        <groupHeader>
+            <band height="28">
+                <textField>
+                    <reportElement x="0" y="8" width="535" height="18" uuid="4fb91e9e-5c8a-495d-893a-4123611f70cc"/>
+                    <textElement verticalAlignment="Middle">
+                        <font size="11" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["Día " + $F{diaSemana} + ($F{nombreDia} != null ? "  ·  " + $F{nombreDia} : "")]]></textFieldExpression>
+                </textField>
+            </band>
+        </groupHeader>
+    </group>
 
     <title>
         <band height="80">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="60" backcolor="#FF9800" uuid="e1111111-2222-3333-4444-555555555555"/>
+                <reportElement x="0" y="0" width="535" height="60" backcolor="#FF9800" uuid="4b307a0f-1df1-4248-9a4a-e703aa220a29"/>
                 <graphicElement><pen lineWidth="0.0"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="15" y="10" width="310" height="40" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-666666666666"/>
+                <reportElement x="15" y="10" width="310" height="40" forecolor="#FFFFFF" uuid="c77ee3b8-dfee-47e7-a828-17c060192aec"/>
                 <textElement verticalAlignment="Middle">
                     <font size="19" isBold="true"/>
                 </textElement>
-                <text><![CDATA[🏋 NutriFit - Rutina de Gimnasio]]></text>
+                <text><![CDATA[Solea - Rutina de Gimnasio]]></text>
             </staticText>
             <textField>
-                <reportElement x="330" y="8" width="190" height="16" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-777777777777"/>
+                <reportElement x="330" y="8" width="190" height="16" forecolor="#FFFFFF" uuid="82e7899d-8d9e-4b34-ad8c-8133bd7e9024"/>
                 <textElement textAlignment="Right">
                     <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Atleta: " + ($P{USUARIO} != null ? $P{USUARIO} : "General")]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="330" y="24" width="190" height="16" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-888888888888"/>
+                <reportElement x="330" y="24" width="190" height="16" forecolor="#FFFFFF" uuid="385e6640-49ec-444f-a7d9-ced216cb2492"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Meta: " + ($P{OBJETIVO} != null ? $P{OBJETIVO} : "Definición / Volumen")]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="330" y="40" width="190" height="16" forecolor="#FFFFFF" uuid="e1111111-2222-3333-4444-999999999999"/>
+                <reportElement x="330" y="40" width="190" height="16" forecolor="#FFFFFF" uuid="a62a24c7-becf-4ddc-8cd1-a50b15e2539f"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
@@ -59,46 +82,46 @@
     <columnHeader>
         <band height="25">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="22" backcolor="#EEEEEE" uuid="f1111111-1111-1111-1111-111111111111"/>
+                <reportElement x="0" y="0" width="535" height="22" backcolor="#EEEEEE" uuid="7b04ca35-12ef-493f-9708-70addc193160"/>
                 <graphicElement><pen lineWidth="0.5" lineColor="#CCCCCC"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="8" y="3" width="40" height="16" uuid="f2222222-1111-1111-1111-111111111111"/>
+                <reportElement x="8" y="3" width="40" height="16" uuid="e98700f8-e0ad-4ee9-aeab-407047543bc4"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9" isBold="true"/>
                 </textElement>
-                <text><![CDATA[Día]]></text>
+                <text><![CDATA[#]]></text>
             </staticText>
             <staticText>
-                <reportElement x="55" y="3" width="170" height="16" uuid="f3333333-1111-1111-1111-111111111111"/>
+                <reportElement x="55" y="3" width="170" height="16" uuid="0b0ece1f-9b4c-4416-90a8-9a0fb6e070de"/>
                 <textElement verticalAlignment="Middle">
                     <font size="9" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Ejercicio]]></text>
             </staticText>
             <staticText>
-                <reportElement x="230" y="3" width="110" height="16" uuid="f4444444-1111-1111-1111-111111111111"/>
+                <reportElement x="230" y="3" width="110" height="16" uuid="389ab1a7-dc65-452e-adcd-16c6f5795315"/>
                 <textElement verticalAlignment="Middle">
                     <font size="9" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Grupo Muscular]]></text>
             </staticText>
             <staticText>
-                <reportElement x="345" y="3" width="55" height="16" uuid="f5555555-1111-1111-1111-111111111111"/>
+                <reportElement x="345" y="3" width="55" height="16" uuid="aa8c58ad-881e-4bf0-af4b-a10d015b6f15"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Series]]></text>
             </staticText>
             <staticText>
-                <reportElement x="405" y="3" width="65" height="16" uuid="f6666666-1111-1111-1111-111111111111"/>
+                <reportElement x="405" y="3" width="65" height="16" uuid="4a201092-6c67-4d45-9f42-9c2652ef2e5a"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Reps]]></text>
             </staticText>
             <staticText>
-                <reportElement x="475" y="3" width="55" height="16" uuid="f7777777-1111-1111-1111-111111111111"/>
+                <reportElement x="475" y="3" width="55" height="16" uuid="4268180f-9710-4c7b-bb10-2401ab729c54"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9" isBold="true"/>
                 </textElement>
@@ -110,45 +133,45 @@
     <detail>
         <band height="20">
             <line>
-                <reportElement x="0" y="19" width="535" height="1" forecolor="#F0F0F0" uuid="d1111111-1111-1111-1111-111111111111"/>
+                <reportElement x="0" y="19" width="535" height="1" forecolor="#F0F0F0" uuid="4e3ba952-3907-4f3a-82e1-e117290374f5"/>
             </line>
             <textField>
-                <reportElement x="8" y="2" width="40" height="15" uuid="d2222222-1111-1111-1111-111111111111"/>
+                <reportElement x="8" y="2" width="40" height="15" uuid="ff9a04ca-cb5f-4d53-88eb-c06c6e0885c8"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
-                <textFieldExpression><![CDATA[$F{diaSemana} != null ? "Día " + $F{diaSemana} : "-"]]></textFieldExpression>
+                <textFieldExpression><![CDATA[$V{Dia_COUNT}]]></textFieldExpression>
             </textField>
             <textField textAdjust="StretchHeight">
-                <reportElement x="55" y="2" width="170" height="15" uuid="d3333333-1111-1111-1111-111111111111"/>
+                <reportElement x="55" y="2" width="170" height="15" uuid="c491b4f9-6042-4be9-b287-91c7f75171a1"/>
                 <textElement verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{nombreEjercicio} != null ? $F{nombreEjercicio} : ""]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="230" y="2" width="110" height="15" uuid="d4444444-1111-1111-1111-111111111111"/>
+                <reportElement x="230" y="2" width="110" height="15" uuid="5f98502c-df39-4887-adfa-bbe364959f0c"/>
                 <textElement verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{grupoMuscular} != null ? $F{grupoMuscular} : ""]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="345" y="2" width="55" height="15" uuid="d5555555-1111-1111-1111-111111111111"/>
+                <reportElement x="345" y="2" width="55" height="15" uuid="e4bd3701-a349-404c-90df-1bc1bded18a0"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{series} != null ? $F{series} : "-"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="405" y="2" width="65" height="15" uuid="d6666666-1111-1111-1111-111111111111"/>
+                <reportElement x="405" y="2" width="65" height="15" uuid="ca181bd9-1b89-4f52-b36f-591652ab1ecd"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA[$F{repeticiones} != null ? $F{repeticiones} : "-"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="475" y="2" width="55" height="15" uuid="d7777777-1111-1111-1111-111111111111"/>
+                <reportElement x="475" y="2" width="55" height="15" uuid="6c79b6b6-6d69-4e75-adb4-09a1d61f4917"/>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
@@ -160,20 +183,39 @@
     <pageFooter>
         <band height="30">
             <textField>
-                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="p1111111-1111-1111-1111-111111111111"/>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="1e52ab37-eafa-46e6-af0c-baeeb13fa378"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="p2222222-2222-2222-2222-222222222222"/>
+                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="7e3170dc-6d80-4f18-9b98-dcc42ce49d3c"/>
                 <textElement>
                     <font size="9"/>
                 </textElement>
-                <text><![CDATA[NutriFit - Módulo de Entrenamiento]]></text>
+                <text><![CDATA[Solea - Módulo de Entrenamiento]]></text>
             </staticText>
         </band>
     </pageFooter>
+
+    <lastPageFooter>
+        <band height="30">
+            <textField>
+                <reportElement x="10" y="8" width="330" height="15" forecolor="#555555" uuid="5b1e2c0a-3f4d-4a6b-9c8d-7e6f5a4b3c2d"/>
+                <textElement>
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Total semanal: " + $V{TOTAL_EJERCICIOS} + " ejercicios · " + $V{TOTAL_SERIES} + " series"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="6c2f3d1b-4a5e-4b7c-8d9e-0f1a2b3c4d5e"/>
+                <textElement textAlignment="Right">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </lastPageFooter>
 
 </jasperReport>

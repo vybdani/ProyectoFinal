@@ -3,7 +3,6 @@ package ni.edu.uam.proyectofinal.util;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import ni.edu.uam.proyectofinal.HelloApplication;
 
@@ -21,16 +20,24 @@ public final class Navegacion {
         try {
             FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("views/" + vista));
             Stage stage = (Stage) origen.getScene().getWindow();
-            stage.setScene(new Scene(loader.load(), ancho, alto));
-            stage.setTitle("NutriFit - " + titulo);
+            Scene escena = new Scene(loader.load(), ancho, alto);
+            aplicarEstilos(escena);
+            stage.setScene(escena);
+            stage.setTitle("Solea - " + titulo);
             stage.setResizable(true);
             stage.centerOnScreen();
         } catch (IOException | RuntimeException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error de navegación");
-            alert.setHeaderText(null);
-            alert.setContentText("No se pudo abrir la pantalla " + vista + ": " + e.getMessage());
-            alert.showAndWait();
+            e.printStackTrace();
+            Alertas.error("No se pudo abrir la pantalla",
+                    "Ocurrió un problema al abrir " + titulo + ". Si el problema sigue, revisa la conexión con PostgreSQL.");
+        }
+    }
+
+    /** Agrega la hoja de estilos común (app.css) a una escena. */
+    public static void aplicarEstilos(Scene escena) {
+        var hoja = HelloApplication.class.getResource("views/app.css");
+        if (hoja != null) {
+            escena.getStylesheets().add(hoja.toExternalForm());
         }
     }
 

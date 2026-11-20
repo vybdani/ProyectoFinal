@@ -5,17 +5,28 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import ni.edu.uam.proyectofinal.dao.AlimentoDAO;
 import ni.edu.uam.proyectofinal.dao.RecetaDAO;
 import ni.edu.uam.proyectofinal.model.Alimento;
 import ni.edu.uam.proyectofinal.model.Receta;
 import ni.edu.uam.proyectofinal.model.RecetaIngrediente;
+import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.util.BuscadorAlimentosDialog;
 import ni.edu.uam.proyectofinal.util.Navegacion;
+import ni.edu.uam.proyectofinal.util.Validacion;
+import ni.edu.uam.proyectofinal.util.Validacion.ValidacionException;
 
 import java.util.List;
 
 public class RecetaController {
+
+    private static final int MAX_INGREDIENTES = 20;
 
     @FXML private TextField txtNombreReceta;
     @FXML private ComboBox<String> cmbTipoComida;
@@ -60,24 +71,23 @@ public class RecetaController {
                 String.format("P: %.0fg | C: %.0fg | G: %.0fg",
                         d.getValue().getProteinasTotales(),
                         d.getValue().getCarbohidratosTotales(),
-                        d.getValue().getGrasasTotales())
-        ));
+                        d.getValue().getGrasasTotales())));
         tblRecetas.setItems(listaRecetas);
 
-        tblRecetas.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, nueva) -> {
+        tblRecetas.getSelectionModel().selectedItemProperty().addListener((obs, anterior, nueva) -> {
             if (nueva != null) {
                 cargarRecetaEnFormulario(nueva);
             }
         });
 
-        cargarAlimentos();
-        cargarRecetas();
-    }
-
-    private void cargarAlimentos() {
-        alimentoDAO.asegurarAlimentosIniciales();
-        List<Alimento> alimentos = alimentoDAO.listarTodos();
-        cmbAlimento.setItems(FXCollections.observableArrayList(alimentos));
+        try {
+            alimentoDAO.asegurarAlimentosIniciales();
+            cmbAlimento.setItems(FXCollections.observableArrayList(alimentoDAO.listarTodos()));
+            cargarRecetas();
+        } catch (Exception e) {
+            Alertas.error("No se pudieron cargar las recetas", e);
+        }
+        actualizarTotalesEtiqueta();
     }
 
     private void cargarRecetas() {
@@ -86,77 +96,107 @@ public class RecetaController {
 
     @FXML
     private void handleAgregarIngrediente() {
-        Alimento alimento = cmbAlimento.getValue();
-        if (alimento == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Validación", "Selecciona un alimento.");
-            return;
-        }
         try {
-            double gramos = Double.parseDouble(txtGramos.getText().trim());
-            if (gramos <= 0) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Validación", "Los gramos deben ser mayores a 0.");
-                return;
+            Alimento alimento = Validacion.seleccion(cmbAlimento, "un alimento");
+            double gramos = Validacion.decimal(txtGramos, "los gramos", 1, 2000);
+
+            // Si el alimento ya está en la receta, se suman los gramos en vez de repetirlo
+            RecetaIngrediente existente = ingredientesActuales.stream()
+                    .filter(i -> i.getAlimento().getId().equals(alimento.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if (existente != null) {
+                double total = existente.getCantidadGramos() + gramos;
+                if (total > 2000) {
+                    throw Validacion.fallo(txtGramos, "Con esa cantidad, " + alimento.getNombre()
+                            + " pasaría de 2000 g en la receta.");
+                }
+                ingredientesActuales.set(ingredientesActuales.indexOf(existente), new RecetaIngrediente(alimento, total));
+            } else {
+                if (ingredientesActuales.size() >= MAX_INGREDIENTES) {
+                    throw Validacion.fallo(cmbAlimento, "Una receta admite como máximo " + MAX_INGREDIENTES + " ingredientes.");
+                }
+                ingredientesActuales.add(new RecetaIngrediente(alimento, gramos));
             }
-            ingredientesActuales.add(new RecetaIngrediente(alimento, gramos));
             txtGramos.clear();
+            cmbAlimento.setValue(null);
             actualizarTotalesEtiqueta();
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "Ingresa una cantidad numérica válida en gramos.");
+        } catch (ValidacionException e) {
+            Alertas.aviso("Revisa el ingrediente", e.getMessage());
         }
+    }
+
+    /** Busca un alimento en internet (API de Solea → Open Food Facts) para usarlo como ingrediente. */
+    @FXML
+    private void handleBuscarEnInternet() {
+        BuscadorAlimentosDialog.mostrar(txtNombreReceta).ifPresent(alimento -> {
+            try {
+                cmbAlimento.setItems(FXCollections.observableArrayList(alimentoDAO.listarTodos()));
+                cmbAlimento.getItems().stream()
+                        .filter(a -> a.getId().equals(alimento.getId()))
+                        .findFirst()
+                        .ifPresent(cmbAlimento::setValue);
+                txtGramos.requestFocus();
+            } catch (Exception e) {
+                Alertas.error("No se pudieron recargar los alimentos", e);
+            }
+        });
     }
 
     @FXML
     private void handleQuitarIngrediente() {
         RecetaIngrediente sel = tblIngredientes.getSelectionModel().getSelectedItem();
-        if (sel != null) {
-            ingredientesActuales.remove(sel);
-            actualizarTotalesEtiqueta();
+        if (sel == null) {
+            Alertas.aviso("Nada seleccionado", "Selecciona en la tabla el ingrediente que quieres quitar.");
+            return;
         }
+        ingredientesActuales.remove(sel);
+        actualizarTotalesEtiqueta();
     }
 
     @FXML
     private void handleGuardarReceta() {
-        String nombre = txtNombreReceta.getText().trim();
-        String tipo = cmbTipoComida.getValue();
-
-        if (nombre.isEmpty() || tipo == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos obligatorios", "Ingresa el nombre de la receta y el tipo de comida.");
-            return;
-        }
-        if (ingredientesActuales.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Sin ingredientes", "Agrega al menos un ingrediente a la receta.");
-            return;
-        }
-
         try {
-            int tiempo = txtTiempoPrep.getText().trim().isEmpty() ? 15 : Integer.parseInt(txtTiempoPrep.getText().trim());
+            String nombre = Validacion.texto(txtNombreReceta, "el nombre de la receta", 120);
+            String tipo = Validacion.seleccion(cmbTipoComida, "el tipo de comida");
+            Integer tiempoEscrito = Validacion.enteroOpcional(txtTiempoPrep, "el tiempo de preparación (min)", 1, 600);
+            int tiempo = tiempoEscrito != null ? tiempoEscrito : 15;
+            String descripcion = Validacion.textoOpcional(txtDescripcion, "la descripción", 500);
+            if (ingredientesActuales.isEmpty()) {
+                throw Validacion.fallo(cmbAlimento, "Agrega al menos un ingrediente a la receta.");
+            }
+            boolean nombreRepetido = listaRecetas.stream()
+                    .anyMatch(r -> r.getNombre().equalsIgnoreCase(nombre)
+                            && (recetaSeleccionada == null || !r.getId().equals(recetaSeleccionada.getId())));
+            if (nombreRepetido) {
+                throw Validacion.fallo(txtNombreReceta, "Ya existe una receta llamada \"" + nombre + "\".");
+            }
 
             if (recetaSeleccionada == null) {
-                Receta nueva = new Receta(nombre, tipo, txtDescripcion.getText().trim(), tiempo);
-                for (RecetaIngrediente ing : ingredientesActuales) {
-                    nueva.agregarIngrediente(new RecetaIngrediente(ing.getAlimento(), ing.getCantidadGramos()));
-                }
+                Receta nueva = new Receta(nombre, tipo, descripcion, tiempo);
+                ingredientesActuales.forEach(i ->
+                        nueva.agregarIngrediente(new RecetaIngrediente(i.getAlimento(), i.getCantidadGramos())));
                 recetaDAO.guardar(nueva);
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Guardado", "Receta registrada correctamente.");
+                Alertas.info("Receta guardada", "\"" + nombre + "\" se agregó a tus recetas.");
             } else {
                 recetaSeleccionada.setNombre(nombre);
                 recetaSeleccionada.setTipoComida(tipo);
-                recetaSeleccionada.setDescripcion(txtDescripcion.getText().trim());
+                recetaSeleccionada.setDescripcion(descripcion);
                 recetaSeleccionada.setTiempoPreparacionMin(tiempo);
+                // orphanRemoval borra en la BD los ingredientes que se quitan de la lista
                 recetaSeleccionada.getIngredientes().clear();
-                for (RecetaIngrediente ing : ingredientesActuales) {
-                    recetaSeleccionada.agregarIngrediente(new RecetaIngrediente(ing.getAlimento(), ing.getCantidadGramos()));
-                }
+                ingredientesActuales.forEach(i ->
+                        recetaSeleccionada.agregarIngrediente(new RecetaIngrediente(i.getAlimento(), i.getCantidadGramos())));
                 recetaDAO.actualizar(recetaSeleccionada);
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Actualizado", "Receta actualizada correctamente.");
+                Alertas.info("Receta actualizada", "Se guardaron los cambios de \"" + nombre + "\".");
             }
-
             limpiarFormulario();
             cargarRecetas();
-        } catch (NumberFormatException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Formato inválido", "El tiempo de preparación debe ser un número entero.");
+        } catch (ValidacionException e) {
+            Alertas.aviso("Revisa la receta", e.getMessage());
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error de Persistencia", e.getMessage());
+            Alertas.error("No se pudo guardar la receta", e);
+            recargarSinPerderFormulario();
         }
     }
 
@@ -164,32 +204,39 @@ public class RecetaController {
     private void handleEliminarReceta() {
         Receta sel = tblRecetas.getSelectionModel().getSelectedItem();
         if (sel == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Selección", "Selecciona una receta de la tabla para eliminar.");
+            Alertas.aviso("Nada seleccionado", "Selecciona en la tabla la receta que quieres eliminar.");
+            return;
+        }
+        if (!Alertas.confirmar("Eliminar receta", "¿Eliminar la receta \"" + sel.getNombre() + "\"?")) {
             return;
         }
         try {
             recetaDAO.eliminar(sel.getId());
             limpiarFormulario();
             cargarRecetas();
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Eliminada", "Receta eliminada correctamente.");
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error al eliminar", "No se puede eliminar la receta porque está asignada a un plan de comidas.");
+            // Por ejemplo: la receta está en un plan semanal (el DAO explica el motivo)
+            Alertas.error("No se pudo eliminar la receta", e);
         }
     }
 
     @FXML
     private void handleVerResumenHQL() {
-        List<Object[]> resumen = recetaDAO.obtenerResumenCaloricoRecetas();
-        if (resumen.isEmpty()) {
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Consulta HQL", "No hay recetas registradas todavía.");
-            return;
+        try {
+            List<Object[]> resumen = recetaDAO.obtenerResumenCaloricoRecetas();
+            if (resumen.isEmpty()) {
+                Alertas.info("Resumen de recetas", "Todavía no hay recetas registradas.");
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (Object[] fila : resumen) {
+                sb.append(String.format("• %s [%s]: %.0f kcal (P: %.1fg | C: %.1fg | G: %.1fg)%n",
+                        fila[1], fila[2], numero(fila[3]), numero(fila[4]), numero(fila[5]), numero(fila[6])));
+            }
+            Alertas.info("Resumen calórico por receta", sb.toString());
+        } catch (Exception e) {
+            Alertas.error("No se pudo calcular el resumen", e);
         }
-        StringBuilder sb = new StringBuilder();
-        for (Object[] fila : resumen) {
-            sb.append(String.format("• %s [%s]: %.0f kcal (P: %.1fg | C: %.1fg | G: %.1fg)\n",
-                    fila[1], fila[2], (Double) fila[3], (Double) fila[4], (Double) fila[5], (Double) fila[6]));
-        }
-        mostrarAlerta(Alert.AlertType.INFORMATION, "Resumen Calórico por Receta (HQL)", sb.toString());
     }
 
     @FXML
@@ -219,9 +266,20 @@ public class RecetaController {
         txtTiempoPrep.clear();
         txtDescripcion.clear();
         txtGramos.clear();
+        cmbAlimento.setValue(null);
         ingredientesActuales.clear();
         tblRecetas.getSelectionModel().clearSelection();
         actualizarTotalesEtiqueta();
+    }
+
+    /** Tras un error al guardar, recarga la tabla para que no quede una receta a medio editar. */
+    private void recargarSinPerderFormulario() {
+        try {
+            recetaSeleccionada = null;
+            cargarRecetas();
+        } catch (Exception ignorada) {
+            // El error principal ya se mostró
+        }
     }
 
     private void actualizarTotalesEtiqueta() {
@@ -229,14 +287,11 @@ public class RecetaController {
         double prot = ingredientesActuales.stream().mapToDouble(RecetaIngrediente::getProteinas).sum();
         double carb = ingredientesActuales.stream().mapToDouble(RecetaIngrediente::getCarbohidratos).sum();
         double gras = ingredientesActuales.stream().mapToDouble(RecetaIngrediente::getGrasas).sum();
-        lblTotalesReceta.setText(String.format("Total Receta: %.0f kcal | Proteína: %.1fg | Carbs: %.1fg | Grasas: %.1fg", kcal, prot, carb, gras));
+        lblTotalesReceta.setText(String.format(
+                "Total receta: %.0f kcal | Proteína: %.1f g | Carbohidratos: %.1f g | Grasas: %.1f g", kcal, prot, carb, gras));
     }
 
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+    private static double numero(Object valor) {
+        return valor instanceof Number n ? n.doubleValue() : 0;
     }
 }

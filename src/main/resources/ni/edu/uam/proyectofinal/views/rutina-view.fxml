@@ -63,6 +63,7 @@
     <HBox spacing="10.0">
         <Button text="Eliminar rutina" onAction="#handleEliminar"
                 style="-fx-background-color: #f44336; -fx-text-fill: white;" />
+        <Button text="Exportar PDF" onAction="#handleExportarPdf" />
         <Button text="Volver" onAction="#handleVolver" />
     </HBox>
 </VBox>

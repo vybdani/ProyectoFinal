@@ -10,6 +10,7 @@ import ni.edu.uam.proyectofinal.dao.ObjetivoDAO;
 import ni.edu.uam.proyectofinal.model.Objetivo;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.service.CalculoNutricionalService;
+import ni.edu.uam.proyectofinal.util.Alertas;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
 
@@ -131,10 +132,6 @@ public class ModoController {
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        Alertas.mostrar(tipo, titulo, mensaje);
     }
 }

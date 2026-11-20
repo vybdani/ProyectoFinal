@@ -9,7 +9,9 @@ import ni.edu.uam.proyectofinal.dao.EjercicioDAO;
 import ni.edu.uam.proyectofinal.dao.GrupoMuscularDAO;
 import ni.edu.uam.proyectofinal.model.Ejercicio;
 import ni.edu.uam.proyectofinal.model.GrupoMuscular;
+import ni.edu.uam.proyectofinal.util.Alertas;
 import ni.edu.uam.proyectofinal.util.Navegacion;
+import ni.edu.uam.proyectofinal.util.Validacion;
 
 import java.util.List;
 
@@ -70,26 +72,17 @@ public class EjercicioController {
 
     @FXML
     private void handleGuardar() {
-        String nombre = txtNombre.getText().trim();
-        GrupoMuscular grupo = cmbGrupo.getValue();
-        String equipo = txtEquipo.getText().trim();
-        String descripcion = txtDescripcion.getText().trim();
-
-        if (nombre.isEmpty() || nombre.length() > 100) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Validación", "El nombre es obligatorio (máximo 100 caracteres).");
-            return;
-        }
-        if (grupo == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Validación", "Selecciona el grupo muscular.");
-            return;
-        }
-        if (equipo.length() > 60 || descripcion.length() > 300) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Validación",
-                    "El equipo admite 60 caracteres y la descripción 300.");
-            return;
-        }
-
         try {
+            String nombre = Validacion.texto(txtNombre, "el nombre del ejercicio", 100);
+            GrupoMuscular grupo = Validacion.seleccion(cmbGrupo, "el grupo muscular");
+            String equipo = Validacion.textoOpcional(txtEquipo, "el equipo", 60);
+            String descripcion = Validacion.textoOpcional(txtDescripcion, "la descripción", 300);
+            boolean repetido = todos.stream().anyMatch(e -> e.getNombre().equalsIgnoreCase(nombre)
+                    && (seleccionado == null || !e.getId().equals(seleccionado.getId())));
+            if (repetido) {
+                throw Validacion.fallo(txtNombre, "Ya existe un ejercicio llamado \"" + nombre + "\".");
+            }
+
             if (seleccionado == null) {
                 ejercicioDAO.guardar(new Ejercicio(nombre, equipo, descripcion, grupo));
             } else {
@@ -101,8 +94,10 @@ public class EjercicioController {
             }
             cargarEjercicios();
             limpiarFormulario();
+        } catch (Validacion.ValidacionException e) {
+            Alertas.aviso("Revisa el ejercicio", e.getMessage());
         } catch (Exception e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
+            Alertas.error("No se pudo guardar el ejercicio", e);
         }
     }
 
@@ -113,10 +108,7 @@ public class EjercicioController {
             mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "Selecciona un ejercicio de la tabla.");
             return;
         }
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION,
-                "¿Eliminar \"" + ejercicio.getNombre() + "\"?", ButtonType.YES, ButtonType.NO);
-        confirmacion.setHeaderText(null);
-        if (confirmacion.showAndWait().orElse(ButtonType.NO) != ButtonType.YES) {
+        if (!Alertas.confirmar("Confirmar eliminación", "¿Eliminar \"" + ejercicio.getNombre() + "\"?")) {
             return;
         }
         try {
@@ -173,10 +165,6 @@ public class EjercicioController {
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        Alertas.mostrar(tipo, titulo, mensaje);
     }
 }
