@@ -45,7 +45,7 @@
     <title>
         <band height="80">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="60" backcolor="#FF9800" uuid="4b307a0f-1df1-4248-9a4a-e703aa220a29"/>
+                <reportElement x="0" y="0" width="535" height="60" backcolor="#B05A36" uuid="4b307a0f-1df1-4248-9a4a-e703aa220a29"/>
                 <graphicElement><pen lineWidth="0.0"/></graphicElement>
             </rectangle>
             <staticText>
@@ -82,8 +82,8 @@
     <columnHeader>
         <band height="25">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="22" backcolor="#EEEEEE" uuid="7b04ca35-12ef-493f-9708-70addc193160"/>
-                <graphicElement><pen lineWidth="0.5" lineColor="#CCCCCC"/></graphicElement>
+                <reportElement x="0" y="0" width="535" height="22" backcolor="#F4E3D8" uuid="7b04ca35-12ef-493f-9708-70addc193160"/>
+                <graphicElement><pen lineWidth="0.5" lineColor="#E4C3B0"/></graphicElement>
             </rectangle>
             <staticText>
                 <reportElement x="8" y="3" width="40" height="16" uuid="e98700f8-e0ad-4ee9-aeab-407047543bc4"/>
@@ -133,7 +133,7 @@
     <detail>
         <band height="20">
             <line>
-                <reportElement x="0" y="19" width="535" height="1" forecolor="#F0F0F0" uuid="4e3ba952-3907-4f3a-82e1-e117290374f5"/>
+                <reportElement x="0" y="19" width="535" height="1" forecolor="#E4E0D5" uuid="4e3ba952-3907-4f3a-82e1-e117290374f5"/>
             </line>
             <textField>
                 <reportElement x="8" y="2" width="40" height="15" uuid="ff9a04ca-cb5f-4d53-88eb-c06c6e0885c8"/>
@@ -183,14 +183,14 @@
     <pageFooter>
         <band height="30">
             <textField>
-                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="1e52ab37-eafa-46e6-af0c-baeeb13fa378"/>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#6E6C64" uuid="1e52ab37-eafa-46e6-af0c-baeeb13fa378"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="7e3170dc-6d80-4f18-9b98-dcc42ce49d3c"/>
+                <reportElement x="10" y="8" width="250" height="15" forecolor="#6E6C64" uuid="7e3170dc-6d80-4f18-9b98-dcc42ce49d3c"/>
                 <textElement>
                     <font size="9"/>
                 </textElement>
@@ -202,14 +202,14 @@
     <lastPageFooter>
         <band height="30">
             <textField>
-                <reportElement x="10" y="8" width="330" height="15" forecolor="#555555" uuid="5b1e2c0a-3f4d-4a6b-9c8d-7e6f5a4b3c2d"/>
+                <reportElement x="10" y="8" width="330" height="15" forecolor="#4A4943" uuid="5b1e2c0a-3f4d-4a6b-9c8d-7e6f5a4b3c2d"/>
                 <textElement>
                     <font size="9" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Total semanal: " + $V{TOTAL_EJERCICIOS} + " ejercicios · " + $V{TOTAL_SERIES} + " series"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="6c2f3d1b-4a5e-4b7c-8d9e-0f1a2b3c4d5e"/>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#6E6C64" uuid="6c2f3d1b-4a5e-4b7c-8d9e-0f1a2b3c4d5e"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>

@@ -21,6 +21,44 @@ public class RecetaDAO extends GenericDAO<Receta> {
                 .list());
     }
 
+    /**
+     * Carga las recetas de {@link DatosIniciales} que todavía no existan (por nombre) en una sola
+     * transacción. Usa los alimentos ya guardados; una receta cuyo alimento falte se omite.
+     * Devuelve cuántas recetas agregó.
+     */
+    public int asegurarRecetasIniciales() {
+        return enTransaccion("cargar las recetas iniciales", session -> {
+            java.util.Set<String> existentes = new java.util.HashSet<>(session.createQuery(
+                    "SELECT lower(r.nombre) FROM Receta r", String.class).list());
+            java.util.Map<String, ni.edu.uam.proyectofinal.model.Alimento> alimentos = new java.util.HashMap<>();
+            session.createQuery("FROM Alimento a", ni.edu.uam.proyectofinal.model.Alimento.class).list()
+                    .forEach(a -> alimentos.put(a.getNombre().toLowerCase(), a));
+
+            int agregadas = 0;
+            for (DatosIniciales.RecetaBase base : DatosIniciales.RECETAS) {
+                if (existentes.contains(base.nombre().toLowerCase())) {
+                    continue;
+                }
+                Receta receta = new Receta(base.nombre(), base.tipoComida(), base.descripcion(), base.minutos());
+                boolean completa = true;
+                for (DatosIniciales.IngredienteBase ing : base.ingredientes()) {
+                    ni.edu.uam.proyectofinal.model.Alimento alimento = alimentos.get(ing.alimento().toLowerCase());
+                    if (alimento == null) {
+                        completa = false;
+                        break;
+                    }
+                    receta.agregarIngrediente(new ni.edu.uam.proyectofinal.model.RecetaIngrediente(alimento, ing.gramos()));
+                }
+                if (completa) {
+                    session.persist(receta); // cascade guarda también los ingredientes
+                    existentes.add(base.nombre().toLowerCase());
+                    agregadas++;
+                }
+            }
+            return agregadas;
+        });
+    }
+
     /** Las recetas siempre se listan con sus ingredientes (la colección es LAZY). */
     @Override
     public List<Receta> listarTodos() {

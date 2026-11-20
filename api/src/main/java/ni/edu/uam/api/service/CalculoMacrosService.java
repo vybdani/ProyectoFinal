@@ -14,9 +14,11 @@ import java.util.Locale;
  * <ul>
  *   <li>TMB: Katch-McArdle si hay % de grasa; si no, Mifflin-St Jeor.</li>
  *   <li>Factor de actividad: sedentario 1.2, ligero 1.375, moderado 1.55, alto 1.725.</li>
- *   <li>Ajuste por objetivo: bajar -20 %, subir +10 %, volumen +12 %, definición -20 %.</li>
+ *   <li>Ajuste por objetivo: bajar -20 %, subir +10 %, volumen +12 %, definición -20 %,
+ *       fuerza +5 %, recomposición -10 %, resistencia 0 %, tonificación -5 %.</li>
  *   <li>Mínimo seguro: 1200 kcal (mujeres) / 1500 kcal (hombres).</li>
- *   <li>Proteína por kg: 1.6 mantener, 1.8 bajar/subir, 2.0 volumen, 2.2 definición.
+ *   <li>Proteína por kg: 1.6 mantener/resistencia, 1.8 bajar/subir/tonificación, 2.0 volumen/fuerza,
+ *       2.2 definición/recomposición.
  *       Grasa 25 % de las kcal; el resto, carbohidratos.</li>
  * </ul>
  */
@@ -72,7 +74,11 @@ public class CalculoMacrosService {
         MANTENER("Mantener peso", 0, 1.6),
         SUBIR("Subir de peso", 0.10, 1.8),
         VOLUMEN("Volumen muscular", 0.12, 2.0),
-        DEFINICION("Definición", -0.20, 2.2);
+        DEFINICION("Definición", -0.20, 2.2),
+        FUERZA("Fuerza", 0.05, 2.0),
+        RECOMPOSICION("Recomposición corporal", -0.10, 2.2),
+        RESISTENCIA("Resistencia muscular", 0, 1.6),
+        TONIFICACION("Tonificación", -0.05, 1.8);
 
         final String nombre;
         final double ajuste;
@@ -97,7 +103,7 @@ public class CalculoMacrosService {
                 }
             }
             throw new IllegalArgumentException("Objetivo no válido: " + texto
-                    + ". Usa Bajar de peso, Mantener peso, Subir de peso, Volumen muscular o Definición.");
+                    + ". Usa Bajar de peso, Mantener peso, Subir de peso, Volumen muscular, Definición, Fuerza, Recomposición corporal, Resistencia muscular o Tonificación.");
         }
     }
 }

@@ -1,58 +1,46 @@
-# Guía de Reportes JasperReports para Daniella
+# Reportes PDF de Solea (JasperReports)
 
-Hola Daniella, aquí tienes las plantillas listas y la clase de utilidad `ReporteUtil` para que solo tengas que llamar una línea de código desde tus controladores o botones para generar y exportar los reportes en PDF.
+Solea genera tres reportes en PDF con **JasperReports 6.21**. Las plantillas `.jrxml` están en esta
+carpeta y los datos salen de PostgreSQL a través de los DAO de Hibernate.
 
----
+| Plantilla | Reporte | Dónde se exporta en la app |
+|---|---|---|
+| `ReporteRutinaGimnasio.jrxml` | Rutina semanal agrupada por día, con series, repeticiones, descanso y total semanal | Rutina de gimnasio → **Exportar PDF** |
+| `ReporteListaSuper.jrxml` | Lista del súper (pendientes primero) | Lista del súper → **Exportar PDF** |
+| `ReportePerfilNutricional.jrxml` | Ficha con perfil físico, objetivo, calorías y macros del día | Cálculo → **Exportar PDF** |
 
-## 1. Plantillas Disponibles (en esta misma carpeta)
+## Cómo está armado
 
-| Archivo | Para qué sirve | Parámetros que recibe | Campos de la lista |
-|---|---|---|---|
-| **`ReporteListaSuper.jrxml`** | Lista del supermercado para compras | `USUARIO`, `FECHA` | `alimento`, `cantidad`, `unidad`, `comprado` |
-| **`ReporteRutinaGimnasio.jrxml`** | Plan de entrenamiento semanal | `USUARIO`, `OBJETIVO`, `DIAS_SEMANA`, `FECHA` | `diaSemana`, `nombreEjercicio`, `grupoMuscular`, `series`, `repeticiones`, `descansoSegundos` |
-| **`ReportePerfilNutricional.jrxml`** | Ficha técnica de perfil y macros | `NOMBRE_USUARIO`, `CORREO`, `PESO`, `ALTURA`, `EDAD`, `SEXO`, `OBJETIVO`, `CALORIAS_OBJETIVO`, `PROTEINAS_G`, `CARBOHIDRATOS_G`, `GRASAS_G`, `FECHA` | No requiere lista (se llena con los parámetros) |
-
----
-
-## 2. Cómo generar y exportar un reporte en 3 líneas de código
-
-Puedes usar `ReporteUtil` desde cualquier controlador de JavaFX:
-
-### Ejemplo A: Exportar Lista del Súper a PDF
-```java
-// 1. Parámetros opcionales
-Map<String, Object> params = new HashMap<>();
-params.put("USUARIO", SesionActual.getUsuarioActivo().getNombre());
-params.put("FECHA", LocalDate.now().toString());
-
-// 2. Obtener la lista desde tu DAO o TableView (por ejemplo ItemListaSuperDAO)
-List<ItemListaSuper> items = itemListaSuperDAO.listarPorUsuario(usuario.getId());
-
-// 3. Generar y exportar a PDF (o visualizar)
-JasperPrint print = ReporteUtil.compilarYLlenar("ReporteListaSuper.jrxml", params, items);
-ReporteUtil.exportarPdf(print, "Lista_Super.pdf");
-ReporteUtil.abrirPdfConLectorDelSistema("Lista_Super.pdf"); // Abre el visor de PDF de Windows
+```
+Pantalla (botón Exportar PDF)
+   └─ ExportadorPdf            elige dónde guardar y genera el PDF en segundo plano
+        └─ ReporteService      reúne los datos con los DAO y arma las filas del reporte
+             └─ ReporteUtil    compila la plantilla (una sola vez, queda en caché), la llena y exporta a PDF
 ```
 
-### Ejemplo B: Exportar Rutina de Gimnasio a PDF
-```java
-Map<String, Object> params = new HashMap<>();
-params.put("USUARIO", SesionActual.getUsuarioActivo().getNombre());
-params.put("OBJETIVO", "Volumen / Masa Muscular");
-params.put("DIAS_SEMANA", 4);
+- **`ReporteService`** (`ni.edu.uam.proyectofinal.reporte`): un método por reporte
+  (`exportarRutina`, `exportarListaSuper`, `exportarPerfilNutricional`). Si faltan datos
+  (sin rutina, lista vacía, sin perfil o sin cálculo) lanza un aviso claro en lugar de un PDF vacío.
+- **Filas del reporte**: `FilaRutinaReporte` y `FilaListaSuperReporte` son JavaBeans con getters,
+  porque JasperReports lee los campos `$F{...}` por reflexión. El paquete se exporta en `module-info.java`.
+- **`ReporteUtil`** (`ni.edu.uam.proyectofinal.util`): compilar una plantilla tarda segundos, así que
+  se compila la primera vez y se reutiliza (los siguientes PDF tardan menos de medio segundo).
 
-// Pasar la lista de ejercicios de la rutina
-JasperPrint print = ReporteUtil.compilarYLlenar("ReporteRutinaGimnasio.jrxml", params, rutinaEjercicios);
-ReporteUtil.visualizar(print); // Abre la ventana interactiva de JasperViewer
-```
+## Campos de cada plantilla
 
----
+**Rutina** · parámetros `USUARIO`, `OBJETIVO`, `DIAS_SEMANA`, `FECHA` ·
+campos `diaSemana`, `nombreDia`, `nombreEjercicio`, `grupoMuscular`, `series`, `repeticiones`, `descansoSegundos`.
+Los ejercicios se agrupan por día (grupo de Jasper `Dia`) y el pie de la última página muestra el total semanal.
 
-## 3. ¿Dónde está la clase de utilidad?
-La clase está en:
-`ni.edu.uam.proyectofinal.util.ReporteUtil`
-Posee métodos para:
-- `ReporteUtil.compilarYLlenar(...)`
-- `ReporteUtil.exportarPdf(...)`
-- `ReporteUtil.visualizar(...)`
-- `ReporteUtil.abrirPdfConLectorDelSistema(...)`
+**Lista del súper** · parámetros `TITULO`, `USUARIO`, `FECHA` · campos `alimento`, `cantidad`, `unidad`, `comprado`.
+
+**Ficha nutricional** · solo parámetros: `NOMBRE_USUARIO`, `CORREO`, `PESO`, `ALTURA`, `EDAD`, `SEXO`,
+`OBJETIVO`, `CALORIAS_OBJETIVO`, `PROTEINAS_G`, `CARBOHIDRATOS_G`, `GRASAS_G`, `FECHA`.
+
+## Notas
+
+- Colores de la marca Solea: terracota `#B05A36` (gimnasio) y verde oliva `#5B6F00` (nutrición) sobre papel `#F7F5EE`.
+- Las fuentes PDF estándar no tienen emojis: los títulos de las plantillas no los usan.
+- En modo módulo, JasperReports necesita que `module-info.java` declare `requires` de OpenPDF, ECJ,
+  commons-beanutils, commons-digester, commons-collections4 y commons-logging; si falta alguno,
+  el PDF falla con `NoClassDefFoundError`.

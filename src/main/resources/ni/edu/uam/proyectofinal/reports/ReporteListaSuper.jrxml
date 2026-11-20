@@ -19,7 +19,7 @@
     <title>
         <band height="75">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="55" backcolor="#4CAF50" uuid="ac2d7d36-7855-4269-9e12-14298ccc5feb"/>
+                <reportElement x="0" y="0" width="535" height="55" backcolor="#5B6F00" uuid="ac2d7d36-7855-4269-9e12-14298ccc5feb"/>
                 <graphicElement><pen lineWidth="0.0"/></graphicElement>
             </rectangle>
             <staticText>
@@ -49,8 +49,8 @@
     <columnHeader>
         <band height="25">
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="22" backcolor="#E0E0E0" uuid="f4ba0d12-38a3-45c1-a74b-425e6efcd629"/>
-                <graphicElement><pen lineWidth="0.5" lineColor="#BDBDBD"/></graphicElement>
+                <reportElement x="0" y="0" width="535" height="22" backcolor="#EFEBE1" uuid="f4ba0d12-38a3-45c1-a74b-425e6efcd629"/>
+                <graphicElement><pen lineWidth="0.5" lineColor="#D4CFC3"/></graphicElement>
             </rectangle>
             <staticText>
                 <reportElement x="10" y="3" width="240" height="16" uuid="64bf8e09-4ca7-486e-96b4-f5d0feee1e23"/>
@@ -86,7 +86,7 @@
     <detail>
         <band height="22">
             <line>
-                <reportElement x="0" y="21" width="535" height="1" forecolor="#EEEEEE" uuid="b62764ec-077a-430b-92f2-3dcf3f9c3885"/>
+                <reportElement x="0" y="21" width="535" height="1" forecolor="#E4E0D5" uuid="b62764ec-077a-430b-92f2-3dcf3f9c3885"/>
             </line>
             <textField textAdjust="StretchHeight">
                 <reportElement x="10" y="2" width="240" height="16" uuid="c941b413-7ad1-4755-889f-3767641d5121"/>
@@ -116,14 +116,14 @@
     <pageFooter>
         <band height="30">
             <textField>
-                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="61e4a0fc-7d47-46f9-89aa-79f9bea94fef"/>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#6E6C64" uuid="61e4a0fc-7d47-46f9-89aa-79f9bea94fef"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="fe6157a4-10a4-4587-bc14-1b4af2c6c22e"/>
+                <reportElement x="10" y="8" width="250" height="15" forecolor="#6E6C64" uuid="fe6157a4-10a4-4587-bc14-1b4af2c6c22e"/>
                 <textElement>
                     <font size="9"/>
                 </textElement>

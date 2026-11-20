@@ -48,6 +48,22 @@ class CalculoMacrosServiceTest {
     }
 
     @Test
+    void reconoceLosNuevosObjetivosDeGimnasio() {
+        CalculoMacrosRequest base = new CalculoMacrosRequest(70.0, 175.0, 25, "Masculino", "Moderado", null, null);
+        double mantenimiento = servicio.calcular(base).caloriasMantenimiento();
+        assertEquals("Fuerza", servicio.calcular(conObjetivo(base, "Fuerza")).objetivo());
+        assertEquals(Math.round(mantenimiento * 1.05 * 10) / 10.0,
+                servicio.calcular(conObjetivo(base, "Fuerza")).caloriasObjetivo(), 0.2);
+        assertEquals(154.0, servicio.calcular(conObjetivo(base, "Recomposición corporal")).proteinasG()); // 2.2 g/kg
+        assertEquals(mantenimiento, servicio.calcular(conObjetivo(base, "Resistencia muscular")).caloriasObjetivo());
+        assertEquals("Tonificación", servicio.calcular(conObjetivo(base, "tonificacion")).objetivo());
+    }
+
+    private static CalculoMacrosRequest conObjetivo(CalculoMacrosRequest r, String objetivo) {
+        return new CalculoMacrosRequest(r.pesoKg(), r.alturaCm(), r.edad(), r.sexo(), r.nivelActividad(), objetivo, r.porcentajeGrasa());
+    }
+
+    @Test
     void rechazaUnObjetivoQueNoExiste() {
         assertThrows(IllegalArgumentException.class, () -> servicio.calcular(
                 new CalculoMacrosRequest(70.0, 175.0, 25, "Masculino", "Ligero", "ser astronauta", null)));

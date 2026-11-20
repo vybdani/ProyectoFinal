@@ -36,6 +36,8 @@ public class GeneradorPlanService {
             throw new IllegalArgumentException("Debe haber un usuario activo para generar el plan.");
         }
 
+        // Si la base todavía no tiene las recetas sugeridas, se cargan antes de armar el plan
+        new DatosInicialesService().asegurar();
         List<Receta> todasLasRecetas = recetaDAO.listarTodas();
         if (todasLasRecetas.isEmpty()) {
             throw new IllegalStateException("No hay recetas registradas. Crea al menos una receta antes de generar el plan.");

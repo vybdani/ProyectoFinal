@@ -16,9 +16,14 @@ public class CalculoNutricionalService {
     public static final String SUBIR_PESO = "Subir de peso";
     public static final String VOLUMEN = "Volumen muscular";
     public static final String DEFINICION = "Definición";
+    public static final String FUERZA = "Fuerza";
+    public static final String RECOMPOSICION = "Recomposición corporal";
+    public static final String RESISTENCIA = "Resistencia muscular";
+    public static final String TONIFICACION = "Tonificación";
 
     public static final List<String> OBJETIVOS_NUTRICION = List.of(BAJAR_PESO, MANTENER_PESO, SUBIR_PESO);
-    public static final List<String> OBJETIVOS_GIMNASIO = List.of(VOLUMEN, DEFINICION);
+    public static final List<String> OBJETIVOS_GIMNASIO = List.of(
+            VOLUMEN, DEFINICION, FUERZA, RECOMPOSICION, RESISTENCIA, TONIFICACION);
 
     /** Calcula sin objetivo: se asume mantener el peso. */
     public RequerimientoDiario calcular(Usuario usuario) {
@@ -103,6 +108,9 @@ public class CalculoNutricionalService {
             case SUBIR_PESO -> 0.10;
             case VOLUMEN -> 0.12;
             case DEFINICION -> -0.20;
+            case FUERZA -> 0.05;
+            case RECOMPOSICION -> -0.10;
+            case TONIFICACION -> -0.05;
             default -> 0;
         };
     }
@@ -114,8 +122,9 @@ public class CalculoNutricionalService {
         }
         return switch (tipo) {
             case BAJAR_PESO, SUBIR_PESO -> 1.8;
-            case VOLUMEN -> 2.0;
-            case DEFINICION -> 2.2;
+            case VOLUMEN, FUERZA -> 2.0;
+            case DEFINICION, RECOMPOSICION -> 2.2;
+            case TONIFICACION -> 1.8;
             default -> 1.6;
         };
     }
@@ -131,6 +140,10 @@ public class CalculoNutricionalService {
             case SUBIR_PESO -> "Superávit de 10 % de calorías para subir de peso.";
             case VOLUMEN -> "Superávit de 12 % y 2 g de proteína por kg para ganar músculo.";
             case DEFINICION -> "Déficit de 20 % y 2.2 g de proteína por kg para bajar grasa sin perder músculo.";
+            case FUERZA -> "Superávit leve de 5 % y 2 g de proteína por kg para levantar más peso con pocas repeticiones.";
+            case RECOMPOSICION -> "Déficit suave de 10 % y 2.2 g de proteína por kg para bajar grasa y ganar músculo a la vez.";
+            case RESISTENCIA -> "Calorías de mantenimiento para aguantar más repeticiones y series largas con poco descanso.";
+            case TONIFICACION -> "Déficit ligero de 5 % y 1.8 g de proteína por kg para marcar el músculo sin cambiar mucho el peso.";
             default -> "";
         };
     }

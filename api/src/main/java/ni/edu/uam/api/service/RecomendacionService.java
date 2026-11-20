@@ -38,6 +38,42 @@ public class RecomendacionService {
                 .fuente("Solea Intelligence Engine")
                 .build());
 
+        recomendaciones.put("fuerza", ConsejoNutricionalDTO.builder()
+                .objetivo("Fuerza / Modo Gimnasio")
+                .titulo("Cargas Pesadas, Pocas Repeticiones y Descanso Completo")
+                .consejo("Trabaja con 3 a 5 repeticiones cerca de tu máximo y descansa 2 a 3 minutos entre series. "
+                        + "Come un ligero superávit, reparte la proteína en 4 comidas y prioriza el sueño para recuperar el sistema nervioso.")
+                .distribucionMacrosSugerida("45% Carbohidratos | 30% Proteínas | 25% Grasas")
+                .recomendacionAgua("40 ml por kg de peso corporal.")
+                .fuente("Solea Intelligence Engine")
+                .build());
+        recomendaciones.put("recomposicion", ConsejoNutricionalDTO.builder()
+                .objetivo("Recomposición Corporal / Modo Gimnasio")
+                .titulo("Perder Grasa y Ganar Músculo al Mismo Tiempo")
+                .consejo("Mantén un déficit pequeño (cerca de 10 %) con proteína alta en cada comida. "
+                        + "Entrena con progresión de cargas en rangos de 6 a 10 repeticiones y mide tu avance con fotos y medidas, no solo con la báscula.")
+                .distribucionMacrosSugerida("35% Carbohidratos | 40% Proteínas | 25% Grasas")
+                .recomendacionAgua("40 ml por kg de peso corporal.")
+                .fuente("Solea Intelligence Engine")
+                .build());
+        recomendaciones.put("resistencia", ConsejoNutricionalDTO.builder()
+                .objetivo("Resistencia Muscular / Modo Gimnasio")
+                .titulo("Más Repeticiones, Menos Descanso y Buena Hidratación")
+                .consejo("Haz series de 15 a 20 repeticiones con descansos cortos (30 s). "
+                        + "Los carbohidratos son tu combustible: inclúyelos antes de entrenar y repón líquidos y electrolitos al terminar.")
+                .distribucionMacrosSugerida("55% Carbohidratos | 20% Proteínas | 25% Grasas")
+                .recomendacionAgua("45 ml por kg de peso corporal (más si sudas mucho).")
+                .fuente("Solea Intelligence Engine")
+                .build());
+        recomendaciones.put("tonificacion", ConsejoNutricionalDTO.builder()
+                .objetivo("Tonificación / Modo Gimnasio")
+                .titulo("Marcar el Músculo con Déficit Ligero y Constancia")
+                .consejo("Combina pesas en 10 a 15 repeticiones con 2 o 3 sesiones de cardio suave por semana. "
+                        + "Un déficit ligero y proteína suficiente ayudan a que el músculo se note sin perder fuerza.")
+                .distribucionMacrosSugerida("40% Carbohidratos | 30% Proteínas | 30% Grasas saludables")
+                .recomendacionAgua("35 a 40 ml por kg de peso corporal.")
+                .fuente("Solea Intelligence Engine")
+                .build());
         recomendaciones.put("subir", ConsejoNutricionalDTO.builder()
                 .objetivo("Subir de Peso")
                 .titulo("Superávit Moderado y Comidas Densas en Energía")

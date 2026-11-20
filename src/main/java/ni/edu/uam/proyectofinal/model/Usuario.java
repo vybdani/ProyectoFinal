@@ -13,6 +13,18 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String password;
 
+    /** Pregunta para recuperar la cuenta si se olvida la contraseña. */
+    @Column(name = "pregunta_seguridad", length = 150)
+    private String preguntaSeguridad;
+
+    /** Respuesta a la pregunta de seguridad, guardada como hash (nunca en texto plano). */
+    @Column(name = "respuesta_seguridad", length = 255)
+    private String respuestaSeguridad;
+
+    /** true cuando el usuario ya vio el tutorial de bienvenida (null en cuentas antiguas = no lo vio). */
+    @Column(name = "tutorial_visto")
+    private Boolean tutorialVisto = false;
+
     /** El perfil pertenece al usuario: se guarda y se borra junto con él (cascade ALL). */
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PerfilFisico perfilFisico;
@@ -34,6 +46,16 @@ public class Usuario {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getPreguntaSeguridad() { return preguntaSeguridad; }
+    public void setPreguntaSeguridad(String preguntaSeguridad) { this.preguntaSeguridad = preguntaSeguridad; }
+
+    public String getRespuestaSeguridad() { return respuestaSeguridad; }
+    public void setRespuestaSeguridad(String respuestaSeguridad) { this.respuestaSeguridad = respuestaSeguridad; }
+
+    /** true si el usuario ya vio el tutorial de bienvenida. */
+    public boolean isTutorialVisto() { return Boolean.TRUE.equals(tutorialVisto); }
+    public void setTutorialVisto(Boolean tutorialVisto) { this.tutorialVisto = tutorialVisto; }
 
     public PerfilFisico getPerfilFisico() { return perfilFisico; }
     public void setPerfilFisico(PerfilFisico perfilFisico) {

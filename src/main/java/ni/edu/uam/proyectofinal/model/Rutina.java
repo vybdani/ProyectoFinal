@@ -17,7 +17,7 @@ public class Rutina {
     @Column(nullable = false, length = 120)
     private String nombre;
 
-    /** Objetivo de gimnasio con el que se generó: Volumen muscular o Definición. */
+    /** Objetivo de gimnasio con el que se generó (Volumen muscular, Definición, Fuerza, etc.). */
     @Column(nullable = false, length = 40)
     private String objetivo;
 

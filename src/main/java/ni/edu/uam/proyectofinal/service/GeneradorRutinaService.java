@@ -22,12 +22,29 @@ import static ni.edu.uam.proyectofinal.dao.GrupoMuscularDAO.*;
  *   <li>4 días: Torso / Pierna / Torso / Pierna</li>
  *   <li>5 días: Pecho / Espalda / Pierna / Hombro y core / Brazos</li>
  * </ul>
- * Volumen: 4 series de 8-12 repeticiones con 90 s de descanso.
- * Definición: 3 series de 12-15 repeticiones con 45 s de descanso.
+ * Cada objetivo tiene su esquema de series, repeticiones y descanso (ver {@link #esquema}).
+ * El core siempre se trabaja con 3 series de 15-20 repeticiones y 45 s de descanso.
  */
 public class GeneradorRutinaService {
 
     public static final List<Integer> DIAS_DISPONIBLES = List.of(3, 4, 5);
+
+    /** Series, repeticiones y descanso (en segundos) de los ejercicios de un objetivo. */
+    public record Esquema(int series, String repeticiones, int descansoSegundos) {
+    }
+
+    /** Esquema de entrenamiento según el objetivo de gimnasio. */
+    public static Esquema esquema(String objetivo) {
+        return switch (objetivo) {
+            case CalculoNutricionalService.VOLUMEN -> new Esquema(4, "8-12", 90);
+            case CalculoNutricionalService.DEFINICION -> new Esquema(3, "12-15", 45);
+            case CalculoNutricionalService.FUERZA -> new Esquema(5, "3-5", 180);
+            case CalculoNutricionalService.RECOMPOSICION -> new Esquema(4, "6-10", 75);
+            case CalculoNutricionalService.RESISTENCIA -> new Esquema(3, "15-20", 30);
+            case CalculoNutricionalService.TONIFICACION -> new Esquema(3, "10-15", 60);
+            default -> throw new IllegalArgumentException("Objetivo de gimnasio no válido: " + objetivo);
+        };
+    }
 
     private final EjercicioDAO ejercicioDAO = new EjercicioDAO();
     private final GrupoMuscularDAO grupoDAO = new GrupoMuscularDAO();
@@ -38,7 +55,7 @@ public class GeneradorRutinaService {
             throw new IllegalArgumentException("Debe haber un usuario activo para generar la rutina.");
         }
         if (!CalculoNutricionalService.OBJETIVOS_GIMNASIO.contains(objetivo)) {
-            throw new IllegalArgumentException("Primero elige y guarda tu objetivo de gimnasio (Volumen muscular o Definición).");
+            throw new IllegalArgumentException("Primero elige y guarda tu objetivo de gimnasio en el menú del Modo Gimnasio.");
         }
         if (!DIAS_DISPONIBLES.contains(diasPorSemana)) {
             throw new IllegalArgumentException("Elige entre 3 y 5 días de entrenamiento por semana.");
@@ -46,10 +63,10 @@ public class GeneradorRutinaService {
 
         grupoDAO.asegurarDatosIniciales();
 
-        boolean volumen = CalculoNutricionalService.VOLUMEN.equals(objetivo);
-        int series = volumen ? 4 : 3;
-        String repeticiones = volumen ? "8-12" : "12-15";
-        int descanso = volumen ? 90 : 45;
+        Esquema esquema = esquema(objetivo);
+        int series = esquema.series();
+        String repeticiones = esquema.repeticiones();
+        int descanso = esquema.descansoSegundos();
 
         Rutina rutina = new Rutina(
                 "Rutina " + objetivo + " - " + diasPorSemana + " días",

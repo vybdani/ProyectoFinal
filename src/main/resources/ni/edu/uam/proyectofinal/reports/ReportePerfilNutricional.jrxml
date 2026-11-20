@@ -24,7 +24,7 @@
         <band height="320">
             <!-- Encabezado Principal -->
             <rectangle>
-                <reportElement x="0" y="0" width="535" height="60" backcolor="#1976D2" uuid="f4e8595f-499f-4ab6-959e-60814a787200"/>
+                <reportElement x="0" y="0" width="535" height="60" backcolor="#5B6F00" uuid="f4e8595f-499f-4ab6-959e-60814a787200"/>
                 <graphicElement><pen lineWidth="0.0"/></graphicElement>
             </rectangle>
             <staticText>
@@ -44,11 +44,11 @@
 
             <!-- Sección Datos Personales -->
             <rectangle>
-                <reportElement x="0" y="75" width="535" height="95" backcolor="#F5F5F5" uuid="3ed37bd9-e957-4c71-8146-afb73227442d"/>
-                <graphicElement><pen lineWidth="0.5" lineColor="#E0E0E0"/></graphicElement>
+                <reportElement x="0" y="75" width="535" height="95" backcolor="#F7F5EE" uuid="3ed37bd9-e957-4c71-8146-afb73227442d"/>
+                <graphicElement><pen lineWidth="0.5" lineColor="#E4E0D5"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="15" y="82" width="200" height="18" forecolor="#1976D2" uuid="a69148c0-7614-41e2-a3bc-ca9d7d3d4619"/>
+                <reportElement x="15" y="82" width="200" height="18" forecolor="#5B6F00" uuid="a69148c0-7614-41e2-a3bc-ca9d7d3d4619"/>
                 <textElement>
                     <font size="12" isBold="true"/>
                 </textElement>
@@ -83,11 +83,11 @@
 
             <!-- Sección Requerimiento Calórico y Macros -->
             <rectangle>
-                <reportElement x="0" y="185" width="535" height="125" backcolor="#E8F5E9" uuid="53227d69-69f0-4f8f-827e-09b8e1f45379"/>
-                <graphicElement><pen lineWidth="0.5" lineColor="#C8E6C9"/></graphicElement>
+                <reportElement x="0" y="185" width="535" height="125" backcolor="#E7ECCF" uuid="53227d69-69f0-4f8f-827e-09b8e1f45379"/>
+                <graphicElement><pen lineWidth="0.5" lineColor="#C9D39A"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="15" y="193" width="250" height="18" forecolor="#2E7D32" uuid="bf2b3b0e-6fcf-4ee6-9926-ea65c25fd570"/>
+                <reportElement x="15" y="193" width="250" height="18" forecolor="#4A5A00" uuid="bf2b3b0e-6fcf-4ee6-9926-ea65c25fd570"/>
                 <textElement>
                     <font size="12" isBold="true"/>
                 </textElement>
@@ -103,7 +103,7 @@
             </textField>
 
             <textField>
-                <reportElement x="15" y="240" width="240" height="24" forecolor="#C2185B" uuid="34f3b444-4a89-45c7-9d03-7ebc7332de94"/>
+                <reportElement x="15" y="240" width="240" height="24" forecolor="#4A5A00" uuid="34f3b444-4a89-45c7-9d03-7ebc7332de94"/>
                 <textElement>
                     <font size="14" isBold="true"/>
                 </textElement>
@@ -137,18 +137,18 @@
     <pageFooter>
         <band height="30">
             <textField>
-                <reportElement x="350" y="8" width="175" height="15" forecolor="#888888" uuid="d5a90ea9-c117-42bf-a439-7fb748355cf7"/>
+                <reportElement x="350" y="8" width="175" height="15" forecolor="#6E6C64" uuid="d5a90ea9-c117-42bf-a439-7fb748355cf7"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
             </textField>
             <staticText>
-                <reportElement x="10" y="8" width="250" height="15" forecolor="#888888" uuid="cc025b2f-9f48-45ff-8722-d285d63f9a90"/>
+                <reportElement x="10" y="8" width="335" height="15" forecolor="#6E6C64" uuid="cc025b2f-9f48-45ff-8722-d285d63f9a90"/>
                 <textElement>
                     <font size="9"/>
                 </textElement>
-                <text><![CDATA[Solea - Reportes Médicos y Nutricionales]]></text>
+                <text><![CDATA[Solea - Ficha nutricional (orientativa, no sustituye la consulta con un profesional)]]></text>
             </staticText>
         </band>
     </pageFooter>
