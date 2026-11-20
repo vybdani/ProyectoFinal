@@ -85,7 +85,14 @@ public final class HibernateUtil {
                     case "3D000":
                         return "La base de datos no existe (" + destino + "). Créala en pgAdmin o psql con: "
                                 + "CREATE DATABASE solea_db;";
-                    case "08001", "08004", "08006":
+                    case "08004":
+                        String detalle = sql.getMessage() == null ? "" : sql.getMessage().toLowerCase();
+                        if (detalle.contains("password") || detalle.contains("authentication")) {
+                            return "PostgreSQL pide una contraseña y no se envió ninguna. Define la variable de "
+                                    + "entorno DB_PASSWORD con tu contraseña de PostgreSQL (ver README).";
+                        }
+                        return "PostgreSQL rechazó la conexión a " + destino + ". Revisa usuario, contraseña y puerto.";
+                    case "08001", "08006":
                         return "No hay un servidor PostgreSQL respondiendo en " + destino
                                 + ". Revisa que el servicio de PostgreSQL esté encendido y el puerto sea el correcto.";
                     default:
