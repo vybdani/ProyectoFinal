@@ -1,52 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ni.edu.uam.proyectofinal.controller.PerfilFisicoController">
-    <padding>
-        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-    </padding>
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.proyectofinal.controller.PerfilFisicoController">
+    <VBox styleClass="pagina" alignment="TOP_CENTER">
+        <VBox spacing="6.0" maxWidth="640.0">
+            <TextFlow>
+                <Text styleClass="titulo" text="Tu perfil " />
+                <Text styleClass="titulo-italico" text="físico." />
+            </TextFlow>
+            <Label text="Con estos datos Solea calcula tus calorías y macronutrientes del día." styleClass="subtitulo" wrapText="true" />
+        </VBox>
 
-    <Label text="Registro de Perfil Físico">
-        <font>
-            <Font name="System Bold" size="18.0" />
-        </font>
-    </Label>
+        <VBox styleClass="tarjeta" spacing="18.0" maxWidth="640.0">
+            <GridPane hgap="20.0" vgap="8.0">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50.0" />
+                    <ColumnConstraints percentWidth="50.0" />
+                </columnConstraints>
 
-    <GridPane hgap="10.0" vgap="10.0" alignment="CENTER">
-        <Label text="Peso (kg):" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <TextField fx:id="txtPeso" promptText="Ej. 70.5" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label text="Peso" styleClass="etiqueta" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label text="Altura (cm)" styleClass="etiqueta" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <HBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <TextField fx:id="txtPeso" promptText="Ej. 70.5" HBox.hgrow="ALWAYS" />
+                    <!-- Unidad del peso: se guarda siempre en kg -->
+                    <ComboBox fx:id="cmbUnidadPeso" prefWidth="80" minWidth="80" />
+                </HBox>
+                <TextField fx:id="txtAltura" promptText="Ej. 175" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-        <Label text="Altura (cm):" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <TextField fx:id="txtAltura" promptText="Ej. 175" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label text="Edad" styleClass="etiqueta" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <Label text="Sexo" styleClass="etiqueta" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="txtEdad" promptText="Ej. 21" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                <ComboBox fx:id="cmbSexo" promptText="Selecciona" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-        <Label text="Edad:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <TextField fx:id="txtEdad" promptText="Ej. 21" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label text="Nivel de actividad" styleClass="etiqueta" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                <Label text="Grasa corporal en % (opcional)" styleClass="etiqueta" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <ComboBox fx:id="cmbNivelActividad" promptText="Selecciona" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                <TextField fx:id="txtPorcentajeGrasa" promptText="Ej. 15.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            </GridPane>
 
-        <Label text="Sexo:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <ComboBox fx:id="cmbSexo" promptText="Selecciona" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Si conoces tu % de grasa, el cálculo de calorías es más preciso." styleClass="nota" wrapText="true" />
 
-        <Label text="Nivel de actividad:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <ComboBox fx:id="cmbNivelActividad" promptText="Selecciona" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
-        <Label text="Grasa corporal en % (opcional):" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-        <TextField fx:id="txtPorcentajeGrasa" promptText="Ej. 15.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-    </GridPane>
-
-    <Label text="Si conoces tu % de grasa, el cálculo de calorías es más preciso." style="-fx-text-fill: #666666;" />
-
-    <HBox alignment="CENTER" spacing="15.0">
-        <Button text="Guardar Datos Físicos" onAction="#handleGuardarPerfil"
-                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;" />
-        <Button fx:id="btnVolver" text="Volver al menú" onAction="#handleVolver" />
-    </HBox>
-</VBox>
+            <HBox spacing="10.0">
+                <Button text="Guardar perfil" styleClass="primario" onAction="#handleGuardarPerfil" defaultButton="true" />
+                <Button fx:id="btnVolver" text="Volver al inicio" onAction="#handleVolver" />
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

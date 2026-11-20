@@ -24,7 +24,6 @@ public class ModoController {
     @FXML private Label lblObjetivoActual;
     @FXML private Label lblDescripcion;
     @FXML private ComboBox<String> cmbObjetivo;
-    @FXML private Button btnRutina;
 
     private final ObjetivoDAO objetivoDAO = new ObjetivoDAO();
     private final CalculoNutricionalService calculoService = new CalculoNutricionalService();
@@ -35,15 +34,14 @@ public class ModoController {
     public void initialize() {
         boolean gimnasio = SesionActual.MODO_GIMNASIO.equals(SesionActual.getModoActual());
 
-        lblTitulo.setText(gimnasio ? "🏋 Modo Gimnasio" : "🥗 Modo Nutrición");
+        lblTitulo.setText(gimnasio
+                ? "Modo Gimnasio: volumen muscular o definición. Cambia de modo en el menú lateral."
+                : "Modo Nutrición: bajar, mantener o subir de peso. Cambia de modo en el menú lateral.");
         cmbObjetivo.setItems(FXCollections.observableArrayList(
                 gimnasio ? CalculoNutricionalService.OBJETIVOS_GIMNASIO : CalculoNutricionalService.OBJETIVOS_NUTRICION
         ));
         cmbObjetivo.valueProperty().addListener((obs, anterior, nuevo) ->
                 lblDescripcion.setText(calculoService.descripcion(nuevo)));
-
-        btnRutina.setVisible(gimnasio);
-        btnRutina.setManaged(gimnasio);
 
         cargarObjetivo();
     }

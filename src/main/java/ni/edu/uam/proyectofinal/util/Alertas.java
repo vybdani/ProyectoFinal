@@ -69,6 +69,13 @@ public final class Alertas {
         alerta.setTitle("Solea - " + titulo);
         alerta.setHeaderText(titulo);
         alerta.getDialogPane().setMinWidth(420);
+        // Mismo tema que el resto de la app, con el color del modo actual
+        var hoja = Alertas.class.getResource("/ni/edu/uam/proyectofinal/views/app.css");
+        if (hoja != null) {
+            alerta.getDialogPane().getStylesheets().add(hoja.toExternalForm());
+        }
+        alerta.getDialogPane().getStyleClass().add(
+                SesionActual.MODO_GIMNASIO.equals(SesionActual.getModoActual()) ? "modo-gimnasio" : "modo-nutricion");
         Window.getWindows().stream()
                 .filter(Window::isFocused)
                 .findFirst()

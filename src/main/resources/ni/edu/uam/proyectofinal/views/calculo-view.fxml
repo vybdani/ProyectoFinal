@@ -1,50 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<VBox alignment="TOP_CENTER" spacing="18.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ni.edu.uam.proyectofinal.controller.CalculoController">
-    <padding>
-        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-    </padding>
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.proyectofinal.controller.CalculoController">
+    <VBox styleClass="pagina">
+        <VBox spacing="6.0">
+            <TextFlow>
+                <Text styleClass="titulo" text="Tu requerimiento " />
+                <Text styleClass="titulo-italico" text="diario." />
+            </TextFlow>
+            <Label fx:id="lblObjetivo" styleClass="subtitulo" text="" wrapText="true" />
+        </VBox>
 
-    <Label text="Cálculo Nutricional Diario">
-        <font>
-            <Font name="System Bold" size="20.0" />
-        </font>
-    </Label>
+        <!-- Meta del día -->
+        <HBox styleClass="tarjeta" style="-fx-padding: 22 0 22 0;">
+            <VBox styleClass="celda-dato" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="300.0">
+                <Label text="Calorías diarias" styleClass="etiqueta" />
+                <Label fx:id="lblCalorias" text="—" styleClass="numero-grande" />
+                <Label text="Tu meta para cada día" styleClass="nota" />
+            </VBox>
+            <VBox styleClass="celda-dato" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="180.0">
+                <Label text="Proteínas" styleClass="etiqueta" />
+                <Label fx:id="lblProteinas" text="—" styleClass="numero" />
+            </VBox>
+            <VBox styleClass="celda-dato" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="180.0">
+                <Label text="Carbohidratos" styleClass="etiqueta" />
+                <Label fx:id="lblCarbohidratos" text="—" styleClass="numero" />
+            </VBox>
+            <VBox styleClass="celda-dato, ultima" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="180.0">
+                <Label text="Grasas" styleClass="etiqueta" />
+                <Label fx:id="lblGrasas" text="—" styleClass="numero" />
+            </VBox>
+        </HBox>
 
-    <Label fx:id="lblObjetivo" text="" />
+        <HBox styleClass="tarjeta-suave" spacing="10.0" alignment="CENTER_LEFT" maxWidth="640.0">
+            <Label text="Metabolismo basal (TMB)" styleClass="texto-suave" />
+            <Label fx:id="lblTMB" text="—" styleClass="dato" />
+        </HBox>
 
-    <GridPane hgap="20.0" vgap="12.0" alignment="CENTER">
-        <Label text="Metabolismo basal (TMB):" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-        <Label fx:id="lblTMB" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+        <Label text="El cálculo usa tu perfil físico y el objetivo del modo actual." styleClass="nota" />
 
-        <Label text="Calorías diarias:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-        <Label fx:id="lblCalorias" text="-" style="-fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
-        <Label text="Proteínas:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-        <Label fx:id="lblProteinas" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
-        <Label text="Carbohidratos:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-        <Label fx:id="lblCarbohidratos" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
-        <Label text="Grasas:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-        <Label fx:id="lblGrasas" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-    </GridPane>
-
-    <Label text="El cálculo usa tu perfil físico y el objetivo del modo actual." style="-fx-text-fill: #666666;" />
-
-    <HBox alignment="CENTER" spacing="15.0">
-        <Button text="Calcular y guardar" onAction="#calcular"
-                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;" />
-        <Button text="Exportar PDF" onAction="#handleExportarPdf" />
-        <Button text="Volver" onAction="#handleVolver" />
-    </HBox>
-</VBox>
+        <HBox spacing="10.0">
+            <Button text="Calcular y guardar" styleClass="primario" onAction="#calcular" defaultButton="true" />
+            <Button text="Exportar PDF" onAction="#handleExportarPdf" />
+        </HBox>
+    </VBox>
+</ScrollPane>

@@ -20,6 +20,7 @@ import ni.edu.uam.proyectofinal.model.RegistroConsumo;
 import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.util.ComboBuscable;
 import ni.edu.uam.proyectofinal.util.BuscadorAlimentosDialog;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
@@ -54,6 +55,8 @@ public class ConsumoController {
 
     @FXML
     public void initialize() {
+        // Se puede escribir para buscar el alimento (sin importar tildes ni mayúsculas)
+        ComboBuscable.activar(cmbAlimento, a -> a.getNombre() + "  ·  " + Math.round(a.getCalorias()) + " kcal / 100 g");
         cmbTipoComida.setItems(FXCollections.observableArrayList("Desayuno", "Almuerzo", "Cena", "Merienda"));
         dpFecha.setValue(LocalDate.now());
         // No se pueden elegir fechas futuras en el calendario
@@ -71,7 +74,7 @@ public class ConsumoController {
         usuario = SesionActual.getUsuarioActivo();
         try {
             alimentoDAO.asegurarAlimentosIniciales();
-            cmbAlimento.setItems(FXCollections.observableArrayList(alimentoDAO.listarTodos()));
+            ComboBuscable.cargar(cmbAlimento, alimentoDAO.listarTodos());
             listarConsumo();
         } catch (Exception e) {
             Alertas.error("No se pudieron cargar los datos", e);
@@ -129,7 +132,7 @@ public class ConsumoController {
     private void handleBuscarEnInternet() {
         BuscadorAlimentosDialog.mostrar(tblConsumo).ifPresent(alimento -> {
             try {
-                cmbAlimento.setItems(FXCollections.observableArrayList(alimentoDAO.listarTodos()));
+                ComboBuscable.cargar(cmbAlimento, alimentoDAO.listarTodos());
                 cmbAlimento.getItems().stream()
                         .filter(a -> a.getId().equals(alimento.getId()))
                         .findFirst()

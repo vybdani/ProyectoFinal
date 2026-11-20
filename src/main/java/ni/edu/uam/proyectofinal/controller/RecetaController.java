@@ -17,6 +17,7 @@ import ni.edu.uam.proyectofinal.model.Alimento;
 import ni.edu.uam.proyectofinal.model.Receta;
 import ni.edu.uam.proyectofinal.model.RecetaIngrediente;
 import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.util.ComboBuscable;
 import ni.edu.uam.proyectofinal.util.BuscadorAlimentosDialog;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.Validacion;
@@ -57,6 +58,8 @@ public class RecetaController {
 
     @FXML
     public void initialize() {
+        // Se puede escribir para buscar el alimento (sin importar tildes ni mayúsculas)
+        ComboBuscable.activar(cmbAlimento, a -> a.getNombre() + "  ·  " + Math.round(a.getCalorias()) + " kcal / 100 g");
         cmbTipoComida.setItems(FXCollections.observableArrayList("Desayuno", "Almuerzo", "Cena", "Merienda"));
 
         colIngAlimento.setCellValueFactory(d -> new ReadOnlyStringWrapper(d.getValue().getAlimento().getNombre()));
@@ -81,8 +84,8 @@ public class RecetaController {
         });
 
         try {
-            alimentoDAO.asegurarAlimentosIniciales();
-            cmbAlimento.setItems(FXCollections.observableArrayList(alimentoDAO.listarTodos()));
+            new ni.edu.uam.proyectofinal.service.DatosInicialesService().asegurar();
+            ComboBuscable.cargar(cmbAlimento, alimentoDAO.listarTodos());
             cargarRecetas();
         } catch (Exception e) {
             Alertas.error("No se pudieron cargar las recetas", e);
@@ -131,7 +134,7 @@ public class RecetaController {
     private void handleBuscarEnInternet() {
         BuscadorAlimentosDialog.mostrar(txtNombreReceta).ifPresent(alimento -> {
             try {
-                cmbAlimento.setItems(FXCollections.observableArrayList(alimentoDAO.listarTodos()));
+                ComboBuscable.cargar(cmbAlimento, alimentoDAO.listarTodos());
                 cmbAlimento.getItems().stream()
                         .filter(a -> a.getId().equals(alimento.getId()))
                         .findFirst()

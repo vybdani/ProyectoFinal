@@ -1,16 +1,681 @@
 /*
- * Solea - estilos comunes a todas las pantallas.
- * Por ahora solo marca los campos con datos inválidos (Validacion.java);
- * el diseño completo se agrega con el frontend nuevo.
+ * Solea - tema visual de toda la aplicación.
+ *
+ * Papel cálido, títulos en serif (Instrument Serif) y la interfaz en Figtree.
+ * Cada modo tiene su color: verde oliva para Nutrición y terracota para Gimnasio.
+ * La ventana principal pone la clase .modo-nutricion o .modo-gimnasio en su raíz
+ * y todo lo que usa -acento cambia de color solo.
+ *
+ * Las fuentes se cargan en HelloApplication (JavaFX no lee WOFF2, por eso son TTF).
  */
 
+/* ---------- Paleta ---------- */
+.root {
+    -papel: #F7F5EE;
+    -papel-2: #EFEBE1;
+    -hoja: #FFFFFF;
+    -tinta: #1E1F1B;
+    -tinta-2: #4A4943;
+    -gris: #6E6C64;
+    -filete: #E4E0D5;
+    -borde: #D4CFC3;
+
+    -oliva: #5B6F00;
+    -oliva-oscuro: #4A5A00;
+    -oliva-tinte: #E7ECCF;
+    -arcilla: #B05A36;
+    -arcilla-oscuro: #94492A;
+    -arcilla-tinte: #F4E3D8;
+    -ambar: #8F5A00;
+    -ambar-tinte: #F6EAD0;
+    -rojo: #B3261E;
+    -rojo-tinte: #F8E1DE;
+
+    /* Acento por defecto (login y pantallas sin modo): oliva */
+    -acento: -oliva;
+    -acento-oscuro: -oliva-oscuro;
+    -acento-tinte: -oliva-tinte;
+
+    -fx-font-family: "Figtree";
+    -fx-font-size: 14px;
+    -fx-background-color: -papel;
+    -fx-text-fill: -tinta;
+    -fx-focus-color: -acento;
+    -fx-faint-focus-color: transparent;
+    -fx-accent: -acento;
+    -fx-selection-bar: -acento-tinte;
+    -fx-selection-bar-non-focused: -papel-2;
+    -fx-highlight-fill: -acento-tinte;
+    -fx-highlight-text-fill: -tinta;
+}
+
+.modo-nutricion {
+    -acento: -oliva;
+    -acento-oscuro: -oliva-oscuro;
+    -acento-tinte: -oliva-tinte;
+}
+
+.modo-gimnasio {
+    -acento: -arcilla;
+    -acento-oscuro: -arcilla-oscuro;
+    -acento-tinte: -arcilla-tinte;
+}
+
+/* ---------- Texto ---------- */
+.label {
+    -fx-text-fill: -tinta;
+}
+
+.titulo, .titulo-italico, .marca, .seccion, .numero, .numero-grande, .cita {
+    -fx-font-family: "Instrument Serif";
+}
+
+.titulo {
+    -fx-font-size: 40px;
+    -fx-fill: -tinta;
+    -fx-text-fill: -tinta;
+}
+
+.titulo-italico {
+    -fx-font-size: 40px;
+    -fx-font-style: italic;
+    -fx-fill: -acento;
+}
+
+.seccion {
+    -fx-font-size: 26px;
+}
+
+.subtitulo {
+    -fx-font-size: 15px;
+    -fx-text-fill: -gris;
+}
+
+.texto-suave {
+    -fx-text-fill: -tinta-2;
+}
+
+.nota {
+    -fx-font-size: 13px;
+    -fx-text-fill: -gris;
+}
+
+.etiqueta {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 12.5px;
+    -fx-text-fill: -gris;
+}
+
+.etiqueta-acento {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 12.5px;
+    -fx-text-fill: -acento;
+}
+
+.numero-grande {
+    -fx-font-size: 64px;
+}
+
+.numero {
+    -fx-font-size: 46px;
+}
+
+.unidad {
+    -fx-font-size: 14px;
+    -fx-text-fill: -gris;
+}
+
+.dato {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 15px;
+}
+
+.cita {
+    -fx-font-size: 21px;
+    -fx-font-style: italic;
+    -fx-text-fill: -tinta;
+}
+
+.resumen {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 14px;
+    -fx-text-fill: -tinta-2;
+}
+
+/* ---------- Superficies ---------- */
+.contenido {
+    -fx-background-color: -papel;
+}
+
+.pagina {
+    -fx-padding: 32 40 32 40;
+    -fx-spacing: 22;
+    -fx-background-color: -papel;
+}
+
+.tarjeta {
+    -fx-background-color: -hoja;
+    -fx-border-color: -borde;
+    -fx-border-width: 1;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-padding: 20 22 20 22;
+}
+
+.tarjeta-suave {
+    -fx-background-color: -papel-2;
+    -fx-border-color: -filete;
+    -fx-border-width: 1;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-padding: 20 22 20 22;
+}
+
+.celda-dato {
+    -fx-padding: 4 22 4 22;
+    -fx-border-color: transparent -filete transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.celda-dato.ultima {
+    -fx-border-width: 0;
+}
+
+.fila-lista {
+    -fx-padding: 10 22 10 22;
+    -fx-border-color: transparent transparent -filete transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.fila-lista.hecho {
+    -fx-background-color: -acento-tinte;
+}
+
+.vacio {
+    -fx-font-size: 14px;
+    -fx-text-fill: -gris;
+    -fx-padding: 12 22 12 22;
+}
+
+.separador {
+    -fx-background-color: -filete;
+    -fx-min-height: 1;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+
+/* ---------- Avisos ---------- */
+.chip {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 12.5px;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+    -fx-background-color: -acento-tinte;
+    -fx-border-color: -acento;
+    -fx-text-fill: -acento-oscuro;
+}
+
+.chip.alerta {
+    -fx-background-color: -ambar-tinte;
+    -fx-border-color: #E5CB94;
+    -fx-text-fill: -ambar;
+}
+
+/* ---------- Barras de progreso de macros ---------- */
+.barra {
+    -fx-pref-height: 6;
+    -fx-max-height: 6;
+}
+
+.barra > .track {
+    -fx-background-color: -filete;
+    -fx-background-radius: 3;
+    -fx-background-insets: 0;
+}
+
+.barra > .bar {
+    -fx-background-color: -acento;
+    -fx-background-radius: 3;
+    -fx-background-insets: 0;
+    -fx-padding: 3;
+}
+
+.barra.alerta > .bar {
+    -fx-background-color: -ambar;
+}
+
+/* ---------- Botones ---------- */
+.button, .toggle-button {
+    -fx-font-family: "Figtree Medium";
+    -fx-font-size: 14px;
+    -fx-text-fill: -tinta;
+    -fx-background-color: -hoja;
+    -fx-border-color: -borde;
+    -fx-border-width: 1;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 9 18 9 18;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: -papel-2;
+}
+
+.button:pressed {
+    -fx-background-color: -filete;
+}
+
+.button:focused {
+    -fx-border-color: -acento;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.button.primario {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-background-color: -acento;
+    -fx-border-color: -acento;
+    -fx-text-fill: white;
+}
+
+.button.primario:hover {
+    -fx-background-color: -acento-oscuro;
+    -fx-border-color: -acento-oscuro;
+}
+
+.button.primario:focused {
+    -fx-border-color: -tinta;
+}
+
+.button.peligro {
+    -fx-text-fill: -rojo;
+}
+
+.button.peligro:hover {
+    -fx-background-color: -rojo-tinte;
+    -fx-border-color: -rojo;
+}
+
+.button.fantasma {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -tinta-2;
+}
+
+.button.fantasma:hover {
+    -fx-background-color: -papel-2;
+}
+
+/* ---------- Menú lateral ---------- */
+.sidebar {
+    -fx-background-color: -hoja;
+    -fx-border-color: transparent -borde transparent transparent;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 26 14 20 14;
+    -fx-spacing: 2;
+}
+
+.marca {
+    -fx-font-size: 34px;
+    -fx-padding: 0 10 18 10;
+}
+
+.nav-grupo {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 12px;
+    -fx-text-fill: -gris;
+    -fx-padding: 16 12 6 12;
+}
+
+.nav-item {
+    -fx-font-family: "Figtree";
+    -fx-font-size: 14.5px;
+    -fx-text-fill: -tinta-2;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-alignment: center-left;
+    -fx-graphic-text-gap: 10;
+}
+
+.nav-item:hover {
+    -fx-background-color: -papel;
+}
+
+.nav-item:selected {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-background-color: -papel-2;
+    -fx-text-fill: -tinta;
+}
+
+.nav-item:focused {
+    -fx-border-color: -acento;
+}
+
+.punto {
+    -fx-fill: -borde;
+}
+
+.punto.nutricion {
+    -fx-fill: #788C15;
+}
+
+.punto.gimnasio {
+    -fx-fill: -arcilla;
+}
+
+.usuario {
+    -fx-border-color: -filete transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 14 12 0 12;
+    -fx-spacing: 2;
+}
+
+/* Selector de modo (Nutrición / Gimnasio) */
+.segmentado {
+    -fx-background-color: -hoja;
+    -fx-border-color: -borde;
+    -fx-border-width: 1;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-padding: 4;
+    -fx-spacing: 2;
+}
+
+.segmentado .toggle-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -tinta-2;
+    -fx-font-size: 13.5px;
+    -fx-padding: 7 8 7 8;
+}
+
+.segmentado .toggle-button:hover {
+    -fx-background-color: -papel-2;
+}
+
+.segmentado .toggle-button:selected {
+    -fx-background-color: -acento;
+    -fx-text-fill: white;
+    -fx-font-family: "Figtree SemiBold";
+}
+
+/* ---------- Campos ---------- */
+.text-field, .password-field, .text-area, .combo-box, .date-picker {
+    -fx-background-color: -hoja;
+    -fx-border-color: -borde;
+    -fx-border-width: 1;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-text-fill: -tinta;
+    -fx-prompt-text-fill: #8A877E;
+}
+
+.text-field, .password-field {
+    -fx-padding: 9 12 9 12;
+}
+
+.text-area {
+    -fx-padding: 4;
+}
+
+.text-area .content {
+    -fx-background-color: -hoja;
+    -fx-background-radius: 8;
+    -fx-padding: 6 8 6 8;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-field:focused, .password-field:focused, .text-area:focused,
+.combo-box:focused, .date-picker:focused {
+    -fx-border-color: -acento;
+    -fx-border-width: 1.5;
+}
+
+.combo-box, .date-picker {
+    -fx-padding: 2 4 2 4;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -tinta;
+    -fx-padding: 6 8 6 8;
+}
+
+.combo-box .arrow-button, .date-picker .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box .arrow, .date-picker .arrow {
+    -fx-background-color: -gris;
+}
+
+.date-picker .text-field {
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view, .context-menu {
+    -fx-background-color: -hoja;
+    -fx-border-color: -borde;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 4;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: -hoja;
+    -fx-text-fill: -tinta;
+    -fx-padding: 8 12 8 12;
+    -fx-background-radius: 6;
+}
+
+.combo-box-popup .list-cell:hover, .combo-box-popup .list-cell:selected {
+    -fx-background-color: -acento-tinte;
+    -fx-text-fill: -tinta;
+}
+
+/* Campos con datos inválidos (Validacion.java) */
 .text-field:error,
 .password-field:error,
 .text-area:error,
 .combo-box:error,
 .date-picker:error {
-    -fx-border-color: #C0392B;
+    -fx-border-color: -rojo;
     -fx-border-width: 1.5;
-    -fx-border-radius: 3;
-    -fx-background-radius: 3;
+    -fx-background-color: #FFF8F7;
+}
+
+/* ---------- Tablas ---------- */
+.table-view {
+    -fx-background-color: -hoja;
+    -fx-border-color: -borde;
+    -fx-border-width: 1;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 2;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view:focused {
+    -fx-background-insets: 0;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: -hoja;
+    -fx-background-radius: 12 12 0 0;
+    -fx-border-color: transparent transparent -filete transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-size: 40;
+}
+
+.table-view .column-header .label {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-font-size: 12.5px;
+    -fx-text-fill: -gris;
+    -fx-alignment: center-left;
+    -fx-padding: 0 12 0 12;
+}
+
+.table-row-cell {
+    -fx-background-color: -hoja;
+    -fx-border-color: transparent transparent -filete transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-cell-size: 40;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: -papel;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: -acento-tinte;
+}
+
+.table-row-cell:empty {
+    -fx-background-color: -hoja;
+    -fx-border-color: transparent;
+}
+
+.table-cell {
+    -fx-text-fill: -tinta;
+    -fx-padding: 0 12 0 12;
+    -fx-alignment: center-left;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: -tinta;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: -gris;
+}
+
+/* ---------- Scroll y paneles ---------- */
+.scroll-pane, .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -borde;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -gris;
+}
+
+.scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-opacity: 0;
+}
+
+.scroll-bar:vertical {
+    -fx-pref-width: 10;
+    -fx-padding: 2;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 10;
+    -fx-padding: 2;
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8 0 8;
+}
+
+/* ---------- Login ---------- */
+.portada {
+    -fx-background-color: -oliva;
+    -fx-padding: 48;
+    -fx-spacing: 14;
+}
+
+.portada .marca-portada {
+    -fx-font-family: "Instrument Serif";
+    -fx-font-size: 64px;
+    -fx-text-fill: #F7F5EE;
+}
+
+.portada .lema {
+    -fx-font-family: "Instrument Serif";
+    -fx-font-style: italic;
+    -fx-font-size: 26px;
+    -fx-text-fill: #E7ECCF;
+}
+
+.portada .nota-portada {
+    -fx-font-size: 14px;
+    -fx-text-fill: #D8DFB8;
+}
+
+/* ---------- Diálogos (Alertas) ---------- */
+.dialog-pane {
+    -fx-background-color: -hoja;
+    -fx-padding: 8;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: -hoja;
+    -fx-padding: 16 20 4 20;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-font-family: "Instrument Serif";
+    -fx-font-size: 24px;
+}
+
+.dialog-pane > .content {
+    -fx-padding: 8 20 12 20;
+    -fx-font-size: 14px;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-padding: 8 18 8 18;
+}
+
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: -acento;
+    -fx-border-color: -acento;
+    -fx-text-fill: white;
+}
+
+.tooltip {
+    -fx-background-color: -tinta;
+    -fx-text-fill: -papel;
+    -fx-font-size: 13px;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10 6 10;
 }

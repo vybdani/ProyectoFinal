@@ -6,31 +6,52 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ni.edu.uam.proyectofinal.controller.LoginController">
-    <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-    </padding>
+<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.proyectofinal.controller.LoginController" styleClass="modo-nutricion">
 
-    <Label text="Solea">
-        <font>
-            <Font name="System Bold" size="24.0" />
-        </font>
-    </Label>
+    <!-- Portada: la marca y lo que hace la app -->
+    <VBox styleClass="portada" prefWidth="430.0" minWidth="430.0">
+        <Label text="Solea" styleClass="marca-portada" />
+        <Label text="Come y entrena según tu objetivo." styleClass="lema" wrapText="true" maxWidth="330.0" />
+        <Region VBox.vgrow="ALWAYS" />
+        <Label text="Calorías y macros del día, plan semanal de comidas, lista del súper y tu rutina de gimnasio, en un solo lugar."
+               styleClass="nota-portada" wrapText="true" maxWidth="320.0" />
+    </VBox>
 
-    <Label text="Inicia sesión o crea tu cuenta" />
+    <!-- Formulario -->
+    <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+        <padding>
+            <Insets bottom="48.0" left="64.0" right="64.0" top="48.0" />
+        </padding>
+    <VBox alignment="CENTER_LEFT" spacing="14.0" maxWidth="420.0">
 
-    <TextField fx:id="txtNombreRegistro" promptText="Nombre (solo para registro)" maxWidth="280.0" />
-    <TextField fx:id="txtCorreo" promptText="Correo electrónico" maxWidth="280.0" />
-    <PasswordField fx:id="txtPassword" promptText="Contraseña" maxWidth="280.0" />
+        <TextFlow>
+            <Text styleClass="titulo" text="Hola de " />
+            <Text styleClass="titulo-italico" text="nuevo." />
+        </TextFlow>
+        <Label text="Inicia sesión con tu correo o crea tu cuenta." styleClass="subtitulo" />
 
-    <HBox alignment="CENTER" spacing="15.0">
-        <Button text="Iniciar sesión" onAction="#handleLogin" prefWidth="130.0"
-                style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;" />
-        <Button text="Registrarse" onAction="#handleRegistro" prefWidth="130.0"
-                style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-size: 14px;" />
-    </HBox>
-</VBox>
+        <Region minHeight="8.0" />
+
+        <Label text="Correo electrónico" styleClass="etiqueta" />
+        <TextField fx:id="txtCorreo" promptText="tu@correo.com" maxWidth="360.0" />
+        <Label text="Contraseña" styleClass="etiqueta" />
+        <PasswordField fx:id="txtPassword" promptText="Tu contraseña" maxWidth="360.0" />
+        <Label text="Nombre (solo si vas a crear tu cuenta)" styleClass="etiqueta" />
+        <TextField fx:id="txtNombreRegistro" promptText="Tu nombre" maxWidth="360.0" />
+
+        <Region minHeight="8.0" />
+
+        <HBox spacing="10.0">
+            <Button text="Iniciar sesión" styleClass="primario" onAction="#handleLogin" defaultButton="true" />
+            <Button text="Crear cuenta" onAction="#handleRegistro" />
+        </HBox>
+        <Button text="¿Olvidaste tu contraseña?" styleClass="fantasma" onAction="#handleOlvideContrasena" />
+    </VBox>
+    </VBox>
+</HBox>

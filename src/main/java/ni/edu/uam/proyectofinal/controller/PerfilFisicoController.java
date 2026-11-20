@@ -16,7 +16,13 @@ import ni.edu.uam.proyectofinal.util.Validacion.ValidacionException;
 
 public class PerfilFisicoController {
 
+    /** Libras que tiene un kilogramo. */
+    private static final double LIBRAS_POR_KG = 2.20462;
+    private static final String KG = "kg";
+    private static final String LB = "lb";
+
     @FXML private TextField txtPeso;
+    @FXML private ComboBox<String> cmbUnidadPeso;
     @FXML private TextField txtAltura;
     @FXML private TextField txtEdad;
     @FXML private TextField txtPorcentajeGrasa;
@@ -32,6 +38,11 @@ public class PerfilFisicoController {
         cmbSexo.setItems(FXCollections.observableArrayList("Masculino", "Femenino"));
         // Los valores deben coincidir con los que entiende CalculoNutricionalService
         cmbNivelActividad.setItems(FXCollections.observableArrayList("Sedentario", "Ligero", "Moderado", "Alto"));
+
+        // El peso se puede escribir en kilos o en libras; en la base siempre se guarda en kg
+        cmbUnidadPeso.setItems(FXCollections.observableArrayList(KG, LB));
+        cmbUnidadPeso.setValue(KG);
+        cmbUnidadPeso.valueProperty().addListener((obs, antes, ahora) -> convertirPesoEscrito(antes, ahora));
 
         usuarioActual = SesionActual.getUsuarioActivo();
         PerfilFisico p = usuarioActual != null ? usuarioActual.getPerfilFisico() : null;
@@ -52,6 +63,27 @@ public class PerfilFisicoController {
         }
     }
 
+    /** Si ya había un peso escrito, lo convierte a la unidad nueva (70 kg -> 154.3 lb). */
+    private void convertirPesoEscrito(String unidadAnterior, String unidadNueva) {
+        if (unidadAnterior == null || unidadNueva == null || unidadAnterior.equals(unidadNueva)) {
+            return;
+        }
+        String texto = txtPeso.getText() == null ? "" : txtPeso.getText().trim().replace(',', '.');
+        try {
+            double valor = Double.parseDouble(texto);
+            if (Double.isFinite(valor) && valor > 0) {
+                double convertido = LB.equals(unidadNueva) ? valor * LIBRAS_POR_KG : valor / LIBRAS_POR_KG;
+                txtPeso.setText(String.valueOf(redondear(convertido)));
+            }
+        } catch (NumberFormatException e) {
+            // Campo vacío o con texto: se deja como está y la validación avisará al guardar
+        }
+    }
+
+    private static double redondear(double valor) {
+        return Math.round(valor * 10) / 10.0;
+    }
+
     public void setUsuarioActual(Usuario usuario) {
         this.usuarioActual = usuario;
     }
@@ -68,7 +100,9 @@ public class PerfilFisicoController {
         }
 
         try {
-            double peso = Validacion.decimal(txtPeso, "el peso (kg)", 30, 300);
+            double peso = LB.equals(cmbUnidadPeso.getValue())
+                    ? redondear(Validacion.decimal(txtPeso, "el peso (lb)", 66, 661) / LIBRAS_POR_KG)
+                    : Validacion.decimal(txtPeso, "el peso (kg)", 30, 300);
             double altura = Validacion.decimal(txtAltura, "la altura (cm)", 120, 230);
             int edad = Validacion.entero(txtEdad, "la edad", 18, 100);
             Double grasa = Validacion.decimalOpcional(txtPorcentajeGrasa, "el % de grasa", 3, 60);

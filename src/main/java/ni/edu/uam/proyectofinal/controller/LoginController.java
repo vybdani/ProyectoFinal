@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import ni.edu.uam.proyectofinal.dao.UsuarioDAO;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.util.CuentaDialogos;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
 import ni.edu.uam.proyectofinal.util.Validacion;
@@ -36,6 +37,10 @@ public class LoginController {
                 return;
             }
             SesionActual.setUsuarioActivo(usuario);
+            // Cuentas creadas antes de existir la recuperación: se les ofrece configurarla una vez
+            if (usuario.getPreguntaSeguridad() == null) {
+                ofrecerPreguntaSeguridad(usuario);
+            }
             if (usuario.getPerfilFisico() == null) {
                 Alertas.info("Perfil incompleto", "Completa tu perfil físico para continuar.");
                 Navegacion.irAlPerfil(txtCorreo);
@@ -62,7 +67,17 @@ public class LoginController {
             if (usuarioDAO.existeCorreo(correo)) {
                 throw Validacion.fallo(txtCorreo, "Ya existe una cuenta con ese correo. Inicia sesión.");
             }
-            Usuario nuevoUsuario = usuarioDAO.guardar(new Usuario(nombre, correo.toLowerCase(), password));
+            // La pregunta de seguridad permite recuperar la cuenta si se olvida la contraseña
+            CuentaDialogos.PreguntaSeguridad seguridad =
+                    CuentaDialogos.elegirPregunta(txtCorreo, false).orElse(null);
+            if (seguridad == null) {
+                Alertas.aviso("Cuenta no creada", "Elige una pregunta de seguridad para poder crear tu cuenta.");
+                return;
+            }
+            Usuario cuenta = new Usuario(nombre, correo.toLowerCase(), password);
+            cuenta.setPreguntaSeguridad(seguridad.pregunta());
+            cuenta.setRespuestaSeguridad(seguridad.respuesta()); // el DAO la guarda como hash
+            Usuario nuevoUsuario = usuarioDAO.guardar(cuenta);
             SesionActual.setUsuarioActivo(nuevoUsuario);
             Alertas.info("Cuenta creada", "Bienvenido/a, " + nombre + ". Ahora completa tu perfil físico.");
             Navegacion.irAlPerfil(txtCorreo);
@@ -71,6 +86,28 @@ public class LoginController {
         } catch (Exception e) {
             Alertas.error("No se pudo crear la cuenta", e);
         }
+    }
+
+    /** Recupera la cuenta respondiendo la pregunta de seguridad y poniendo una contraseña nueva. */
+    @FXML
+    private void handleOlvideContrasena() {
+        CuentaDialogos.recuperarContrasena(txtCorreo, txtCorreo.getText()).ifPresent(correo -> {
+            txtCorreo.setText(correo);
+            txtPassword.clear();
+            txtPassword.requestFocus();
+            Alertas.info("Contraseña cambiada", "Listo. Ya puedes iniciar sesión con tu contraseña nueva.");
+        });
+    }
+
+    private void ofrecerPreguntaSeguridad(Usuario usuario) {
+        CuentaDialogos.elegirPregunta(txtCorreo, true).ifPresent(seguridad -> {
+            try {
+                usuarioDAO.configurarPreguntaSeguridad(usuario.getId(), seguridad.pregunta(), seguridad.respuesta());
+                usuario.setPreguntaSeguridad(seguridad.pregunta());
+            } catch (Exception e) {
+                Alertas.error("No se pudo guardar la pregunta", e);
+            }
+        });
     }
 
     /** La contraseña no se recorta: los espacios forman parte de ella. */

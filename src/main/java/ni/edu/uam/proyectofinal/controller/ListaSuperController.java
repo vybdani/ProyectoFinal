@@ -44,7 +44,7 @@ public class ListaSuperController {
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colUnidad.setCellValueFactory(new PropertyValueFactory<>("unidad"));
         colEstado.setCellValueFactory(d -> new ReadOnlyStringWrapper(
-                Boolean.TRUE.equals(d.getValue().getComprado()) ? "✔ Comprado" : "Pendiente"));
+                Boolean.TRUE.equals(d.getValue().getComprado()) ? "Comprado" : "Pendiente"));
         tblListaSuper.setItems(listaProductos);
 
         usuario = SesionActual.getUsuarioActivo();

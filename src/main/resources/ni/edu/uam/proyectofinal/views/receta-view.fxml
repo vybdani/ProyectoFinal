@@ -1,79 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<BorderPane prefHeight="640.0" prefWidth="920.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ni.edu.uam.proyectofinal.controller.RecetaController">
-    <top>
-        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #2e7d32;">
-            <padding><Insets bottom="12.0" left="20.0" right="20.0" top="12.0"/></padding>
-            <Button text="← Menú" onAction="#handleVolverMenu" style="-fx-background-color: white; -fx-text-fill: #2e7d32;"/>
-            <Label text="Gestión de Recetas e Ingredientes" textFill="WHITE">
-                <font><Font name="System Bold" size="18.0"/></font>
-            </Label>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="📊 Resumen Calórico (HQL)" onAction="#handleVerResumenHQL"
-                    style="-fx-background-color: #1b5e20; -fx-text-fill: white; -fx-font-weight: bold;"/>
-        </HBox>
-    </top>
+<VBox styleClass="pagina" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ni.edu.uam.proyectofinal.controller.RecetaController">
+    <HBox alignment="BOTTOM_LEFT">
+        <VBox spacing="6.0">
+            <TextFlow>
+                <Text styleClass="titulo" text="Tus " />
+                <Text styleClass="titulo-italico" text="recetas." />
+            </TextFlow>
+            <Label text="Crea recetas con sus ingredientes; Solea suma las calorías y los macros." styleClass="subtitulo" />
+        </VBox>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="Resumen calórico" onAction="#handleVerResumenHQL" />
+    </HBox>
 
-    <center>
-        <SplitPane dividerPositions="0.46">
-            <VBox spacing="10.0">
-                <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/></padding>
-                <Label text="Datos de la Receta"><font><Font name="System Bold" size="14.0"/></font></Label>
-
-                <TextField fx:id="txtNombreReceta" promptText="Nombre de la receta (Ej. Pollo con arroz y aguacate)"/>
+    <HBox spacing="18.0" VBox.vgrow="ALWAYS">
+        <!-- Editor de receta -->
+        <ScrollPane fitToWidth="true" prefWidth="460.0" minWidth="420.0">
+            <VBox styleClass="tarjeta" spacing="8.0">
+                <Label text="Nombre de la receta" styleClass="etiqueta" />
+                <TextField fx:id="txtNombreReceta" promptText="Ej. Pollo con arroz y aguacate" />
                 <HBox spacing="10.0">
-                    <ComboBox fx:id="cmbTipoComida" promptText="Tiempo de comida" prefWidth="200.0"/>
-                    <TextField fx:id="txtTiempoPrep" promptText="Minutos prep. (Ej. 20)" prefWidth="160.0"/>
+                    <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                        <Label text="Tiempo de comida" styleClass="etiqueta" />
+                        <ComboBox fx:id="cmbTipoComida" promptText="Selecciona" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                        <Label text="Minutos de preparación" styleClass="etiqueta" />
+                        <TextField fx:id="txtTiempoPrep" promptText="Ej. 20" />
+                    </VBox>
                 </HBox>
-                <TextArea fx:id="txtDescripcion" promptText="Instrucciones de preparación..." prefRowCount="2"/>
+                <Label text="Preparación" styleClass="etiqueta" />
+                <TextArea fx:id="txtDescripcion" promptText="Pasos de la preparación" prefRowCount="3" wrapText="true" />
 
-                <Separator/>
-                <Label text="Ingredientes"><font><Font name="System Bold" size="14.0"/></font></Label>
-
+                <Region minHeight="6.0" />
+                <Label text="Ingredientes" styleClass="seccion" style="-fx-font-size: 22px;" />
                 <HBox spacing="8.0">
-                    <ComboBox fx:id="cmbAlimento" promptText="Selecciona alimento" prefWidth="210.0"/>
-                    <Button text="Internet" onAction="#handleBuscarEnInternet"/>
-                    <TextField fx:id="txtGramos" promptText="Gramos" prefWidth="85.0"/>
-                    <Button text="+ Agregar" onAction="#handleAgregarIngrediente" style="-fx-background-color: #1976d2; -fx-text-fill: white;"/>
-                    <Button text="Quitar" onAction="#handleQuitarIngrediente"/>
+                    <ComboBox fx:id="cmbAlimento" promptText="Alimento" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                    <Button text="Internet" onAction="#handleBuscarEnInternet" />
+                    <TextField fx:id="txtGramos" promptText="Gramos" prefWidth="86.0" />
                 </HBox>
-
-                <TableView fx:id="tblIngredientes" prefHeight="160.0">
+                <HBox spacing="8.0">
+                    <Button text="Agregar ingrediente" onAction="#handleAgregarIngrediente" />
+                    <Button text="Quitar" styleClass="fantasma" onAction="#handleQuitarIngrediente" />
+                </HBox>
+                <TableView fx:id="tblIngredientes" prefHeight="170.0">
                     <columns>
-                        <TableColumn fx:id="colIngAlimento" text="Alimento" prefWidth="210.0"/>
-                        <TableColumn fx:id="colIngGramos" text="Gramos" prefWidth="80.0"/>
-                        <TableColumn fx:id="colIngKcal" text="Calorías" prefWidth="90.0"/>
+                        <TableColumn fx:id="colIngAlimento" text="Alimento" prefWidth="200.0" />
+                        <TableColumn fx:id="colIngGramos" text="Gramos" prefWidth="80.0" />
+                        <TableColumn fx:id="colIngKcal" text="Calorías" prefWidth="90.0" />
                     </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
                 </TableView>
+                <Label fx:id="lblTotalesReceta" text="Total de la receta: 0 kcal" styleClass="resumen" wrapText="true" />
 
-                <Label fx:id="lblTotalesReceta" text="Total Receta: 0 kcal | Proteína: 0g | Carbs: 0g | Grasas: 0g"
-                       style="-fx-font-weight: bold; -fx-text-fill: #2e7d32;"/>
-
-                <HBox spacing="10.0">
-                    <Button text="Guardar / Actualizar" onAction="#handleGuardarReceta" style="-fx-background-color: #4caf50; -fx-text-fill: white;"/>
-                    <Button text="Eliminar" onAction="#handleEliminarReceta" style="-fx-background-color: #d32f2f; -fx-text-fill: white;"/>
-                    <Button text="Limpiar" onAction="#handleLimpiar"/>
+                <Region minHeight="4.0" />
+                <HBox spacing="8.0">
+                    <Button text="Guardar receta" styleClass="primario" onAction="#handleGuardarReceta" />
+                    <Button text="Limpiar" onAction="#handleLimpiar" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button text="Eliminar" styleClass="peligro" onAction="#handleEliminarReceta" />
                 </HBox>
             </VBox>
+        </ScrollPane>
 
-            <VBox spacing="10.0">
-                <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/></padding>
-                <Label text="Recetas Registradas"><font><Font name="System Bold" size="14.0"/></font></Label>
-                <TableView fx:id="tblRecetas" VBox.vgrow="ALWAYS">
-                    <columns>
-                        <TableColumn fx:id="colRecNombre" text="Receta" prefWidth="160.0"/>
-                        <TableColumn fx:id="colRecTipo" text="Tiempo" prefWidth="85.0"/>
-                        <TableColumn fx:id="colRecKcal" text="Calorías" prefWidth="80.0"/>
-                        <TableColumn fx:id="colRecMacros" text="Macronutrientes" prefWidth="150.0"/>
-                    </columns>
-                </TableView>
-            </VBox>
-        </SplitPane>
-    </center>
-</BorderPane>
+        <!-- Recetas guardadas -->
+        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <Label text="Recetas guardadas" styleClass="seccion" style="-fx-font-size: 22px;" />
+            <TableView fx:id="tblRecetas" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colRecNombre" text="Receta" prefWidth="170.0" />
+                    <TableColumn fx:id="colRecTipo" text="Tiempo" prefWidth="90.0" />
+                    <TableColumn fx:id="colRecKcal" text="Calorías" prefWidth="80.0" />
+                    <TableColumn fx:id="colRecMacros" text="Macronutrientes" prefWidth="170.0" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+    </HBox>
+</VBox>

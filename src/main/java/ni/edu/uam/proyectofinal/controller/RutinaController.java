@@ -101,7 +101,7 @@ public class RutinaController {
         }
         if (objetivo == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Objetivo",
-                    "Primero elige y guarda tu objetivo (Volumen muscular o Definición) en el menú del Modo Gimnasio.");
+                    "Primero elige y guarda tu objetivo de gimnasio en el menú del Modo Gimnasio.");
             return;
         }
         if (cmbDias.getValue() == null) {

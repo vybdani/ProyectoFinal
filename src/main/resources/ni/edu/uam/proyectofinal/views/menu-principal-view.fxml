@@ -1,47 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<VBox alignment="CENTER" spacing="22.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ni.edu.uam.proyectofinal.controller.MenuPrincipalController">
-    <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-    </padding>
+<!-- Inicio: el resumen del día. Se llena desde MenuPrincipalController con los datos guardados. -->
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.proyectofinal.controller.MenuPrincipalController">
+    <VBox styleClass="pagina">
 
-    <Label fx:id="lblBienvenida" text="Bienvenido/a a Solea">
-        <font>
-            <Font name="System Bold" size="22.0" />
-        </font>
-    </Label>
-
-    <Label text="Selecciona el modo de trabajo:" />
-
-    <HBox spacing="20.0" alignment="CENTER">
-        <VBox spacing="6.0" alignment="CENTER">
-            <Button text="🥗 Modo Nutrición" onAction="#handleModoNutricion" prefWidth="200.0" prefHeight="60.0"
-                    style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 14px;" />
-            <Label text="Bajar, mantener o subir de peso" style="-fx-text-fill: #666666;" />
+        <!-- Saludo -->
+        <VBox spacing="6.0">
+            <TextFlow>
+                <Text fx:id="txtSaludo" styleClass="titulo" text="Hola. " />
+                <Text fx:id="txtSaludoAcento" styleClass="titulo-italico" text="" />
+            </TextFlow>
+            <Label fx:id="lblBienvenida" styleClass="subtitulo" text="" />
         </VBox>
 
-        <VBox spacing="6.0" alignment="CENTER">
-            <Button text="🏋 Modo Gimnasio" onAction="#handleModoGimnasio" prefWidth="200.0" prefHeight="60.0"
-                    style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-size: 14px;" />
-            <Label text="Volumen muscular o definición" style="-fx-text-fill: #666666;" />
-        </VBox>
-    </HBox>
+        <!-- Cifras del día -->
+        <HBox styleClass="tarjeta" style="-fx-padding: 20 0 20 0;">
+            <VBox styleClass="celda-dato" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="320.0">
+                <Label text="Calorías de hoy" styleClass="etiqueta" />
+                <TextFlow>
+                    <Text fx:id="txtKcal" styleClass="numero-grande" text="—" />
+                    <Text fx:id="txtKcalMeta" styleClass="unidad" text="" />
+                </TextFlow>
+                <Label fx:id="lblKcalNota" styleClass="texto-suave" text="" wrapText="true" />
+                <ProgressBar fx:id="barKcal" styleClass="barra" progress="0" maxWidth="Infinity" />
+            </VBox>
+            <VBox styleClass="celda-dato" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="200.0">
+                <Label text="Proteína" styleClass="etiqueta" />
+                <TextFlow>
+                    <Text fx:id="txtProt" styleClass="numero" text="—" />
+                    <Text fx:id="txtProtMeta" styleClass="unidad" text="" />
+                </TextFlow>
+                <ProgressBar fx:id="barProt" styleClass="barra" progress="0" maxWidth="Infinity" />
+                <Label fx:id="lblProtNota" styleClass="chip, alerta" text="" visible="false" managed="false" />
+            </VBox>
+            <VBox styleClass="celda-dato" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="200.0">
+                <Label text="Carbohidratos" styleClass="etiqueta" />
+                <TextFlow>
+                    <Text fx:id="txtCarb" styleClass="numero" text="—" />
+                    <Text fx:id="txtCarbMeta" styleClass="unidad" text="" />
+                </TextFlow>
+                <ProgressBar fx:id="barCarb" styleClass="barra" progress="0" maxWidth="Infinity" />
+            </VBox>
+            <VBox styleClass="celda-dato, ultima" spacing="6.0" HBox.hgrow="ALWAYS" prefWidth="200.0">
+                <Label text="Grasas" styleClass="etiqueta" />
+                <TextFlow>
+                    <Text fx:id="txtGrasa" styleClass="numero" text="—" />
+                    <Text fx:id="txtGrasaMeta" styleClass="unidad" text="" />
+                </TextFlow>
+                <ProgressBar fx:id="barGrasa" styleClass="barra" progress="0" maxWidth="Infinity" />
+            </VBox>
+        </HBox>
 
-    <!-- Botón para consumir la API REST de Solea -->
-    <Button text="💡 Consejo Nutricional del Día (API REST)" onAction="#handleConsultarApiConsejo"
-            prefWidth="320.0" prefHeight="38.0"
-            style="-fx-background-color: #2196f3; -fx-text-fill: white; -fx-font-weight: bold;" />
+        <!-- Comidas, rutina o súper, y consejo -->
+        <HBox spacing="18.0">
+            <VBox styleClass="tarjeta" spacing="4.0" HBox.hgrow="ALWAYS" prefWidth="420.0" style="-fx-padding: 20 0 20 0;">
+                <HBox style="-fx-padding: 0 22 0 22;" alignment="BASELINE_LEFT">
+                    <Label text="Comidas de hoy" styleClass="seccion" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="lblComidasConteo" styleClass="nota" text="" />
+                </HBox>
+                <VBox fx:id="listaComidas" style="-fx-padding: 8 0 0 0;" />
+                <Region VBox.vgrow="ALWAYS" minHeight="12.0" />
+                <HBox spacing="10.0" style="-fx-padding: 0 22 0 22;">
+                    <Button text="Registrar consumo" styleClass="primario" onAction="#handleConsumo" />
+                    <Button text="Plan semanal" onAction="#handlePlan" />
+                </HBox>
+            </VBox>
 
-    <HBox spacing="15.0" alignment="CENTER">
-        <Button text="Editar perfil físico" onAction="#handleEditarPerfil" />
-        <Button text="Cerrar sesión" onAction="#handleCerrarSesion" />
-    </HBox>
-</VBox>
+            <VBox styleClass="tarjeta" spacing="4.0" HBox.hgrow="ALWAYS" prefWidth="340.0" style="-fx-padding: 20 0 20 0;">
+                <HBox style="-fx-padding: 0 22 0 22;" alignment="BASELINE_LEFT">
+                    <Label fx:id="lblSegundaTitulo" text="" styleClass="seccion" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="lblSegundaDetalle" styleClass="nota" text="" />
+                </HBox>
+                <Label fx:id="lblSegundaSub" styleClass="texto-suave" text="" wrapText="true" style="-fx-padding: 0 22 0 22;" />
+                <VBox fx:id="listaSegunda" style="-fx-padding: 8 0 0 0;" />
+                <Region VBox.vgrow="ALWAYS" minHeight="12.0" />
+                <HBox spacing="10.0" style="-fx-padding: 0 22 0 22;">
+                    <Button fx:id="btnSegunda" text="" styleClass="primario" onAction="#handleSegunda" />
+                </HBox>
+            </VBox>
+
+            <VBox styleClass="tarjeta-suave" spacing="10.0" prefWidth="250.0" minWidth="230.0">
+                <Label text="Consejo del día" styleClass="seccion" style="-fx-font-size: 22px;" />
+                <Label fx:id="lblConsejo" styleClass="cita" text="Buscando un consejo para tu objetivo…" wrapText="true" />
+                <Label fx:id="lblConsejoFuente" styleClass="nota" text="" wrapText="true" />
+                <Region VBox.vgrow="ALWAYS" />
+                <Button fx:id="btnConsejo" text="Ver consejo completo" onAction="#handleConsultarApiConsejo" />
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>
