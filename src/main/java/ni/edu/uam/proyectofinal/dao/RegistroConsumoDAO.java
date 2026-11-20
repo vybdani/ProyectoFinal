@@ -1,79 +1,43 @@
 package ni.edu.uam.proyectofinal.dao;
 
 import ni.edu.uam.proyectofinal.model.RegistroConsumo;
-import ni.edu.uam.proyectofinal.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class RegistroConsumoDAO {
+public class RegistroConsumoDAO extends GenericDAO<RegistroConsumo> {
 
-    public void guardar(RegistroConsumo registro) {
-        Transaction transaction = null;
-
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(registro);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error al registrar consumo", e);
-        }
+    public RegistroConsumoDAO() {
+        super(RegistroConsumo.class, "el registro de consumo");
     }
 
+    /** Lo que comió el usuario en una fecha (el alimento viene cargado por ser EAGER). */
     public List<RegistroConsumo> listarConsumoDiario(Long usuarioId, LocalDate fecha) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = """
-                FROM RegistroConsumo r
-                WHERE r.usuario.id = :usuarioId
-                AND r.fecha = :fecha
-                ORDER BY r.hora DESC
-                """;
-            return session.createQuery(hql, RegistroConsumo.class)
-                    .setParameter("usuarioId", usuarioId)
-                    .setParameter("fecha", fecha)
-                    .list();
-        }
+        return consultar("cargar el consumo del día", session -> session.createQuery("""
+                        FROM RegistroConsumo r
+                        WHERE r.usuario.id = :usuarioId
+                        AND r.fecha = :fecha
+                        ORDER BY r.hora DESC
+                        """, RegistroConsumo.class)
+                .setParameter("usuarioId", usuarioId)
+                .setParameter("fecha", fecha)
+                .list());
     }
 
+    /** HQL de agregación: kcal, proteínas, carbohidratos y grasas consumidos en el día. */
     public Object[] obtenerTotales(Long usuarioId, LocalDate fecha) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = """
-                SELECT
-                    COALESCE(SUM(r.caloriasConsumidas), 0.0),
-                    COALESCE(SUM(r.proteinasConsumidas), 0.0),
-                    COALESCE(SUM(r.carbohidratosConsumidos), 0.0),
-                    COALESCE(SUM(r.grasasConsumidas), 0.0)
-                FROM RegistroConsumo r
-                WHERE r.usuario.id = :usuarioId
-                AND r.fecha = :fecha
-                """;
-            return session.createQuery(hql, Object[].class)
-                    .setParameter("usuarioId", usuarioId)
-                    .setParameter("fecha", fecha)
-                    .uniqueResult();
-        }
-    }
-
-    public void eliminar(Long id) {
-        Transaction transaction = null;
-
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            RegistroConsumo registro = session.get(RegistroConsumo.class, id);
-            if (registro != null) {
-                session.remove(registro);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error al eliminar consumo", e);
-        }
+        return consultar("calcular los totales del día", session -> session.createQuery("""
+                        SELECT
+                            COALESCE(SUM(r.caloriasConsumidas), 0.0),
+                            COALESCE(SUM(r.proteinasConsumidas), 0.0),
+                            COALESCE(SUM(r.carbohidratosConsumidos), 0.0),
+                            COALESCE(SUM(r.grasasConsumidas), 0.0)
+                        FROM RegistroConsumo r
+                        WHERE r.usuario.id = :usuarioId
+                        AND r.fecha = :fecha
+                        """, Object[].class)
+                .setParameter("usuarioId", usuarioId)
+                .setParameter("fecha", fecha)
+                .uniqueResult());
     }
 }

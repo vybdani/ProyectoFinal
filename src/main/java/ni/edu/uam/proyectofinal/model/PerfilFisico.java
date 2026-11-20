@@ -10,14 +10,21 @@ public class PerfilFisico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "peso", nullable = false)
     private Double peso;
+    @Column(name = "altura", nullable = false)
     private Double altura;
+    @Column(name = "edad", nullable = false)
     private Integer edad;
+    @Column(name = "porcentaje_grasa")
     private Double porcentajeGrasa;
+    @Column(name = "sexo", nullable = false, length = 10)
     private String sexo;
+    @Column(name = "nivel_actividad", nullable = false, length = 20)
     private String nivelActividad;
 
-    @OneToOne
+    /** Lado dueño de la relación 1-1: la tabla perfiles_fisicos guarda usuario_id (único). */
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;
 

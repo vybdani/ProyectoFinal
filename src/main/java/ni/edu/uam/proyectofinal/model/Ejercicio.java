@@ -19,6 +19,7 @@ public class Ejercicio {
     @Column(length = 300)
     private String descripcion;
 
+    /** EAGER a propósito: el grupo es un dato pequeño que siempre se muestra junto al ejercicio. */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "grupo_muscular_id", nullable = false)
     private GrupoMuscular grupoMuscular;

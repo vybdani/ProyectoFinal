@@ -1,56 +1,54 @@
 package ni.edu.uam.proyectofinal.dao;
 
 import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
-import ni.edu.uam.proyectofinal.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.time.LocalDate;
 
-public class RequerimientoDiarioDAO {
+public class RequerimientoDiarioDAO extends GenericDAO<RequerimientoDiario> {
 
-    public void guardar(RequerimientoDiario requerimiento) {
-        Transaction transaction = null;
-
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(requerimiento);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error al guardar requerimiento", e);
-        }
+    public RequerimientoDiarioDAO() {
+        super(RequerimientoDiario.class, "el requerimiento diario");
     }
 
+    /** Último requerimiento calculado por el usuario. */
     public RequerimientoDiario buscarPorUsuario(Long usuarioId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = """
-                FROM RequerimientoDiario r
-                WHERE r.usuario.id = :usuarioId
-                ORDER BY r.fecha DESC, r.id DESC
-                """;
-            return session.createQuery(hql, RequerimientoDiario.class)
-                    .setParameter("usuarioId", usuarioId)
-                    .setMaxResults(1)
-                    .uniqueResult();
-        }
+        return consultar("cargar el requerimiento", session -> session.createQuery("""
+                        FROM RequerimientoDiario r
+                        WHERE r.usuario.id = :usuarioId
+                        ORDER BY r.fecha DESC, r.id DESC
+                        """, RequerimientoDiario.class)
+                .setParameter("usuarioId", usuarioId)
+                .setMaxResults(1)
+                .uniqueResult());
     }
 
+    /** Requerimiento calculado hoy, si existe. */
     public RequerimientoDiario buscarDelDia(Long usuarioId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = """
-                FROM RequerimientoDiario r
-                WHERE r.usuario.id = :usuarioId
-                AND r.fecha = :fecha
-                ORDER BY r.id DESC
-                """;
-            return session.createQuery(hql, RequerimientoDiario.class)
-                    .setParameter("usuarioId", usuarioId)
-                    .setParameter("fecha", LocalDate.now())
-                    .setMaxResults(1)
-                    .uniqueResult();
-        }
+        return consultar("cargar el requerimiento", session -> session.createQuery("""
+                        FROM RequerimientoDiario r
+                        WHERE r.usuario.id = :usuarioId
+                        AND r.fecha = :fecha
+                        ORDER BY r.id DESC
+                        """, RequerimientoDiario.class)
+                .setParameter("usuarioId", usuarioId)
+                .setParameter("fecha", LocalDate.now())
+                .setMaxResults(1)
+                .uniqueResult());
+    }
+
+    /** Un plan de comidas puede apuntar al requerimiento: se desvincula antes de borrarlo. */
+    @Override
+    public void eliminar(Long id) {
+        ejecutar("eliminar el requerimiento diario", session -> {
+            RequerimientoDiario requerimiento = session.get(RequerimientoDiario.class, id);
+            if (requerimiento == null) {
+                throw new IllegalArgumentException("El requerimiento que se quiere eliminar no existe.");
+            }
+            session.createMutationQuery(
+                            "UPDATE PlanComidas p SET p.requerimientoDiario = null WHERE p.requerimientoDiario.id = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+            session.remove(requerimiento);
+        });
     }
 }

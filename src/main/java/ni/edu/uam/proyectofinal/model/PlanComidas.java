@@ -24,11 +24,17 @@ public class PlanComidas {
     @Column(nullable = false, length = 120)
     private String nombrePlan;
 
+    @Column(name = "fecha_inicio")
     private LocalDate fechaInicio;
 
+    @Column(name = "calorias_objetivo_diarias")
     private Double caloriasObjetivoDiarias;
 
-    @OneToMany(mappedBy = "planComidas", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    /**
+     * Composición: las comidas no existen sin su plan (cascade ALL + orphanRemoval).
+     * LAZY: PlanComidasDAO las trae con JOIN FETCH.
+     */
+    @OneToMany(mappedBy = "planComidas", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ComidaPlan> comidas = new ArrayList<>();
 
     public PlanComidas() {
@@ -41,10 +47,14 @@ public class PlanComidas {
         this.fechaInicio = fechaInicio;
         this.caloriasObjetivoDiarias = caloriasObjetivoDiarias;
     }
-
     public void agregarComida(ComidaPlan comida) {
         comidas.add(comida);
         comida.setPlanComidas(this);
+    }
+
+    public void removerComida(ComidaPlan comida) {
+        comidas.remove(comida);
+        comida.setPlanComidas(null);
     }
 
     public Long getId() {

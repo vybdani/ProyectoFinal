@@ -10,7 +10,10 @@ public class Usuario {
     private String nombre;
     @Column(nullable = false, unique = true, length = 100)
     private String correo;
-    @Column(nullable = false) private String password;
+    @Column(nullable = false, length = 255)
+    private String password;
+
+    /** El perfil pertenece al usuario: se guarda y se borra junto con él (cascade ALL). */
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PerfilFisico perfilFisico;
 

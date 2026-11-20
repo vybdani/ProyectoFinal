@@ -9,18 +9,20 @@ public class ItemListaSuper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @Column(nullable = false, length = 100)
     private String nombreProducto;
 
+    @Column(name = "cantidad", nullable = false)
     private Double cantidad;
 
+    @Column(name = "unidad", nullable = false, length = 20)
     private String unidad;
 
+    @Column(name = "comprado", nullable = false)
     private Boolean comprado;
 
     public ItemListaSuper() {
@@ -65,5 +67,24 @@ public class ItemListaSuper {
     public void setComprado(Boolean comprado) {
         this.comprado = comprado;
     }
-}
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public void setUnidad(String unidad) {
+        this.unidad = unidad;
+    }
+}

@@ -1,88 +1,60 @@
 package ni.edu.uam.proyectofinal.dao;
 
 import ni.edu.uam.proyectofinal.model.Receta;
-import ni.edu.uam.proyectofinal.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.util.List;
 
-public class RecetaDAO {
+public class RecetaDAO extends GenericDAO<Receta> {
 
-    public void guardar(Receta receta) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(receta);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error al guardar la receta", e);
-        }
+    public RecetaDAO() {
+        super(Receta.class, "la receta");
     }
 
-    public void actualizar(Receta receta) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.merge(receta);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error al actualizar la receta", e);
-        }
-    }
-
-    public void eliminar(Long id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Receta receta = session.get(Receta.class, id);
-            if (receta != null) {
-                session.remove(receta);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error al eliminar la receta", e);
-        }
-    }
-
-    // HQL 1: Recupera las recetas con sus ingredientes y alimentos asociados
+    /** HQL con JOIN FETCH: recetas con sus ingredientes y el alimento de cada uno. */
     public List<Receta> listarTodas() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = """
-                SELECT DISTINCT r FROM Receta r
-                LEFT JOIN FETCH r.ingredientes ri
-                LEFT JOIN FETCH ri.alimento
-                ORDER BY r.nombre ASC
-                """;
-            return session.createQuery(hql, Receta.class).list();
-        }
+        return consultar("listar las recetas", session -> session.createQuery("""
+                        SELECT DISTINCT r FROM Receta r
+                        LEFT JOIN FETCH r.ingredientes ri
+                        LEFT JOIN FETCH ri.alimento
+                        ORDER BY r.nombre ASC
+                        """, Receta.class)
+                .list());
     }
 
-    // HQL 2 (Rúbrica): Calcula las kcal y macros totales por receta desde sus ingredientes
+    /** Las recetas siempre se listan con sus ingredientes (la colección es LAZY). */
+    @Override
+    public List<Receta> listarTodos() {
+        return listarTodas();
+    }
+
+    /** HQL de agregación: kcal y macros totales de cada receta calculados desde sus ingredientes. */
     public List<Object[]> obtenerResumenCaloricoRecetas() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = """
-                SELECT r.id, r.nombre, r.tipoComida,
-                       COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.calorias), 0.0),
-                       COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.proteinas), 0.0),
-                       COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.carbohidratos), 0.0),
-                       COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.grasas), 0.0)
-                FROM Receta r
-                LEFT JOIN r.ingredientes ri
-                LEFT JOIN ri.alimento a
-                GROUP BY r.id, r.nombre, r.tipoComida
-                ORDER BY r.nombre ASC
-                """;
-            return session.createQuery(hql, Object[].class).list();
+        return consultar("calcular el resumen de recetas", session -> session.createQuery("""
+                        SELECT r.id, r.nombre, r.tipoComida,
+                               COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.calorias), 0.0),
+                               COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.proteinas), 0.0),
+                               COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.carbohidratos), 0.0),
+                               COALESCE(SUM((ri.cantidadGramos / a.cantidadBase) * a.grasas), 0.0)
+                        FROM Receta r
+                        LEFT JOIN r.ingredientes ri
+                        LEFT JOIN ri.alimento a
+                        GROUP BY r.id, r.nombre, r.tipoComida
+                        ORDER BY r.nombre ASC
+                        """, Object[].class)
+                .list());
+    }
+
+    /** No se borra una receta que forma parte de un plan semanal. */
+    @Override
+    public void eliminar(Long id) {
+        Long usos = consultar("verificar la receta", session -> session.createQuery(
+                        "SELECT COUNT(c) FROM ComidaPlan c WHERE c.receta.id = :id", Long.class)
+                .setParameter("id", id)
+                .uniqueResult());
+        if (usos != null && usos > 0) {
+            throw new IllegalStateException("La receta está en " + usos
+                    + " comida(s) de un plan semanal y no se puede eliminar.");
         }
+        super.eliminar(id);
     }
 }

@@ -14,6 +14,7 @@ public class ComidaPlan {
     @JoinColumn(name = "plan_id", nullable = false)
     private PlanComidas planComidas;
 
+    /** EAGER a propósito: cada comida del plan se muestra con su receta. */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "receta_id", nullable = false)
     private Receta receta;
@@ -24,6 +25,7 @@ public class ComidaPlan {
     @Column(nullable = false, length = 30)
     private String tiempoComida;
 
+    @Column(name = "calorias_estimadas")
     private Double caloriasEstimadas;
 
     public ComidaPlan() {

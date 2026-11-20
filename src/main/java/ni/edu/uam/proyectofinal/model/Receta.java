@@ -21,9 +21,14 @@ public class Receta {
     @Column(length = 500)
     private String descripcion;
 
+    @Column(name = "tiempo_preparacion_min")
     private Integer tiempoPreparacionMin;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    /**
+     * Composición: los ingredientes no existen sin su receta (cascade ALL + orphanRemoval).
+     * LAZY: RecetaDAO los trae con JOIN FETCH cuando se necesitan.
+     */
+    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecetaIngrediente> ingredientes = new ArrayList<>();
 
     public Receta() {

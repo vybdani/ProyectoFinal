@@ -24,12 +24,14 @@ public class Rutina {
     @Column(nullable = false)
     private Integer diasPorSemana;
 
+    @Column(name = "fecha_creacion", nullable = false)
     private LocalDate fechaCreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    /** Composición: los ejercicios de la rutina se guardan y se borran con ella (cascade ALL + orphanRemoval). */
     @OneToMany(mappedBy = "rutina", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("dia ASC, orden ASC")
     private List<RutinaEjercicio> ejercicios = new ArrayList<>();
@@ -49,6 +51,11 @@ public class Rutina {
     public void agregarEjercicio(RutinaEjercicio rutinaEjercicio) {
         rutinaEjercicio.setRutina(this);
         ejercicios.add(rutinaEjercicio);
+    }
+
+    public void removerEjercicio(RutinaEjercicio rutinaEjercicio) {
+        ejercicios.remove(rutinaEjercicio);
+        rutinaEjercicio.setRutina(null);
     }
 
     public Long getId() {

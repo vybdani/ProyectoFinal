@@ -18,6 +18,7 @@ public class RutinaEjercicio {
     @JoinColumn(name = "rutina_id", nullable = false)
     private Rutina rutina;
 
+    /** EAGER a propósito: la rutina siempre se muestra con el nombre de cada ejercicio. */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ejercicio_id", nullable = false)
     private Ejercicio ejercicio;

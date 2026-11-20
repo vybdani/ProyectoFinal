@@ -16,6 +16,7 @@ public class Objetivo {
     @Column(nullable = false)
     private String tipo;
 
+    @Column(name = "calorias_diarias")
     private Integer caloriasDiarias;
 
     @ManyToOne(fetch = FetchType.LAZY)

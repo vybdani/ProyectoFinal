@@ -2,15 +2,12 @@ package ni.edu.uam.proyectofinal.dao;
 
 import ni.edu.uam.proyectofinal.model.Ejercicio;
 import ni.edu.uam.proyectofinal.model.GrupoMuscular;
-import ni.edu.uam.proyectofinal.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GrupoMuscularDAO {
+public class GrupoMuscularDAO extends GenericDAO<GrupoMuscular> {
 
     public static final String PECHO = "Pecho";
     public static final String ESPALDA = "Espalda";
@@ -20,10 +17,29 @@ public class GrupoMuscularDAO {
     public static final String TRICEPS = "Tríceps";
     public static final String CORE = "Core";
 
+    public GrupoMuscularDAO() {
+        super(GrupoMuscular.class, "el grupo muscular");
+    }
+
+    /** Grupos musculares ordenados por nombre. */
+    @Override
     public List<GrupoMuscular> listarTodos() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM GrupoMuscular g ORDER BY g.nombre", GrupoMuscular.class).list();
+        return consultar("listar los grupos musculares", session ->
+                session.createQuery("FROM GrupoMuscular g ORDER BY g.nombre", GrupoMuscular.class).list());
+    }
+
+    /** No se borra un grupo que todavía tiene ejercicios en el catálogo. */
+    @Override
+    public void eliminar(Long id) {
+        Long ejercicios = consultar("verificar el grupo muscular", session -> session.createQuery(
+                        "SELECT COUNT(e) FROM Ejercicio e WHERE e.grupoMuscular.id = :id", Long.class)
+                .setParameter("id", id)
+                .uniqueResult());
+        if (ejercicios != null && ejercicios > 0) {
+            throw new IllegalStateException("El grupo tiene " + ejercicios
+                    + " ejercicio(s). Muévelos o elimínalos antes de borrar el grupo.");
         }
+        super.eliminar(id);
     }
 
     /**
@@ -31,28 +47,21 @@ public class GrupoMuscularDAO {
      * básico de ejercicios (todo en una sola transacción).
      */
     public void asegurarDatosIniciales() {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Long cantidad = session.createQuery("SELECT COUNT(g) FROM GrupoMuscular g", Long.class).uniqueResult();
-            if (cantidad != null && cantidad > 0) {
-                return;
-            }
-
-            transaction = session.beginTransaction();
+        Long cantidad = consultar("contar los grupos musculares", session ->
+                session.createQuery("SELECT COUNT(g) FROM GrupoMuscular g", Long.class).uniqueResult());
+        if (cantidad != null && cantidad > 0) {
+            return;
+        }
+        ejecutar("cargar los ejercicios iniciales", session -> {
             for (Map.Entry<String[], String[][]> entrada : catalogo().entrySet()) {
                 GrupoMuscular grupo = new GrupoMuscular(entrada.getKey()[0], entrada.getKey()[1]);
-                session.persist(grupo);
                 for (String[] e : entrada.getValue()) {
-                    session.persist(new Ejercicio(e[0], e[1], e[2], grupo));
+                    grupo.agregarEjercicio(new Ejercicio(e[0], e[1], e[2], grupo));
                 }
+                session.persist(grupo);
+                grupo.getEjercicios().forEach(session::persist);
             }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Error al cargar los ejercicios iniciales", e);
-        }
+        });
     }
 
     /** Grupo {nombre, descripción} → ejercicios {nombre, equipo, descripción}. */

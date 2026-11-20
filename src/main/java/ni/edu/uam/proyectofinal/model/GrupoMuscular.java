@@ -19,6 +19,9 @@ public class GrupoMuscular {
     @Column(length = 200)
     private String descripcion;
 
+    /**
+     * Sin cascade: los ejercicios son un catálogo propio y no se borran al tocar el grupo.
+     */
     @OneToMany(mappedBy = "grupoMuscular")
     private List<Ejercicio> ejercicios = new ArrayList<>();
 
@@ -60,6 +63,17 @@ public class GrupoMuscular {
 
     public void setEjercicios(List<Ejercicio> ejercicios) {
         this.ejercicios = ejercicios;
+    }
+
+    /** Agrega un ejercicio al grupo manteniendo la relación en ambos lados. */
+    public void agregarEjercicio(Ejercicio ejercicio) {
+        ejercicios.add(ejercicio);
+        ejercicio.setGrupoMuscular(this);
+    }
+
+    public void removerEjercicio(Ejercicio ejercicio) {
+        ejercicios.remove(ejercicio);
+        ejercicio.setGrupoMuscular(null);
     }
 
     @Override

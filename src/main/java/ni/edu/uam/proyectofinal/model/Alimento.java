@@ -13,16 +13,22 @@ public class Alimento {
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    @Column(name = "categoria", length = 50)
     private String categoria;
 
+    @Column(name = "calorias", nullable = false)
     private Double calorias;
 
+    @Column(name = "proteinas", nullable = false)
     private Double proteinas;
 
+    @Column(name = "carbohidratos", nullable = false)
     private Double carbohidratos;
 
+    @Column(name = "grasas", nullable = false)
     private Double grasas;
 
+    @Column(name = "cantidad_base", nullable = false)
     private Double cantidadBase = 100.0;
 
     public Alimento() {

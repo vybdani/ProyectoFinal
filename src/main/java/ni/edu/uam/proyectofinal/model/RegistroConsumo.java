@@ -12,29 +12,37 @@ public class RegistroConsumo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne
+    /** EAGER a propósito: cada registro se muestra con el nombre y las kcal del alimento. */
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "alimento_id", nullable = false)
     private Alimento alimento;
 
+    @Column(name = "cantidad_gramos", nullable = false)
     private Double cantidad;
 
+    @Column(name = "calorias_consumidas", nullable = false)
     private Double caloriasConsumidas;
 
+    @Column(name = "proteinas_consumidas", nullable = false)
     private Double proteinasConsumidas;
 
+    @Column(name = "carbohidratos_consumidos", nullable = false)
     private Double carbohidratosConsumidos;
 
+    @Column(name = "grasas_consumidas", nullable = false)
     private Double grasasConsumidas;
 
+    @Column(name = "tipo_comida", nullable = false, length = 30)
     private String tipoComida;
 
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
+    @Column(name = "hora")
     private LocalTime hora;
 
     public RegistroConsumo() {

@@ -14,6 +14,7 @@ public class RecetaIngrediente {
     @JoinColumn(name = "receta_id", nullable = false)
     private Receta receta;
 
+    /** EAGER a propósito: las kcal y macros del ingrediente se calculan con su alimento. */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "alimento_id", nullable = false)
     private Alimento alimento;
