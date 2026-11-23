@@ -62,7 +62,9 @@
     <Label fx:id="lblResumen" text="" wrapText="true" styleClass="resumen" />
 
     <HBox spacing="10.0">
+        <Button text="Vista previa" onAction="#handleVistaPrevia" />
         <Button text="Exportar PDF" onAction="#handleExportarPdf" />
+        <Button text="Exportar Excel" onAction="#handleExportarExcel" />
         <Region HBox.hgrow="ALWAYS" />
         <Button text="Eliminar rutina" styleClass="peligro" onAction="#handleEliminar" />
     </HBox>

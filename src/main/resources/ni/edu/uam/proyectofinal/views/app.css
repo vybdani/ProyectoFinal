@@ -679,3 +679,23 @@
     -fx-background-radius: 6;
     -fx-padding: 6 10 6 10;
 }
+
+/* ---------------------------------------------------------- Vista previa de reportes */
+
+.vista-previa-barra {
+    -fx-background-color: -hoja;
+    -fx-border-color: transparent transparent -filete transparent;
+    -fx-padding: 14 18 14 18;
+}
+
+.vista-previa-hojas,
+.vista-previa-hojas > .viewport {
+    -fx-background-color: -papel-2;
+}
+
+.vista-previa-zoom {
+    -fx-font-family: "Figtree SemiBold";
+    -fx-text-fill: -gris;
+    -fx-min-width: 52;
+    -fx-alignment: center;
+}

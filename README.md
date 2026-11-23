@@ -234,8 +234,9 @@ datos en una sola transacción.
 
 Los datos inválidos responden `400` con el motivo; si Open Food Facts no responde, usa un catálogo local.
 
-**Reportes PDF** (JasperReports): rutina de gimnasio agrupada por día, lista del súper y ficha
-nutricional, con el botón **Exportar PDF** en cada pantalla. Detalle en
+**Reportes en PDF y Excel** (JasperReports): rutina de gimnasio agrupada por día, lista del súper y
+ficha nutricional, con los botones **Vista previa**, **Exportar PDF** y **Exportar Excel** en cada
+pantalla. Detalle en
 [`reports/README_REPORTES.md`](src/main/resources/ni/edu/uam/proyectofinal/reports/README_REPORTES.md).
 
 ---

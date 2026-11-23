@@ -13,8 +13,10 @@ import ni.edu.uam.proyectofinal.dao.ItemListaSuperDAO;
 import ni.edu.uam.proyectofinal.model.ItemListaSuper;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.reporte.FormatoReporte;
 import ni.edu.uam.proyectofinal.reporte.ReporteService;
-import ni.edu.uam.proyectofinal.util.ExportadorPdf;
+import ni.edu.uam.proyectofinal.util.ExportadorReporte;
+import ni.edu.uam.proyectofinal.util.VistaPreviaReporte;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
 import ni.edu.uam.proyectofinal.util.Validacion;
@@ -116,15 +118,37 @@ public class ListaSuperController {
         }
     }
 
+    /** Muestra la lista del súper como quedará en el reporte, con opción de exportarla. */
+    @FXML
+    private void handleVistaPrevia() {
+        if (listaProductos.isEmpty()) {
+            Alertas.aviso("Lista vacía", "Agrega productos antes de ver el reporte.");
+            return;
+        }
+        java.util.List<ItemListaSuper> items = java.util.List.copyOf(listaProductos);
+        VistaPreviaReporte.mostrar(tblListaSuper, "Lista del súper", "ListaSuper", usuario,
+                () -> new ReporteService().prepararListaSuper(usuario, items));
+    }
+
     /** Exporta la lista del súper a PDF (JasperReports). */
     @FXML
     private void handleExportarPdf() {
+        exportar(FormatoReporte.PDF);
+    }
+
+    /** Exporta la lista del súper a Excel (JasperReports). */
+    @FXML
+    private void handleExportarExcel() {
+        exportar(FormatoReporte.EXCEL);
+    }
+
+    private void exportar(FormatoReporte formato) {
         if (listaProductos.isEmpty()) {
             Alertas.aviso("Lista vacía", "Agrega productos antes de exportar la lista.");
             return;
         }
         java.util.List<ItemListaSuper> items = java.util.List.copyOf(listaProductos);
-        ExportadorPdf.exportar(tblListaSuper, "ListaSuper", usuario,
+        ExportadorReporte.exportar(tblListaSuper, "ListaSuper", usuario, formato,
                 destino -> new ReporteService().exportarListaSuper(usuario, items, destino));
     }
 

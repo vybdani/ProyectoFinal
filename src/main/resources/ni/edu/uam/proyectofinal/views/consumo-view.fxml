@@ -28,10 +28,7 @@
         <HBox spacing="10.0">
             <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                 <Label text="Alimento" styleClass="etiqueta" />
-                <HBox spacing="8.0">
-                    <ComboBox fx:id="cmbAlimento" promptText="Elige un alimento" maxWidth="Infinity" HBox.hgrow="ALWAYS" />
-                    <Button text="Buscar en internet" onAction="#handleBuscarEnInternet" />
-                </HBox>
+                <ComboBox fx:id="cmbAlimento" promptText="Elige un alimento" maxWidth="Infinity" minWidth="200.0" />
             </VBox>
             <VBox spacing="6.0">
                 <Label text="Gramos" styleClass="etiqueta" />
@@ -43,12 +40,13 @@
             </VBox>
             <VBox spacing="6.0">
                 <Label text="Fecha" styleClass="etiqueta" />
-                <DatePicker fx:id="dpFecha" prefWidth="150.0" />
+                <DatePicker fx:id="dpFecha" prefWidth="150.0" minWidth="150.0" />
             </VBox>
             <VBox spacing="6.0" alignment="BOTTOM_LEFT">
-                <Button text="Registrar" styleClass="primario" onAction="#registrarConsumo" defaultButton="true" />
+                <Button text="Registrar" styleClass="primario" onAction="#registrarConsumo" defaultButton="true" minWidth="-Infinity" />
             </VBox>
         </HBox>
+        <Button text="¿No está tu alimento? Búscalo en internet" styleClass="fantasma" onAction="#handleBuscarEnInternet" />
     </VBox>
 
     <TableView fx:id="tblConsumo" VBox.vgrow="ALWAYS">

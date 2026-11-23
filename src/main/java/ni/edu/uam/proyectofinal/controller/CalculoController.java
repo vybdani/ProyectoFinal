@@ -9,8 +9,10 @@ import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.service.CalculoNutricionalService;
 import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.reporte.FormatoReporte;
 import ni.edu.uam.proyectofinal.reporte.ReporteService;
-import ni.edu.uam.proyectofinal.util.ExportadorPdf;
+import ni.edu.uam.proyectofinal.util.ExportadorReporte;
+import ni.edu.uam.proyectofinal.util.VistaPreviaReporte;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
 
@@ -85,11 +87,29 @@ public class CalculoController {
         }
     }
 
+    /** Muestra la ficha nutricional como quedará en el reporte, con opción de exportarla. */
+    @FXML
+    private void handleVistaPrevia() {
+        String modo = SesionActual.getModoActual();
+        VistaPreviaReporte.mostrar(lblTMB, "Ficha nutricional", "FichaNutricional", usuario,
+                () -> new ReporteService().prepararPerfilNutricional(usuario, modo));
+    }
+
     /** Exporta la ficha nutricional (perfil + objetivo + requerimiento) a PDF. */
     @FXML
     private void handleExportarPdf() {
+        exportar(FormatoReporte.PDF);
+    }
+
+    /** Exporta la ficha nutricional a Excel. */
+    @FXML
+    private void handleExportarExcel() {
+        exportar(FormatoReporte.EXCEL);
+    }
+
+    private void exportar(FormatoReporte formato) {
         String modo = SesionActual.getModoActual();
-        ExportadorPdf.exportar(lblTMB, "FichaNutricional", usuario,
+        ExportadorReporte.exportar(lblTMB, "FichaNutricional", usuario, formato,
                 destino -> new ReporteService().exportarPerfilNutricional(usuario, modo, destino));
     }
 

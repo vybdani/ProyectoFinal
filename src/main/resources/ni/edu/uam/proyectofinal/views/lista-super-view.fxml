@@ -53,7 +53,9 @@
 
     <HBox spacing="10.0">
         <Button text="Marcar como comprado" onAction="#marcarComprado" />
+        <Button text="Vista previa" onAction="#handleVistaPrevia" />
         <Button text="Exportar PDF" onAction="#handleExportarPdf" />
+        <Button text="Exportar Excel" onAction="#handleExportarExcel" />
         <Region HBox.hgrow="ALWAYS" />
         <Button text="Eliminar" styleClass="peligro" onAction="#eliminarProducto" />
     </HBox>

@@ -23,21 +23,21 @@
                 <graphicElement><pen lineWidth="0.0"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="15" y="10" width="300" height="35" forecolor="#FFFFFF" uuid="27299011-6a61-4b7e-bb56-9c5f32b3eeae"/>
+                <reportElement x="15" y="10" width="300" height="35" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="27299011-6a61-4b7e-bb56-9c5f32b3eeae"/>
                 <textElement verticalAlignment="Middle">
                     <font size="20" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Solea - Lista del Súper]]></text>
             </staticText>
             <textField>
-                <reportElement x="320" y="10" width="200" height="18" forecolor="#FFFFFF" uuid="89bb29a4-9bc8-4b5a-ad84-da9b92622b48"/>
+                <reportElement x="320" y="10" width="200" height="18" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="89bb29a4-9bc8-4b5a-ad84-da9b92622b48"/>
                 <textElement textAlignment="Right">
                     <font size="10"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Usuario: " + ($P{USUARIO} != null ? $P{USUARIO} : "General")]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="320" y="28" width="200" height="18" forecolor="#FFFFFF" uuid="90417cbb-4176-42af-bcd4-fc320ba2302d"/>
+                <reportElement x="320" y="28" width="200" height="18" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="90417cbb-4176-42af-bcd4-fc320ba2302d"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>

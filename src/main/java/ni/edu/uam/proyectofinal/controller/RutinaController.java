@@ -14,8 +14,10 @@ import ni.edu.uam.proyectofinal.model.RutinaEjercicio;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.service.GeneradorRutinaService;
 import ni.edu.uam.proyectofinal.util.Alertas;
+import ni.edu.uam.proyectofinal.reporte.FormatoReporte;
 import ni.edu.uam.proyectofinal.reporte.ReporteService;
-import ni.edu.uam.proyectofinal.util.ExportadorPdf;
+import ni.edu.uam.proyectofinal.util.ExportadorReporte;
+import ni.edu.uam.proyectofinal.util.VistaPreviaReporte;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.Validacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
@@ -165,15 +167,37 @@ public class RutinaController {
         Navegacion.ir(tblRutina, "ejercicio-view.fxml", "Catálogo de Ejercicios", 860, 600);
     }
 
+    /** Muestra la rutina como quedará en el reporte, con opción de exportarla. */
+    @FXML
+    private void handleVistaPrevia() {
+        if (rutinaActual == null) {
+            Alertas.aviso("Sin rutina", "Genera una rutina antes de ver el reporte.");
+            return;
+        }
+        Rutina rutina = rutinaActual;
+        VistaPreviaReporte.mostrar(tblRutina, "Rutina de gimnasio", "Rutina", usuario,
+                () -> new ReporteService().prepararRutina(usuario, rutina));
+    }
+
     /** Exporta la rutina que se está viendo a PDF (JasperReports). */
     @FXML
     private void handleExportarPdf() {
+        exportar(FormatoReporte.PDF);
+    }
+
+    /** Exporta la rutina que se está viendo a Excel (JasperReports). */
+    @FXML
+    private void handleExportarExcel() {
+        exportar(FormatoReporte.EXCEL);
+    }
+
+    private void exportar(FormatoReporte formato) {
         if (rutinaActual == null) {
             Alertas.aviso("Sin rutina", "Genera una rutina antes de exportarla.");
             return;
         }
         Rutina rutina = rutinaActual;
-        ExportadorPdf.exportar(tblRutina, "Rutina", usuario,
+        ExportadorReporte.exportar(tblRutina, "Rutina", usuario, formato,
                 destino -> new ReporteService().exportarRutina(usuario, rutina, destino));
     }
 
@@ -199,6 +223,7 @@ public class RutinaController {
         cmbFiltroDia.setItems(FXCollections.observableArrayList(dias));
         cmbFiltroDia.setValue(TODOS);
         txtNombreRutina.setText(rutinaActual.getNombre());
+        cmbDias.setValue(rutinaActual.getDiasPorSemana());
 
         actualizarInfo();
         mostrarFilas();

@@ -49,7 +49,9 @@
 
         <HBox spacing="10.0">
             <Button text="Calcular y guardar" styleClass="primario" onAction="#calcular" defaultButton="true" />
+            <Button text="Vista previa" onAction="#handleVistaPrevia" />
             <Button text="Exportar PDF" onAction="#handleExportarPdf" />
+            <Button text="Exportar Excel" onAction="#handleExportarExcel" />
         </HBox>
     </VBox>
 </ScrollPane>

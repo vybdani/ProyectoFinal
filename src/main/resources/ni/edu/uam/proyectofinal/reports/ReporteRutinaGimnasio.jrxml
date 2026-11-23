@@ -49,28 +49,28 @@
                 <graphicElement><pen lineWidth="0.0"/></graphicElement>
             </rectangle>
             <staticText>
-                <reportElement x="15" y="10" width="310" height="40" forecolor="#FFFFFF" uuid="c77ee3b8-dfee-47e7-a828-17c060192aec"/>
+                <reportElement x="15" y="10" width="310" height="40" mode="Opaque" forecolor="#FFFFFF" backcolor="#B05A36" uuid="c77ee3b8-dfee-47e7-a828-17c060192aec"/>
                 <textElement verticalAlignment="Middle">
                     <font size="19" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Solea - Rutina de Gimnasio]]></text>
             </staticText>
             <textField>
-                <reportElement x="330" y="8" width="190" height="16" forecolor="#FFFFFF" uuid="82e7899d-8d9e-4b34-ad8c-8133bd7e9024"/>
+                <reportElement x="330" y="8" width="190" height="16" mode="Opaque" forecolor="#FFFFFF" backcolor="#B05A36" uuid="82e7899d-8d9e-4b34-ad8c-8133bd7e9024"/>
                 <textElement textAlignment="Right">
                     <font size="10" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Atleta: " + ($P{USUARIO} != null ? $P{USUARIO} : "General")]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="330" y="24" width="190" height="16" forecolor="#FFFFFF" uuid="385e6640-49ec-444f-a7d9-ced216cb2492"/>
+                <reportElement x="330" y="24" width="190" height="16" mode="Opaque" forecolor="#FFFFFF" backcolor="#B05A36" uuid="385e6640-49ec-444f-a7d9-ced216cb2492"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Meta: " + ($P{OBJETIVO} != null ? $P{OBJETIVO} : "Definición / Volumen")]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="330" y="40" width="190" height="16" forecolor="#FFFFFF" uuid="a62a24c7-becf-4ddc-8cd1-a50b15e2539f"/>
+                <reportElement x="330" y="40" width="190" height="16" mode="Opaque" forecolor="#FFFFFF" backcolor="#B05A36" uuid="a62a24c7-becf-4ddc-8cd1-a50b15e2539f"/>
                 <textElement textAlignment="Right">
                     <font size="9"/>
                 </textElement>

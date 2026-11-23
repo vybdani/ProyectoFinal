@@ -7,11 +7,19 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperPrintManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import net.sf.jasperreports.view.JasperViewer;
 
 import java.awt.Desktop;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Operaciones de bajo nivel con JasperReports: compilar plantillas .jrxml, llenarlas con datos
- * y exportarlas a PDF. La lógica de qué datos lleva cada reporte está en ReporteService.
+ * y exportarlas a PDF o Excel. La lógica de qué datos lleva cada reporte está en ReporteService.
  */
 public final class ReporteUtil {
 
@@ -74,6 +82,39 @@ public final class ReporteUtil {
 
     /** Exporta el reporte a PDF, creando la carpeta de destino si no existe. */
     public static Path exportarPdf(JasperPrint print, Path destino) throws JRException {
+        crearCarpeta(destino);
+        JasperExportManager.exportReportToPdfFile(print, destino.toString());
+        return destino;
+    }
+
+    /**
+     * Exporta el reporte a Excel (.xlsx), creando la carpeta de destino si no existe.
+     * Todo el reporte queda en una sola hoja, sin filas vacías de relleno, y los números
+     * se guardan como números (se pueden sumar o filtrar en Excel).
+     */
+    public static Path exportarXlsx(JasperPrint print, Path destino, String nombreHoja) throws JRException {
+        crearCarpeta(destino);
+        SimpleXlsxReportConfiguration config = new SimpleXlsxReportConfiguration();
+        config.setOnePagePerSheet(false);
+        config.setRemoveEmptySpaceBetweenRows(true);
+        config.setRemoveEmptySpaceBetweenColumns(true);
+        config.setDetectCellType(true);
+        config.setWhitePageBackground(false);
+        config.setCollapseRowSpan(false);
+        config.setWrapText(false); // el texto largo se extiende a la celda vecina en lugar de cortarse
+        if (nombreHoja != null && !nombreHoja.isBlank()) {
+            config.setSheetNames(new String[]{nombreHoja});
+        }
+
+        JRXlsxExporter exportador = new JRXlsxExporter();
+        exportador.setExporterInput(new SimpleExporterInput(print));
+        exportador.setExporterOutput(new SimpleOutputStreamExporterOutput(destino.toFile()));
+        exportador.setConfiguration(config);
+        exportador.exportReport();
+        return destino;
+    }
+
+    private static void crearCarpeta(Path destino) throws JRException {
         try {
             Path carpeta = destino.toAbsolutePath().getParent();
             if (carpeta != null) {
@@ -82,13 +123,28 @@ public final class ReporteUtil {
         } catch (IOException e) {
             throw new JRException("No se pudo crear la carpeta " + destino.getParent(), e);
         }
-        JasperExportManager.exportReportToPdfFile(print, destino.toString());
-        return destino;
     }
 
     /** Compatibilidad con el código anterior que recibía la ruta como texto. */
     public static void exportarPdf(JasperPrint print, String rutaDestino) throws JRException {
         exportarPdf(print, Path.of(rutaDestino));
+    }
+
+    /**
+     * Dibuja una página del reporte como imagen (para la vista previa).
+     *
+     * @param escala 1 = tamaño real de la página en puntos; 2 = el doble de nítida
+     */
+    public static BufferedImage renderizarPagina(JasperPrint print, int pagina, float escala) throws JRException {
+        Image imagen = JasperPrintManager.printPageToImage(print, pagina, escala);
+        if (imagen instanceof BufferedImage buffered) {
+            return buffered;
+        }
+        BufferedImage copia = new BufferedImage(imagen.getWidth(null), imagen.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = copia.createGraphics();
+        g.drawImage(imagen, 0, 0, null);
+        g.dispose();
+        return copia;
     }
 
     /** Abre el visor interactivo de JasperReports en una ventana aparte. */
@@ -98,22 +154,26 @@ public final class ReporteUtil {
         viewer.setVisible(true);
     }
 
-    /** Abre el PDF con el lector predeterminado del sistema. Devuelve false si no se pudo. */
-    public static boolean abrirPdfConLectorDelSistema(Path pdf) {
+    /** Abre el archivo (PDF o Excel) con el programa predeterminado del sistema. Devuelve false si no se pudo. */
+    public static boolean abrirConProgramaDelSistema(Path ruta) {
         try {
-            File archivo = pdf.toFile();
+            File archivo = ruta.toFile();
             if (archivo.exists() && Desktop.isDesktopSupported()
                     && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
                 Desktop.getDesktop().open(archivo);
                 return true;
             }
         } catch (IOException | UnsupportedOperationException e) {
-            System.err.println("No se pudo abrir el PDF automáticamente: " + e.getMessage());
+            System.err.println("No se pudo abrir el archivo automáticamente: " + e.getMessage());
         }
         return false;
     }
 
+    public static boolean abrirPdfConLectorDelSistema(Path pdf) {
+        return abrirConProgramaDelSistema(pdf);
+    }
+
     public static void abrirPdfConLectorDelSistema(String rutaPdf) {
-        abrirPdfConLectorDelSistema(Path.of(rutaPdf));
+        abrirConProgramaDelSistema(Path.of(rutaPdf));
     }
 }
