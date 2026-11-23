@@ -22,11 +22,11 @@ import java.util.concurrent.CompletableFuture;
  * Open Food Facts en internet.
  *
  * <p>Todas las llamadas son asíncronas para no congelar la ventana. La dirección se puede
- * cambiar con la variable de entorno {@code SOLEA_API_URL} (por defecto http://localhost:8080/api).</p>
+ * cambiar con la variable de entorno {@code SOLEA_API_URL} (por defecto http://localhost:8081/api).</p>
  */
 public class NutricionApiClient {
 
-    private static final String URL_POR_DEFECTO = "http://localhost:8080/api";
+    private static final String URL_POR_DEFECTO = "http://localhost:8081/api";
 
     private final String baseUrl;
     private final HttpClient httpClient;
