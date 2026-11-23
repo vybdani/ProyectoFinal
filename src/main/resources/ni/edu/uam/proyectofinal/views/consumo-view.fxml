@@ -20,15 +20,15 @@
             <Text styleClass="titulo" text="Lo que " />
             <Text styleClass="titulo-italico" text="comiste." />
         </TextFlow>
-        <Label text="Registra cada alimento y compáralo con tu meta del día." styleClass="subtitulo" />
+        <Label text="Registra cada alimento o receta y compáralo con tu meta del día." styleClass="subtitulo" />
     </VBox>
 
     <!-- Nuevo registro -->
     <VBox styleClass="tarjeta" spacing="8.0">
         <HBox spacing="10.0">
             <VBox spacing="6.0" HBox.hgrow="ALWAYS">
-                <Label text="Alimento" styleClass="etiqueta" />
-                <ComboBox fx:id="cmbAlimento" promptText="Elige un alimento" maxWidth="Infinity" minWidth="200.0" />
+                <Label text="Alimento o receta" styleClass="etiqueta" />
+                <ComboBox fx:id="cmbAlimento" promptText="Escribe o elige un alimento o receta" maxWidth="Infinity" minWidth="200.0" />
             </VBox>
             <VBox spacing="6.0">
                 <Label text="Gramos" styleClass="etiqueta" />
@@ -43,7 +43,7 @@
                 <DatePicker fx:id="dpFecha" prefWidth="150.0" minWidth="150.0" />
             </VBox>
             <VBox spacing="6.0" alignment="BOTTOM_LEFT">
-                <Button text="Registrar" styleClass="primario" onAction="#registrarConsumo" defaultButton="true" minWidth="-Infinity" />
+                <Button text="Registrar" styleClass="primario" onAction="#registrarConsumo" minWidth="-Infinity" />
             </VBox>
         </HBox>
         <Button text="¿No está tu alimento? Búscalo en internet" styleClass="fantasma" onAction="#handleBuscarEnInternet" />
@@ -51,7 +51,7 @@
 
     <TableView fx:id="tblConsumo" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colAlimento" text="Alimento" prefWidth="260.0" />
+            <TableColumn fx:id="colAlimento" text="Alimento / Receta" prefWidth="260.0" />
             <TableColumn fx:id="colCantidad" text="Gramos" prefWidth="100.0" />
             <TableColumn fx:id="colCalorias" text="Calorías" prefWidth="120.0" />
             <TableColumn fx:id="colComida" text="Comida" prefWidth="140.0" />

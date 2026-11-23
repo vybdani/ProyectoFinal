@@ -69,7 +69,7 @@ public class AlimentoService {
             }
         }
         if (e.getCaloriasPor100g() > 900
-                || e.getProteinasPor100g() + e.getCarbohidratosPor100g() + e.getGrasasPor100g() > 100.5) {
+                || e.getProteinasPor100g() + e.getCarbohidratosPor100g() + e.getGrasasPor100g() > 105.0) {
             throw new IllegalArgumentException("Los valores nutricionales de \"" + e.getNombre() + "\" no son válidos.");
         }
     }

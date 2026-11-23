@@ -77,6 +77,9 @@ public final class BuscadorAlimentosDialog {
         dialogo.getDialogPane().getButtonTypes().addAll(guardar, ButtonType.CANCEL);
         Node btnGuardar = dialogo.getDialogPane().lookupButton(guardar);
         btnGuardar.disableProperty().bind(lista.getSelectionModel().selectedItemProperty().isNull());
+        if (btnGuardar instanceof Button b) {
+            b.setDefaultButton(false);
+        }
 
         Runnable buscar = () -> {
             String texto = txtBusqueda.getText() == null ? "" : txtBusqueda.getText().trim();
@@ -101,6 +104,14 @@ public final class BuscadorAlimentosDialog {
         };
         btnBuscar.setOnAction(e -> buscar.run());
         txtBusqueda.setOnAction(e -> buscar.run());
+
+        // Doble clic sobre un resultado equivale a pulsar "Agregar a mis alimentos"
+        lista.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2 && lista.getSelectionModel().getSelectedItem() != null
+                    && btnGuardar instanceof Button b) {
+                b.fire();
+            }
+        });
 
         // Guardar en la BD al pulsar "Agregar"; si falla, el diálogo sigue abierto
         Alimento[] guardado = new Alimento[1];

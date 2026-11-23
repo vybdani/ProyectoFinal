@@ -13,28 +13,83 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import ni.edu.uam.proyectofinal.dao.AlimentoDAO;
+import ni.edu.uam.proyectofinal.dao.RecetaDAO;
 import ni.edu.uam.proyectofinal.dao.RegistroConsumoDAO;
 import ni.edu.uam.proyectofinal.dao.RequerimientoDiarioDAO;
 import ni.edu.uam.proyectofinal.model.Alimento;
+import ni.edu.uam.proyectofinal.model.Receta;
+import ni.edu.uam.proyectofinal.model.RecetaIngrediente;
 import ni.edu.uam.proyectofinal.model.RegistroConsumo;
 import ni.edu.uam.proyectofinal.model.RequerimientoDiario;
 import ni.edu.uam.proyectofinal.model.Usuario;
 import ni.edu.uam.proyectofinal.util.Alertas;
-import ni.edu.uam.proyectofinal.util.ComboBuscable;
 import ni.edu.uam.proyectofinal.util.BuscadorAlimentosDialog;
+import ni.edu.uam.proyectofinal.util.ComboBuscable;
 import ni.edu.uam.proyectofinal.util.Navegacion;
 import ni.edu.uam.proyectofinal.util.SesionActual;
 import ni.edu.uam.proyectofinal.util.Validacion;
 import ni.edu.uam.proyectofinal.util.Validacion.ValidacionException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConsumoController {
 
     /** Hasta cuántos días atrás se puede registrar o consultar consumo. */
     private static final int DIAS_HISTORIAL = 365;
+    private static final String CATEGORIA_RECETA = "Receta";
 
-    @FXML private ComboBox<Alimento> cmbAlimento;
+    /** Permite elegir tanto un Alimento individual como una Receta completa en el mismo buscador. */
+    public static final class OpcionConsumo {
+        private final Alimento alimento;
+        private final Receta receta;
+
+        private OpcionConsumo(Alimento alimento, Receta receta) {
+            this.alimento = alimento;
+            this.receta = receta;
+        }
+
+        public static OpcionConsumo deAlimento(Alimento alimento) {
+            return new OpcionConsumo(alimento, null);
+        }
+
+        public static OpcionConsumo deReceta(Receta receta) {
+            return new OpcionConsumo(null, receta);
+        }
+
+        public boolean esReceta() {
+            return receta != null;
+        }
+
+        public Alimento getAlimento() {
+            return alimento;
+        }
+
+        public Receta getReceta() {
+            return receta;
+        }
+
+        public double getGramosReceta() {
+            if (receta == null) {
+                return 0.0;
+            }
+            return receta.getIngredientes().stream()
+                    .mapToDouble(i -> i.getCantidadGramos() != null ? i.getCantidadGramos() : 0.0)
+                    .sum();
+        }
+
+        public String getEtiqueta() {
+            if (alimento != null) {
+                return alimento.getNombre() + "  ·  " + Math.round(alimento.getCalorias()) + " kcal / 100 g";
+            }
+            double gramos = getGramosReceta();
+            return "Receta: " + receta.getNombre() + "  ·  "
+                    + Math.round(receta.getCaloriasTotales()) + " kcal (" + Math.round(gramos) + " g)";
+        }
+    }
+
+    @FXML private ComboBox<OpcionConsumo> cmbAlimento;
     @FXML private TextField txtCantidad;
     @FXML private ComboBox<String> cmbTipoComida;
     @FXML private DatePicker dpFecha;
@@ -48,6 +103,7 @@ public class ConsumoController {
     private Usuario usuario;
 
     private final AlimentoDAO alimentoDAO = new AlimentoDAO();
+    private final RecetaDAO recetaDAO = new RecetaDAO();
     private final RegistroConsumoDAO consumoDAO = new RegistroConsumoDAO();
     private final RequerimientoDiarioDAO requerimientoDAO = new RequerimientoDiarioDAO();
 
@@ -55,11 +111,25 @@ public class ConsumoController {
 
     @FXML
     public void initialize() {
-        // Se puede escribir para buscar el alimento (sin importar tildes ni mayúsculas)
-        ComboBuscable.activar(cmbAlimento, a -> a.getNombre() + "  ·  " + Math.round(a.getCalorias()) + " kcal / 100 g");
+        ComboBuscable.activar(cmbAlimento, OpcionConsumo::getEtiqueta);
         cmbTipoComida.setItems(FXCollections.observableArrayList("Desayuno", "Almuerzo", "Cena", "Merienda"));
         dpFecha.setValue(LocalDate.now());
-        // No se pueden elegir fechas futuras en el calendario
+
+        // Al elegir una receta, sugiere automáticamente su peso total en gramos y su tiempo de comida
+        cmbAlimento.valueProperty().addListener((obs, anterior, nueva) -> {
+            if (nueva != null && nueva.esReceta()) {
+                double gramos = nueva.getGramosReceta();
+                if (gramos > 0 && (txtCantidad.getText() == null || txtCantidad.getText().isBlank())) {
+                    txtCantidad.setText(String.valueOf(Math.round(gramos)));
+                }
+                String comidaReceta = nueva.getReceta().getTipoComida();
+                if (cmbTipoComida.getValue() == null && comidaReceta != null
+                        && cmbTipoComida.getItems().contains(comidaReceta)) {
+                    cmbTipoComida.setValue(comidaReceta);
+                }
+            }
+        });
+
         dpFecha.setDayCellFactory(picker -> new javafx.scene.control.DateCell() {
             @Override
             public void updateItem(LocalDate fecha, boolean vacia) {
@@ -74,11 +144,25 @@ public class ConsumoController {
         usuario = SesionActual.getUsuarioActivo();
         try {
             alimentoDAO.asegurarAlimentosIniciales();
-            ComboBuscable.cargar(cmbAlimento, alimentoDAO.listarTodos());
+            recetaDAO.asegurarRecetasIniciales();
+            recargarOpcionesConsumo();
             listarConsumo();
         } catch (Exception e) {
             Alertas.error("No se pudieron cargar los datos", e);
         }
+    }
+
+    private void recargarOpcionesConsumo() {
+        List<OpcionConsumo> opciones = new ArrayList<>();
+        for (Alimento a : alimentoDAO.listarTodos()) {
+            if (!CATEGORIA_RECETA.equalsIgnoreCase(a.getCategoria())) {
+                opciones.add(OpcionConsumo.deAlimento(a));
+            }
+        }
+        for (Receta r : recetaDAO.listarTodas()) {
+            opciones.add(OpcionConsumo.deReceta(r));
+        }
+        ComboBuscable.cargar(cmbAlimento, opciones);
     }
 
     private void configurarTabla() {
@@ -102,7 +186,7 @@ public class ConsumoController {
             return;
         }
         try {
-            Alimento alimento = Validacion.seleccion(cmbAlimento, "un alimento");
+            OpcionConsumo opcion = Validacion.seleccion(cmbAlimento, "un alimento o receta");
             double cantidad = Validacion.decimal(txtCantidad, "la cantidad en gramos", 1, 3000);
             String tipoComida = Validacion.seleccion(cmbTipoComida, "el tipo de comida");
             LocalDate fecha = Validacion.seleccion(dpFecha, "la fecha");
@@ -113,12 +197,16 @@ public class ConsumoController {
                 throw Validacion.fallo(dpFecha, "Solo se puede registrar consumo del último año.");
             }
 
-            RegistroConsumo registro = new RegistroConsumo(usuario, alimento, cantidad, tipoComida);
+            Alimento alimentoRegistrar = opcion.esReceta()
+                    ? obtenerOCrearAlimentoDeReceta(opcion.getReceta())
+                    : opcion.getAlimento();
+
+            RegistroConsumo registro = new RegistroConsumo(usuario, alimentoRegistrar, cantidad, tipoComida);
             registro.setFecha(fecha);
             consumoDAO.guardar(registro);
 
             txtCantidad.clear();
-            cmbAlimento.setValue(null);
+            ComboBuscable.seleccionar(cmbAlimento, null);
             listarConsumo();
         } catch (ValidacionException e) {
             Alertas.aviso("Revisa los datos", e.getMessage());
@@ -127,16 +215,46 @@ public class ConsumoController {
         }
     }
 
-    /** Busca un alimento en internet (API de Solea → Open Food Facts) y lo agrega a la lista. */
+    /** Convierte una Receta a su equivalente nutricional por 100 g para registrarla en el consumo diario. */
+    private Alimento obtenerOCrearAlimentoDeReceta(Receta receta) {
+        double gramosTotales = receta.getIngredientes().stream()
+                .mapToDouble(i -> i.getCantidadGramos() != null ? i.getCantidadGramos() : 0.0)
+                .sum();
+        if (gramosTotales <= 0) {
+            throw Validacion.fallo(cmbAlimento, "La receta seleccionada no tiene ingredientes con peso válido.");
+        }
+
+        double factor100 = 100.0 / gramosTotales;
+        double kcal100 = receta.getCaloriasTotales() * factor100;
+        double prot100 = receta.getProteinasTotales() * factor100;
+        double carb100 = receta.getCarbohidratosTotales() * factor100;
+        double gras100 = receta.getGrasasTotales() * factor100;
+
+        String nombreBase = "Receta: " + receta.getNombre().trim();
+        String nombre = nombreBase.length() > 100 ? nombreBase.substring(0, 100).trim() : nombreBase;
+
+        Alimento existente = alimentoDAO.buscarPorNombreExacto(nombre);
+        if (existente != null) {
+            existente.setCategoria(CATEGORIA_RECETA);
+            existente.setCalorias(kcal100);
+            existente.setProteinas(prot100);
+            existente.setCarbohidratos(carb100);
+            existente.setGrasas(gras100);
+            return alimentoDAO.actualizar(existente);
+        }
+        return alimentoDAO.guardar(new Alimento(nombre, CATEGORIA_RECETA, kcal100, prot100, carb100, gras100));
+    }
+
+    /** Busca un alimento en internet (API de Solea → Open Food Facts) y lo selecciona para registrar. */
     @FXML
     private void handleBuscarEnInternet() {
         BuscadorAlimentosDialog.mostrar(tblConsumo).ifPresent(alimento -> {
             try {
-                ComboBuscable.cargar(cmbAlimento, alimentoDAO.listarTodos());
+                recargarOpcionesConsumo();
                 cmbAlimento.getItems().stream()
-                        .filter(a -> a.getId().equals(alimento.getId()))
+                        .filter(op -> !op.esReceta() && op.getAlimento().getId().equals(alimento.getId()))
                         .findFirst()
-                        .ifPresent(cmbAlimento::setValue);
+                        .ifPresent(op -> ComboBuscable.seleccionar(cmbAlimento, op));
                 txtCantidad.requestFocus();
             } catch (Exception e) {
                 Alertas.error("No se pudieron recargar los alimentos", e);
