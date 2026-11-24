@@ -88,9 +88,8 @@ public final class ReporteUtil {
     }
 
     /**
-     * Exporta el reporte a Excel (.xlsx), creando la carpeta de destino si no existe.
-     * Todo el reporte queda en una sola hoja, sin filas vacías de relleno, y los números
-     * se guardan como números (se pueden sumar o filtrar en Excel).
+     * Exporta el reporte a Excel (.xlsx) conservando el diseño visual, fondos de tarjetas
+     * y alineación de columnas del PDF.
      */
     public static Path exportarXlsx(JasperPrint print, Path destino, String nombreHoja) throws JRException {
         crearCarpeta(destino);
@@ -99,9 +98,12 @@ public final class ReporteUtil {
         config.setRemoveEmptySpaceBetweenRows(true);
         config.setRemoveEmptySpaceBetweenColumns(true);
         config.setDetectCellType(true);
-        config.setWhitePageBackground(false);
+        config.setWhitePageBackground(true);
+        config.setShowGridLines(false);
         config.setCollapseRowSpan(false);
-        config.setWrapText(false); // el texto largo se extiende a la celda vecina en lugar de cortarse
+        config.setWrapText(true);
+        config.setFontSizeFixEnabled(true);
+        config.setIgnoreGraphics(false);
         if (nombreHoja != null && !nombreHoja.isBlank()) {
             config.setSheetNames(new String[]{nombreHoja});
         }

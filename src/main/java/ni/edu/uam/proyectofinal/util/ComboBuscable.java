@@ -5,6 +5,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
 import java.text.Normalizer;
@@ -81,7 +85,30 @@ public final class ComboBuscable {
             }
         });
 
-        // Al escribir se filtra la lista sin perder la selección si coincide
+        // Evita que Espacio o Enter borren lo escrito cuando el desplegable está abierto
+        combo.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.SPACE && combo.getEditor().isFocused()) {
+                e.consume();
+                combo.getEditor().replaceSelection(" ");
+            } else if (e.getCode() == KeyCode.ENTER) {
+                e.consume();
+                T seleccionadoPopup = obtenerSeleccionPopup(combo);
+                if (seleccionadoPopup != null) {
+                    seleccionar(combo, seleccionadoPopup);
+                    combo.hide();
+                    return;
+                }
+                T exacto = combo.getConverter().fromString(combo.getEditor().getText());
+                if (exacto != null) {
+                    seleccionar(combo, exacto);
+                    combo.hide();
+                }
+            } else if (e.getCode() == KeyCode.DOWN && !combo.isShowing() && !datos.filtrados.isEmpty()) {
+                combo.show();
+            }
+        });
+
+        // Al escribir se filtra la lista sin perder el texto ni el cursor
         combo.getEditor().textProperty().addListener((obs, antes, ahora) -> {
             if (datos.actualizando) {
                 return;
@@ -97,13 +124,23 @@ public final class ComboBuscable {
                 }
                 datos.actualizando = true;
                 try {
+                    String textoActual = combo.getEditor().getText();
+                    int caret = combo.getEditor().getCaretPosition();
+
                     T actual = combo.getValue();
                     if (actual != null && !coincide(texto.apply(actual), buscado)) {
                         combo.setValue(null);
+                        combo.getEditor().setText(textoActual);
+                        combo.getEditor().positionCaret(Math.min(caret, textoActual.length()));
                     }
+
                     datos.filtrados.setPredicate(t -> coincide(texto.apply(t), buscado));
-                    if (combo.getEditor().isFocused() && !datos.filtrados.isEmpty() && !combo.isShowing()) {
-                        combo.show();
+                    if (combo.getEditor().isFocused()) {
+                        if (!datos.filtrados.isEmpty() && !combo.isShowing()) {
+                            combo.show();
+                        } else if (datos.filtrados.isEmpty() && combo.isShowing()) {
+                            combo.hide();
+                        }
                     }
                 } finally {
                     datos.actualizando = false;
@@ -147,6 +184,15 @@ public final class ComboBuscable {
                 }
             }
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T obtenerSeleccionPopup(ComboBox<T> combo) {
+        if (combo.isShowing() && combo.getSkin() instanceof ComboBoxListViewSkin<?> skin
+                && skin.getPopupContent() instanceof ListView<?> lv) {
+            return (T) lv.getSelectionModel().getSelectedItem();
+        }
+        return null;
     }
 
     /** Reemplaza las opciones del ComboBox (usar en lugar de setItems una vez activado). */

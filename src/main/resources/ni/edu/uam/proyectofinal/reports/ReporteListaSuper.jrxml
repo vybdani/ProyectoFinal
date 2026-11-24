@@ -17,64 +17,81 @@
     <field name="comprado" class="java.lang.Boolean"/>
 
     <title>
-        <band height="75">
-            <rectangle>
-                <reportElement x="0" y="0" width="535" height="55" backcolor="#5B6F00" uuid="ac2d7d36-7855-4269-9e12-14298ccc5feb"/>
-                <graphicElement><pen lineWidth="0.0"/></graphicElement>
-            </rectangle>
+        <band height="68">
             <staticText>
-                <reportElement x="15" y="10" width="300" height="35" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="27299011-6a61-4b7e-bb56-9c5f32b3eeae"/>
+                <reportElement x="0" y="0" width="355" height="54" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="27299011-6a61-4b7e-bb56-9c5f32b3eeae"/>
+                <box leftPadding="15"/>
                 <textElement verticalAlignment="Middle">
                     <font size="20" isBold="true"/>
                 </textElement>
                 <text><![CDATA[Solea - Lista del Súper]]></text>
             </staticText>
             <textField>
-                <reportElement x="320" y="10" width="200" height="18" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="89bb29a4-9bc8-4b5a-ad84-da9b92622b48"/>
-                <textElement textAlignment="Right">
+                <reportElement x="355" y="0" width="180" height="27" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="89bb29a4-9bc8-4b5a-ad84-da9b92622b48"/>
+                <box topPadding="6" rightPadding="15"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font size="10"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Usuario: " + ($P{USUARIO} != null ? $P{USUARIO} : "General")]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="320" y="28" width="200" height="18" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="90417cbb-4176-42af-bcd4-fc320ba2302d"/>
-                <textElement textAlignment="Right">
+                <reportElement x="355" y="27" width="180" height="27" mode="Opaque" forecolor="#FFFFFF" backcolor="#5B6F00" uuid="90417cbb-4176-42af-bcd4-fc320ba2302d"/>
+                <box bottomPadding="6" rightPadding="15"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Generado: " + ($P{FECHA} != null ? $P{FECHA} : "")]]></textFieldExpression>
             </textField>
+            <staticText>
+                <reportElement x="0" y="54" width="535" height="14" uuid="33333333-3333-4333-8333-333333333333"/>
+                <text><![CDATA[]]></text>
+            </staticText>
         </band>
     </title>
 
     <columnHeader>
-        <band height="25">
-            <rectangle>
-                <reportElement x="0" y="0" width="535" height="22" backcolor="#EFEBE1" uuid="f4ba0d12-38a3-45c1-a74b-425e6efcd629"/>
-                <graphicElement><pen lineWidth="0.5" lineColor="#D4CFC3"/></graphicElement>
-            </rectangle>
+        <band height="24">
             <staticText>
-                <reportElement x="10" y="3" width="240" height="16" uuid="64bf8e09-4ca7-486e-96b4-f5d0feee1e23"/>
+                <reportElement x="0" y="0" width="265" height="24" mode="Opaque" backcolor="#EFEBE1" uuid="64bf8e09-4ca7-486e-96b4-f5d0feee1e23"/>
+                <box leftPadding="10">
+                    <topPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                    <leftPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                    <bottomPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                </box>
                 <textElement verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
                 <text><![CDATA[Alimento / Ingrediente]]></text>
             </staticText>
             <staticText>
-                <reportElement x="260" y="3" width="90" height="16" uuid="a2286868-3cbc-463b-99fa-2c4a3e294bf9"/>
+                <reportElement x="265" y="0" width="90" height="24" mode="Opaque" backcolor="#EFEBE1" uuid="a2286868-3cbc-463b-99fa-2c4a3e294bf9"/>
+                <box rightPadding="10">
+                    <topPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                    <bottomPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                </box>
                 <textElement textAlignment="Right" verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
                 <text><![CDATA[Cantidad]]></text>
             </staticText>
             <staticText>
-                <reportElement x="365" y="3" width="80" height="16" uuid="f559f52d-87c3-47c4-873b-ad23dc701098"/>
+                <reportElement x="355" y="0" width="90" height="24" mode="Opaque" backcolor="#EFEBE1" uuid="f559f52d-87c3-47c4-873b-ad23dc701098"/>
+                <box>
+                    <topPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                    <bottomPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
                 <text><![CDATA[Unidad]]></text>
             </staticText>
             <staticText>
-                <reportElement x="460" y="3" width="65" height="16" uuid="14a57e8e-bcb8-44ca-92ea-0a5cc4eaf894"/>
+                <reportElement x="445" y="0" width="90" height="24" mode="Opaque" backcolor="#EFEBE1" uuid="14a57e8e-bcb8-44ca-92ea-0a5cc4eaf894"/>
+                <box rightPadding="8">
+                    <topPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                    <bottomPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                    <rightPen lineWidth="0.5" lineColor="#D4CFC3"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font isBold="true"/>
                 </textElement>
@@ -85,26 +102,35 @@
 
     <detail>
         <band height="22">
-            <line>
-                <reportElement x="0" y="21" width="535" height="1" forecolor="#E4E0D5" uuid="b62764ec-077a-430b-92f2-3dcf3f9c3885"/>
-            </line>
             <textField textAdjust="StretchHeight">
-                <reportElement x="10" y="2" width="240" height="16" uuid="c941b413-7ad1-4755-889f-3767641d5121"/>
+                <reportElement x="0" y="0" width="265" height="22" uuid="c941b413-7ad1-4755-889f-3767641d5121"/>
+                <box topPadding="3" leftPadding="10" bottomPadding="3">
+                    <bottomPen lineWidth="0.5" lineColor="#E4E0D5"/>
+                </box>
                 <textElement verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{alimento} != null ? $F{alimento} : ""]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="260" y="2" width="90" height="16" uuid="f0e38cfe-4d61-431c-a9c4-01edfc2b83f1"/>
+                <reportElement x="265" y="0" width="90" height="22" uuid="f0e38cfe-4d61-431c-a9c4-01edfc2b83f1"/>
+                <box topPadding="3" bottomPadding="3" rightPadding="10">
+                    <bottomPen lineWidth="0.5" lineColor="#E4E0D5"/>
+                </box>
                 <textElement textAlignment="Right" verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{cantidad} != null ? new java.text.DecimalFormat("#,##0.##").format($F{cantidad}) : "-"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="365" y="2" width="80" height="16" uuid="e60ea994-af84-4364-8fd8-17458ae0c548"/>
+                <reportElement x="355" y="0" width="90" height="22" uuid="e60ea994-af84-4364-8fd8-17458ae0c548"/>
+                <box topPadding="3" bottomPadding="3">
+                    <bottomPen lineWidth="0.5" lineColor="#E4E0D5"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{unidad} != null ? $F{unidad} : ""]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="460" y="2" width="65" height="16" uuid="ef0ff62a-af57-4fa3-ab44-bc7e59b3c5b8"/>
+                <reportElement x="445" y="0" width="90" height="22" uuid="ef0ff62a-af57-4fa3-ab44-bc7e59b3c5b8"/>
+                <box topPadding="3" bottomPadding="3" rightPadding="8">
+                    <bottomPen lineWidth="0.5" lineColor="#E4E0D5"/>
+                </box>
                 <textElement textAlignment="Center" verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
@@ -114,21 +140,23 @@
     </detail>
 
     <pageFooter>
-        <band height="30">
-            <textField>
-                <reportElement x="350" y="8" width="175" height="15" forecolor="#6E6C64" uuid="61e4a0fc-7d47-46f9-89aa-79f9bea94fef"/>
-                <textElement textAlignment="Right">
-                    <font size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
-            </textField>
+        <band height="28">
             <staticText>
-                <reportElement x="10" y="8" width="250" height="15" forecolor="#6E6C64" uuid="fe6157a4-10a4-4587-bc14-1b4af2c6c22e"/>
-                <textElement>
+                <reportElement x="0" y="6" width="355" height="18" forecolor="#6E6C64" uuid="fe6157a4-10a4-4587-bc14-1b4af2c6c22e"/>
+                <box leftPadding="4"/>
+                <textElement verticalAlignment="Middle">
                     <font size="9"/>
                 </textElement>
                 <text><![CDATA[Solea - Sistema de Nutrición y Entrenamiento]]></text>
             </staticText>
+            <textField>
+                <reportElement x="355" y="6" width="180" height="18" forecolor="#6E6C64" uuid="61e4a0fc-7d47-46f9-89aa-79f9bea94fef"/>
+                <box rightPadding="4"/>
+                <textElement textAlignment="Right" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
         </band>
     </pageFooter>
 
